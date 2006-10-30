@@ -2776,3 +2776,16 @@ script, encounter snakespleen, begin
 end
 
 #---------------------------------------------------------------------------
+
+plot script, jormungand each step, x, y, begin
+  if (current map <> map:Jormungandling's Belly) then (exit script)
+  if (check tag(tag: Bob is leader) == OFF) then (exit script)
+  variable (block, bob)
+  block := read map block(x,y)
+  bob := find hero(hero:Bob the Hamster)
+  set hero picture(bob, 0, outside battle)
+  if((block >= 48 && block <= 56) || (block >= 64 && block <= 72)) then, begin
+    bob := rank in caterpillar(hero:Bob the Hamster)
+    set hero picture (bob, 59, outside battle)
+  end
+end
