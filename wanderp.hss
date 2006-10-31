@@ -1818,11 +1818,6 @@ end
 
 script,Broaste Castle Exterior,begin
  resume random enemys
- if (check tag(tag:James took castle)) then,begin
-   play song (song:Royal March)
- end, else, begin
-   play song (song: Outside castle)
- end
 end
 
 #---------------------------------------------------------------------------
