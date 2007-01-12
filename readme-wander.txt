@@ -1,5 +1,5 @@
 ------------------------------------------------------------
- Wandering Hamster O.H.R.RPG.C.E Demo       (March 15 2006)
+ Wandering Hamster O.H.R.RPG.C.E Demo       (??? ?? 2006)
 ------------------------------------------------------------
 
 This is a Work-in-Progress demo of Wandering Hamster. This version
@@ -9,6 +9,13 @@ contains roughly three hours of playing time
 
 NEW IN THIS RELEASE
 
+  * New battle theme by Cartlemmy (Josh Merritt)
+  * Added a rope-ladder to the roof of Flanat Castle
+  * Removed the unreasonable water-resistance previously
+    Enjoyed by the Myrmidon mini-boss
+
+RECENT CHANGES
+
   * Native Windows version with installer!
   * Fixed bug that prevented dismounting the Myrmidon suit
   * Fixed bug that prevented James from talking to you in the
@@ -16,11 +23,6 @@ NEW IN THIS RELEASE
   * Fixed bug that prevented the Teddy bear from being removed
     if you manually equipped it
   * Numerous spelling fixes, especially apostrophes
-
-
-RECENT CHANGES
-
-   * Updated WANDER.EXE (GPL)
 
 ---
 HOW TO PLAY

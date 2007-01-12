@@ -18,7 +18,6 @@ define script (9,Show James House,none)
 define script (10,Sleep at the Inn,none)
 define script (11,die in battle,none)
 define script (12,broaste lackeys block castle,none)
-define script (13,flanat castle area autorun,none)
  define script (autonumber,plot boulder mover,none)
 define script (14,broaste castle inn,none)
 define script (15,ixnekolan inn,none)
@@ -680,6 +679,11 @@ script,Panic and Run Around,begin
  reset palette
  fade screen in
 
+get hero name(0, find hero(hero by rank(0)))
+show string(0)
+wait(20)
+show no value
+
  resume player
 end
 
@@ -865,22 +869,23 @@ script, Broaste Lackeys Block Castle,begin
 
 #---------------------------------------------------------------------------
 
-script,Flanat Castle Area Autorun,begin
+plotscript,Flanat Castle Area Autorun,begin
   if (check tag(tag:intro finished)) then(
-    if (check tag(tag:spoke to guards))
-    then,begin
+    if (check tag(tag:spoke to guards)) then,begin
       set NPC position (0,24,55)
       set NPC position (6,23,54)
       set NPC position (7,25,54)
       set NPC direction (6,west)
       set NPC direction (7,east)
     end
-    if(check tag(tag:saw plotrock mover)==OFF,and,hero Y(me)>>40)
-    # the reason we check the hero's Y value is so that this
-    # script will only be triggered if we enter the map from the normal
-    # entrance in the south, and not via the warp-outhouse in the north
-    then,begin
-       Plot Boulder Mover
+    if(check tag(tag:saw plotrock mover)==OFF,and,hero Y(me)>>40) then,begin
+      # the reason we check the hero's Y value is so that this
+      # script will only be triggered if we enter the map from the normal
+      # entrance in the south, and not via the warp-outhouse in the north
+      Plot Boulder Mover
+    end
+    if(check tag(tag: flanat rope ladder)) then, begin
+      lower flanat castle rope ladder(true)
     end
   end
 end
@@ -2772,7 +2777,7 @@ end
 
 #---------------------------------------------------------------------------
 
-plot script, jormungand each step, x, y, begin
+plotscript, jormungand each step, x, y, begin
   if (current map <> map:Jormungandling's Belly) then (exit script)
   if (check tag(tag: Bob is leader) == OFF) then (exit script)
   variable (block, bob)
@@ -2784,3 +2789,54 @@ plot script, jormungand each step, x, y, begin
     set hero picture (bob, 59, outside battle)
   end
 end
+
+#---------------------------------------------------------------------------
+
+plotscript, lower flanat castle rope ladder, no delay=0, begin
+  variable(i, ref, x, y, count)
+  set tag(tag: flanat rope ladder, ON)
+  count := NPC copy count(17)
+  if(count >> 1) then(exit script)
+  for(i, 17, 18)
+    do(alter NPC(i, NPCstat:move type, NPCmovetype:walk in place))
+  set NPC speed(17, 4)
+  ref := NPC reference(17)
+  x := NPC X(ref)
+  y := NPC Y(ref)
+  for(i, 0, 2) do, begin
+    if(no delay) then, begin
+      create NPC(17, x, y + 1 + i)
+    end, else, begin
+      walk NPC(ref, south, 3--i)
+      ref := create NPC(17, x, y)
+      wait(5)
+    end
+  end
+  for(i, 17, 18)
+    do(alter NPC(i, NPCstat:move type, NPCmovetype:stand still))
+end
+
+plotscript, climb flanat castle rope ladder, begin
+  variable(d)
+  suspend player
+  suspend random enemies
+  suspend hero walls
+  suspend obstruction
+  d := hero direction(me)
+  walk hero(me, d, 1)
+  set hero direction(me, north)
+  wait for hero(me)
+  set hero speed(me, 2)
+  walk hero(me, d, 3)
+  set hero direction(me, north)
+  wait for hero(me)
+  set hero speed(me, 4)
+  walk hero(me, d, 1)
+  wait for hero(me)
+  resume player
+  resume random enemies
+  resume hero walls
+  resume obstruction
+end
+
+#---------------------------------------------------------------------------
