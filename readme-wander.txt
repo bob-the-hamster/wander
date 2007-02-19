@@ -1,5 +1,5 @@
 ------------------------------------------------------------
- Wandering Hamster O.H.R.RPG.C.E Demo       (??? ?? 2006)
+ Wandering Hamster O.H.R.RPG.C.E Demo       (??? ?? 2007)
 ------------------------------------------------------------
 
 This is a Work-in-Progress demo of Wandering Hamster. This version
@@ -9,6 +9,7 @@ contains roughly three hours of playing time
 
 NEW IN THIS RELEASE
 
+  * Fixed crash while sleeping at Inns later in the game
   * New battle theme by Cartlemmy (Josh Merritt)
   * Added a rope-ladder to the roof of Flanat Castle
   * Removed the unreasonable water-resistance previously
