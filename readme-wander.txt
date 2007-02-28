@@ -9,6 +9,8 @@ contains roughly three hours of playing time
 
 NEW IN THIS RELEASE
 
+  * Uses layers so you don't disappear when you walk behind
+    trees and things
   * Fixed crash while sleeping at Inns later in the game
   * New battle theme by Cartlemmy (Josh Merritt)
   * Added a rope-ladder to the roof of Flanat Castle

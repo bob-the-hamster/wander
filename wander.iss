@@ -4,19 +4,19 @@
 
 [Setup]
 AppName=Wandering Hamster
-AppVerName=Wandering Hamster (tirgoviste) 20060315
-VersionInfoVersion=2006.03.15.0
+AppVerName=Wandering Hamster (ubersetzung) 2007????
+VersionInfoVersion=2007.02.28.0
 AppPublisher=Hamster Republic Productions
 AppPublisherURL=http://HamsterRepublic.com/ohrrpgce/
-AppSupportURL=http://HamsterRepublic.com/ohrrpgce/docs.php
-AppUpdatesURL=http://HamsterRepublic.com/ohrrpgce/download.php
+AppSupportURL=http://HamsterRepublic.com/ohrrpgce/index.php/Game_Wandering_Hamster.html
+AppUpdatesURL=http://HamsterRepublic.com/ohrrpgce/index.php/Game_Wandering_Hamster.html
 AppReadmeFile={app}\readme-wander.txt
 DefaultDirName={pf}\Hamster Republic\Wandering Hamster
 DefaultGroupName=Wandering Hamster
 DisableProgramGroupPage=yes
 AllowNoIcons=yes
 AllowUNCPath=no
-LicenseFile=..\LICENSE-binary.txt
+LicenseFile=LICENSE-binary.txt
 InfoAfterFile=readme-wander.txt
 OutputBaseFilename=wandering-hamster
 Compression=bzip
@@ -31,14 +31,17 @@ Name: "eng"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"
 
 [Files]
-Source: "..\wander.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\wander.rpg"; DestDir: "{app}"; Flags: ignoreversion
+Source: "wander.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "SDL.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "SDL_mixer.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "wander.rpg"; DestDir: "{app}"; Flags: ignoreversion
 Source: "wanderp.hss"; DestDir: "{app}"; Flags: ignoreversion
 Source: "wander.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "readme-wander.txt"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\LICENSE-binary.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "LICENSE-binary.txt"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{group}\OHRRPGCE Game Player"; Filename: "{app}\wander.exe"; Flags: closeonexit
-Name: "{userdesktop}\OHRRPGCE Game Player"; Filename: "{app}\wander.exe"; Flags: closeonexit; Tasks: desktopicon
+Name: "{group}\Wandering Hamster"; Filename: "{app}\wander.exe"; Flags: closeonexit
+Name: "{group}\Wandering Hamster (fullscreen)"; Filename: "{app}\wander.exe"; Parameters: "-f"; Flags: closeonexit
+Name: "{userdesktop}\Wandering Hamster"; Filename: "{app}\wander.exe"; Flags: closeonexit; Tasks: desktopicon
