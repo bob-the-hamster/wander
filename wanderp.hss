@@ -869,6 +869,52 @@ script, Broaste Lackeys Block Castle,begin
 
 #---------------------------------------------------------------------------
 
+plotscript, fight broaste lackeys blocking castle, begin
+ suspend player
+ suspend obstruction
+ if(fight formation(4)) then, begin
+   # won
+   show text box(12)
+   variable(loop, dir)
+   dir := south
+   for(loop, 0, 24) do, begin
+     dir := dir+1, mod, 4
+     set NPC direction(0, dir)
+     set NPC direction(6, dir)
+     set NPC direction(7, dir)
+     wait(1)
+   end
+   destroy NPC(0)
+   destroy NPC(6)
+   destroy NPC(7)
+   set tag(6, ON)
+   wait for text box
+ end, else, begin
+   # ran away
+   set hero speed(0, 10)
+   walk hero(0, south, 4)
+   wait for hero(0)
+   set hero speed(0, 4)
+   walk hero(0, south, 1)
+   wait for hero(0)
+   set hero direction(0,west)
+   suspend caterpillar
+   walk hero(1, south, 1)
+   walk hero(1, west, 1)
+   wait(2)
+   set hero direction(0, north)
+   wait for hero(1)
+   set hero direction(1, east)
+   wait(2)
+   set hero direction(1, north)
+   resume caterpillar
+ end
+ resume obstruction
+ resume player
+end
+
+#---------------------------------------------------------------------------
+
 plotscript,Flanat Castle Area Autorun,begin
   if (check tag(tag:intro finished)) then(
     if (check tag(tag:spoke to guards)) then,begin
