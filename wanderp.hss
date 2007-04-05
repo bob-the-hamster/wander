@@ -2069,6 +2069,7 @@ script,Cats Enlist Bob,begin
 
   set NPC direction(skeppio,north)
   set NPC direction(rathmara,north)
+  wait (5)
 
   show text box(290) #cats introduce themselves
   wait for text box
