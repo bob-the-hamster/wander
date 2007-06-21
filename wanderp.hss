@@ -2831,7 +2831,7 @@ plotscript, jormungand each step, x, y, begin
   block := read map block(x,y)
   bob := find hero(hero:Bob the Hamster)
   set hero picture(bob, 0, outside battle)
-  if((block >= 48 && block <= 56) || (block >= 64 && block <= 72)) then, begin
+  if(block == 48 || block == 64) then, begin
     bob := rank in caterpillar(hero:Bob the Hamster)
     set hero picture (bob, 59, outside battle)
   end
