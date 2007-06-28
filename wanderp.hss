@@ -2687,9 +2687,6 @@ script, Jormungand Encounter, begin
 
   wait for text box  
 
-  show text box(381)
-  wait for text box
-
   resume hero walls
   resume npc walls
   resume player
@@ -2819,11 +2816,6 @@ end
 
 #---------------------------------------------------------------------------
 
-script, encounter snakespleen, begin
-end
-
-#---------------------------------------------------------------------------
-
 plotscript, jormungand each step, x, y, begin
   if (current map <> map:Jormungandling's Belly) then (exit script)
   if (check tag(tag: Bob is leader) == OFF) then (exit script)
@@ -2835,6 +2827,32 @@ plotscript, jormungand each step, x, y, begin
     bob := rank in caterpillar(hero:Bob the Hamster)
     set hero picture (bob, 59, outside battle)
   end
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, whack the golf ball, arg=0, ref=0, begin
+  variable(x, y, d)
+  suspend player
+  x := NPC X(ref)
+  y := NPC Y(ref)
+  d := rotate(hero direction(me), counterclockwise)
+  set NPC speed(ref, 10)
+  walk NPC(ref, d, 1)
+  wait for NPC(ref)
+  resume player
+end
+
+#---------------------------------------------------------------------------
+
+define constant (1, clockwise)
+define constant (-1, counterclockwise)
+
+script, rotate, dir=0, which way=1, quarters=1, begin
+  dir += quarters * which way
+  while (dir >> 3) do(dir -= 4)
+  while (dir << 0) do(dir += 4)
+  exit returning(dir)
 end
 
 #---------------------------------------------------------------------------
