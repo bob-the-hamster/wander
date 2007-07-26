@@ -2832,15 +2832,66 @@ end
 #---------------------------------------------------------------------------
 
 plotscript, whack the golf ball, arg=0, ref=0, begin
-  variable(x, y, d)
+  variable(x, y, d, club)
   suspend player
   x := NPC X(ref)
   y := NPC Y(ref)
   d := rotate(hero direction(me), counterclockwise)
+  
+  # Animate Bob
+  if (check tag(tag: Bob is leader) == ON) then, begin
+    club := create NPC(9)
+    set hero picture(me, 0)
+    set NPC position(club, hero X(me), hero Y(me))
+    set NPC direction(club, hero direction(me))
+    spin golf club(club)
+    destroy NPC(club)
+    jormungand each step (hero X(me), hero Y(me))
+  end
+  
   set NPC speed(ref, 10)
   walk NPC(ref, d, 1)
   wait for NPC(ref)
   resume player
+end
+
+#---------------------------------------------------------------------------
+
+script, spin golf club, club=0, begin
+  variable(i)
+  for(i, 0, 4) do, begin
+    set NPC direction(club, rotate(NPC direction(club), counterclockwise))
+    advance NPC by pixels(club, 15)
+    set NPC frame(club, 0)
+    wait(1)
+    advance NPC by pixels(club, -5)
+    advance NPC by pixels(club, 15, -1)
+    set NPC frame(club, 1)
+    wait(1)
+    advance NPC by pixels(club, -15, -1)
+    advance NPC by pixels(club, -10)
+  end
+end
+
+#---------------------------------------------------------------------------
+
+script, advance NPC by pixels, ref=0, pix=1, angle=0, begin
+  variable(d, x, y)
+  d := NPC direction(ref)
+  if(angle) then(d := rotate(d, clockwise, angle))
+  $0="a "
+  append number(0, d)
+  append ascii(0, 32)
+  append number(0, pix)
+  trace(0)
+  x := NPC pixel X(ref)
+  y := NPC pixel Y(ref)
+  switch(d) do(
+    case(north) do(put npc(ref, x, y -- pix))
+    case(south) do(put npc(ref, x, y + pix))
+    case(west)  do(put npc(ref, x -- pix, y))
+    case(east)  do(put npc(ref, x + pix, y))
+  )
 end
 
 #---------------------------------------------------------------------------
