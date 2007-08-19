@@ -3,6 +3,7 @@
 
 include, plotscr.hsd   #language definition
 include, wander.hsi    #game-specific include
+include, scancode.hsi  #keyboard constants
 
 #---------------------------------------------------------------------------
 
@@ -2832,33 +2833,59 @@ end
 #---------------------------------------------------------------------------
 
 plotscript, whack the golf ball, arg=0, ref=0, begin
-  variable(x, y, d, club)
+  variable(x, y, d, club, charge, force)
   suspend player
   x := NPC X(ref)
   y := NPC Y(ref)
   d := rotate(hero direction(me), counterclockwise)
+  charge := 0
+  force := 1
   
   # Animate Bob
   if (check tag(tag: Bob is leader) == ON) then, begin
+    $0="Swing *"
+    show string at (0, 0, 190)
     club := create NPC(9)
     set hero picture(me, 0)
     set NPC position(club, hero X(me), hero Y(me))
     set NPC direction(club, hero direction(me))
+    set NPC frame(club, 0)
+    advance NPC by pixels(club, 15)
+    while(holding action key) do, begin
+      charge += 1
+      if ((charge, mod, 9) == 0) then, begin
+       force += 1
+       append ascii(0, 42)
+      end
+      wait(1)
+    end
+    hide string(0)
+    advance NPC by pixels(club, -15)
     spin golf club(club)
     destroy NPC(club)
     jormungand each step (hero X(me), hero Y(me))
   end
   
   set NPC speed(ref, 10)
-  walk NPC(ref, d, 1)
+  walk NPC(ref, d, force)
   wait for NPC(ref)
   resume player
 end
 
 #---------------------------------------------------------------------------
 
+script, holding action key, begin
+  return (keyispressed(key:ENTER)
+       || keyispressed(key:SPACE)
+       || keyispressed(key:CTRL)
+       || keyispressed(joy:button 1))
+end
+
+#---------------------------------------------------------------------------
+
 script, spin golf club, club=0, begin
   variable(i)
+  playsound(3)
   for(i, 0, 4) do, begin
     set NPC direction(club, rotate(NPC direction(club), counterclockwise))
     advance NPC by pixels(club, 15)
@@ -2879,11 +2906,6 @@ script, advance NPC by pixels, ref=0, pix=1, angle=0, begin
   variable(d, x, y)
   d := NPC direction(ref)
   if(angle) then(d := rotate(d, clockwise, angle))
-  $0="a "
-  append number(0, d)
-  append ascii(0, 32)
-  append number(0, pix)
-  trace(0)
   x := NPC pixel X(ref)
   y := NPC pixel Y(ref)
   switch(d) do(
