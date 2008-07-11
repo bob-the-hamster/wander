@@ -773,7 +773,7 @@ script, Sleep at the Inn, begin
   wait (1)
  end
  fade screen in
- play song (song:Cheerful Town Music)
+ play song (song:Soldier's Chorus)
  wait (5)
 
  focus camera (hero x(me), hero y(me),10)
@@ -2666,7 +2666,7 @@ script, Jormungand Encounter, begin
 
   set hero speed (me,4)
 
-  teleport to map (map:Jormungandling's Belly,106,9)
+  teleport to map (map:Jormungandling's Belly,115,18)
 
   resume caterpillar
 
