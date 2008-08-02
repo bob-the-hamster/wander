@@ -7,7 +7,6 @@ include, scancode.hsi  #keyboard constants
 
 #---------------------------------------------------------------------------
 
-define script (1,introduction,none)
 define script (2,broaste returns,none)
 define script (3,fluffy-mu,none)
 define script (4,shell game,none)
@@ -17,7 +16,6 @@ define script (7,reset hide and seek,none)
 define script (8,Panic and Run Around,none)
 define script (9,Show James House,none)
 define script (10,Sleep at the Inn,none)
-define script (11,die in battle,none)
 define script (12,broaste lackeys block castle,none)
  define script (autonumber,plot boulder mover,none)
 define script (14,broaste castle inn,none)
@@ -73,13 +71,14 @@ global variable(
 )
 global variable(9,under bridge)
 global variable(10,James Saying)
+global variable(11,hit golf ball too hard)
 
 # variables after 100 used for temporary fake-array
 global variable(100,array)
 
 #---------------------------------------------------------------------------
 
-script, introduction, begin
+plotscript, introduction, begin
 
  suspend npcs
  suspend player
@@ -829,7 +828,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script,die in battle,begin
+plotscript,die in battle,begin
  suspend player
  play song (song:Game Over)
  show backdrop (19)
@@ -2833,13 +2832,15 @@ end
 #---------------------------------------------------------------------------
 
 plotscript, whack the golf ball, arg=0, ref=0, begin
-  variable(x, y, d, club, charge, force)
+  variable(x, y, d, club, charge, force, moved)
   suspend player
   x := NPC X(ref)
   y := NPC Y(ref)
   d := rotate(hero direction(me), counterclockwise)
   charge := 0
-  force := 1
+  force := 0
+  moved := false
+  hit golf ball too hard := false
   
   # Animate Bob
   if (check tag(tag: Bob is leader) == ON) then, begin
@@ -2853,9 +2854,11 @@ plotscript, whack the golf ball, arg=0, ref=0, begin
     advance NPC by pixels(club, 15)
     while(holding action key) do, begin
       charge += 1
-      if ((charge, mod, 9) == 0) then, begin
-       force += 1
-       append ascii(0, 42)
+      if ((charge, mod, 3) == 0) then, begin
+       if(force << 30) then, begin
+        force += 1
+        append ascii(0, 42)
+       end
       end
       wait(1)
     end
@@ -2866,10 +2869,111 @@ plotscript, whack the golf ball, arg=0, ref=0, begin
     jormungand each step (hero X(me), hero Y(me))
   end
   
-  set NPC speed(ref, 10)
-  walk NPC(ref, d, force)
-  wait for NPC(ref)
+  moved := move golf ball(ref, d, force)
+
+  if(force>>0 && not(moved)) then, begin
+    # No movement!
+    fix stuck golf ball(ref)
+  end
+
+  if(hit golf ball too hard) then, begin
+    show text box(399)
+    wait for text box
+  end
+
   resume player
+end
+
+script, move golf ball, ref, d, force, begin
+  variable(x,y)
+  variable(moved)
+  variable(first bounce)
+  moved := false
+  first bounce := true
+  if(force >> 0) then, begin
+    play sound(sfx:lilhit)
+  end
+  while(force >> 0) do, begin
+    x := NPC x(ref)
+    y := NPC y(ref)
+    set NPC speed(ref, 10)
+    if(force << 2) then(set NPC speed(ref, 5))
+    
+    d := check golf ball bounces(ref, d, force)
+    if(hit golf ball too hard && force>>2) then(force:=2)
+    walk NPC(ref, d, 1)
+    wait for NPC(ref)
+    
+    #Bounce agains normal obstruction walls
+    if(NPC x(ref)==x && NPC y(ref)==y) then, begin
+      d := rotate(d, clockwise, 2)
+      if(first bounce) then(first bounce:=false, increment(force))
+      play sound(sfx:lilhit)
+    end, else, begin
+      moved := true
+    end
+
+    decrement(force)
+  end
+  exit returning(moved)
+end
+
+script, check golf ball bounces, ref, d, force, begin
+  variable(x, y, tile, bounce)
+  x := NPC x(ref)
+  y := NPC y(ref)
+  bounce := -1
+  tile := read map block(x, y, 1) # golf course edges are always in layer 1
+  if(tile==49) then(bounce:=down)
+  if(tile==50) then(bounce:=right)
+  if(tile==51) then(bounce:=left)
+  if(tile==52) then(bounce:=up)
+  if(tile==65 && d==up)    then(bounce:=right)
+  if(tile==65 && d==left)  then(bounce:=down)
+  if(tile==66 && d==up)    then(bounce:=left)
+  if(tile==66 && d==right) then(bounce:=down)
+  if(tile==67 && d==down)  then(bounce:=right)
+  if(tile==67 && d==left)  then(bounce:=up)
+  if(tile==68 && d==down)  then(bounce:=left)
+  if(tile==68 && d==right) then(bounce:=up)
+  if(bounce>=0) then, begin
+    # a bounce occured
+    if(force<<22) then, begin
+      exit returning(bounce)
+    end, else, begin
+      hit golf ball too hard := true
+    end
+  end
+  exit returning(d)
+end
+
+script, fix stuck golf ball, ref, begin
+  wait(8)
+  show text box (397) # Oops! stuck
+  wait for text box
+  wait(1)
+  set hero direction(me, rotate(hero direction(me), counterclockwise))
+  wait(5)
+  set hero direction(me, rotate(hero direction(me), clockwise))
+  wait(3)
+  set hero direction(me, rotate(hero direction(me), clockwise))
+  wait(5)
+  set hero direction(me, rotate(hero direction(me), counterclockwise))
+  wait(2)
+  suspend obstruction
+  set hero speed(me, 5)
+  set NPC speed(ref, 5)
+  walk hero(me, hero direction(me), 1)
+  wait for hero(me)
+  walk hero(me, rotate(hero direction(me), clockwise, 2), 1)
+  walk NPC(ref, hero direction(me), 1)
+  set hero direction(me, rotate(hero direction(me), clockwise, 2))
+  wait for hero(me)
+  set hero speed(me, 4)
+  resume obstruction
+  wait(15)
+  show text box (398) # Hope that wasn't cheating
+  wait for text box
 end
 
 #---------------------------------------------------------------------------
