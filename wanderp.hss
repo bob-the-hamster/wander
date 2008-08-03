@@ -51,7 +51,6 @@ define script (41,Rathmara Burn Log,none)
 define script (42,Gallopeg Autorun,none)
 define script (43,Jormungand Encounter,none)
 define script (44,Rathmara Finds Rope,none)
-define script (45,encounter snakespleen,none)
 define script (46,dustyleavesangry,none)
 
 define script (autonumber,Spin NPC,3,0,2,1)
@@ -72,6 +71,8 @@ global variable(
 global variable(9,under bridge)
 global variable(10,James Saying)
 global variable(11,hit golf ball too hard)
+global variable(12,golf round)
+global variable(13,golf hits)
 
 # variables after 100 used for temporary fake-array
 global variable(100,array)
@@ -2831,6 +2832,50 @@ end
 
 #---------------------------------------------------------------------------
 
+plotscript, fight snake spleen, begin
+  fight formation(95)
+  set tag(tag:beat snake spleen1, ON)
+  variable(ref)
+  ref := NPC reference(14)
+  set NPC position(ref, 50,18)
+  wait(10)
+  show text box(404)
+  wait for text box
+  set NPC speed(ref, 5)
+  walk NPC(ref, left, 2)
+  wait for NPC(ref)
+  walk NPC(ref, down, 1)
+  wait for NPC(ref)
+  walk NPC(ref, left, 1)
+  wait for NPC(ref)
+  walk NPC(ref, down, 1)
+  wait for NPC(ref)
+  walk NPC(ref, left, 1)
+  wait for NPC(ref)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, golf game start tile, arg, ref, begin
+  set tag(tag:can open a golf door, ON)
+  destroy NPC(ref)
+  golf round := 0
+end
+
+plotscript, open a golf door, arg, ref, begin
+  if(check tag(tag:can open a golf door)) then, begin
+    destroy NPC(ref)
+    increment(golf round)
+    show text box(402) # golf round number
+    set tag(tag:can open a golf door, OFF)
+    golf hits := 0
+  end, else, begin
+    show text box(403) # must finish round
+  end
+end
+
+#---------------------------------------------------------------------------
+
 plotscript, whack the golf ball, arg=0, ref=0, begin
   variable(x, y, d, club, charge, force, moved)
   suspend player
@@ -2862,7 +2907,7 @@ plotscript, whack the golf ball, arg=0, ref=0, begin
       end
       wait(1)
     end
-    hide string(0)
+    hide string(0) # Hide display of force
     advance NPC by pixels(club, -15)
     spin golf club(club)
     destroy NPC(club)
@@ -2870,6 +2915,7 @@ plotscript, whack the golf ball, arg=0, ref=0, begin
   end
   
   moved := move golf ball(ref, d, force)
+
 
   if(force>>0 && not(moved)) then, begin
     # No movement!
@@ -2884,6 +2930,10 @@ plotscript, whack the golf ball, arg=0, ref=0, begin
   resume player
 end
 
+script, golf score hide, begin
+  hide string(1) # Hide display of hits
+end
+
 script, move golf ball, ref, d, force, begin
   variable(x,y)
   variable(moved)
@@ -2892,6 +2942,11 @@ script, move golf ball, ref, d, force, begin
   first bounce := true
   if(force >> 0) then, begin
     play sound(sfx:lilhit)
+    increment(golf hits)
+    $1="Hits: "
+    append number(1, golf hits)
+    show string at(1, 0, 0)
+    stop timer(1) # this is the timer for hiding hits. it gets re-started when this script ends
   end
   while(force >> 0) do, begin
     x := NPC x(ref)
@@ -2900,6 +2955,7 @@ script, move golf ball, ref, d, force, begin
     if(force << 2) then(set NPC speed(ref, 5))
     
     d := check golf ball bounces(ref, d, force)
+    if(d==-1) then(exit returning(true))
     if(hit golf ball too hard && force>>2) then(force:=2)
     walk NPC(ref, d, 1)
     wait for NPC(ref)
@@ -2915,15 +2971,35 @@ script, move golf ball, ref, d, force, begin
 
     decrement(force)
   end
+  # Score should vanish after 10 seconds
+  set timer(1, 10, 16, @golf score hide)
+  # re-run collision check, in case the ball landed on the hole
+  if(check golf ball bounces(ref, d, force) == -1)
+    then(exit returning(true))
   exit returning(moved)
 end
 
 script, check golf ball bounces, ref, d, force, begin
-  variable(x, y, tile, bounce)
+  variable(x, y, bounce)
+  variable(tile, ahead, floor)
   x := NPC x(ref)
   y := NPC y(ref)
   bounce := -1
   tile := read map block(x, y, 1) # golf course edges are always in layer 1
+  floor := read map block(x, y, 0) # the hole is always in layer 0
+  if(d==up) then(y-=1)
+  if(d==down) then(y+=1)
+  if(d==left) then(x-=1)
+  if(d==right) then(x+=1)
+  ahead := read map block(x, y, 1) # golf course edges are always in layer 1
+  if(floor==64 && force<<3) then, begin
+    force := 0
+    set tag(tag:can open a golf door, ON)
+    destroy NPC(ref)
+    show text box(406) # Hole in X
+    wait for text box
+    exit returning(-1) # signal abort
+  end
   if(tile==49) then(bounce:=down)
   if(tile==50) then(bounce:=right)
   if(tile==51) then(bounce:=left)
@@ -2936,6 +3012,10 @@ script, check golf ball bounces, ref, d, force, begin
   if(tile==67 && d==left)  then(bounce:=up)
   if(tile==68 && d==down)  then(bounce:=left)
   if(tile==68 && d==right) then(bounce:=up)
+  if(ahead==97 && d==up)    then(bounce:=down)
+  if(ahead==98 && d==right) then(bounce:=left)
+  if(ahead==99 && d==down)  then(bounce:=up)
+  if(ahead==100 && d==left) then(bounce:=right)
   if(bounce>=0) then, begin
     # a bounce occured
     if(force<<22) then, begin
@@ -2973,19 +3053,11 @@ script, fix stuck golf ball, ref, begin
   resume obstruction
   wait(15)
   show text box (398) # Hope that wasn't cheating
+  increment(golf hits)
+  $1="Hits: "
+  append number(1, golf hits)
   wait for text box
 end
-
-#---------------------------------------------------------------------------
-
-script, holding action key, begin
-  return (keyispressed(key:ENTER)
-       || keyispressed(key:SPACE)
-       || keyispressed(key:CTRL)
-       || keyispressed(joy:button 1))
-end
-
-#---------------------------------------------------------------------------
 
 script, spin golf club, club=0, begin
   variable(i)
@@ -3002,6 +3074,15 @@ script, spin golf club, club=0, begin
     advance NPC by pixels(club, -15, -1)
     advance NPC by pixels(club, -10)
   end
+end
+
+#---------------------------------------------------------------------------
+
+script, holding action key, begin
+  return (keyispressed(key:ENTER)
+       || keyispressed(key:SPACE)
+       || keyispressed(key:CTRL)
+       || keyispressed(joy:button 1))
 end
 
 #---------------------------------------------------------------------------
