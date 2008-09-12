@@ -3163,7 +3163,3 @@ plotscript, climb flanat castle rope ladder, begin
 end
 
 #---------------------------------------------------------------------------
-
-plotscript, duck inn, begin
-  open menu (1)
-end
