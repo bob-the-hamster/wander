@@ -91,11 +91,11 @@ plotscript, introduction, begin
  x:=hero X(leader)
  y:=hero Y(leader)
 
- # go to panning cutscene map
- teleport to map (map:Panning Cutscene Map,0,0)
-
  # new-game fade-in cannot be supressed, so wipe out the palette
  tweak palette(-63,-63,-63) 
+
+ # go to panning cutscene map
+ teleport to map (map:Panning Cutscene Map,0,0)
 
  # start the intro music
  wait(1)
