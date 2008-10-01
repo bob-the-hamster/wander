@@ -79,6 +79,12 @@ global variable(100,array)
 
 #---------------------------------------------------------------------------
 
+# Timer notes: must suffice to avoid timer collisions
+# 1 Temporary short-term single map uses
+#   golf score
+
+#---------------------------------------------------------------------------
+
 plotscript, introduction, begin
 
  suspend npcs
@@ -3120,6 +3126,7 @@ plotscript, lower flanat castle rope ladder, no delay=0, begin
   set tag(tag: flanat rope ladder, ON)
   count := NPC copy count(17)
   if(count >> 1) then(exit script)
+  set tag(tag: flanat rope lock, ON)
   for(i, 17, 18)
     do(alter NPC(i, NPCstat:move type, NPCmovetype:walk in place))
   set NPC speed(17, 4)
@@ -3137,9 +3144,14 @@ plotscript, lower flanat castle rope ladder, no delay=0, begin
   end
   for(i, 17, 18)
     do(alter NPC(i, NPCstat:move type, NPCmovetype:stand still))
+  if(not(no delay)) then, begin
+    wait(5)
+  end
+  set tag(tag: flanat rope lock, OFF)
 end
 
 plotscript, climb flanat castle rope ladder, begin
+  if(check tag(tag:flanat rope lock)==ON) then(exit script)
   variable(d)
   suspend player
   suspend random enemies
