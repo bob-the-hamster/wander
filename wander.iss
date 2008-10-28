@@ -4,8 +4,8 @@
 
 [Setup]
 AppName=Wandering Hamster
-AppVerName=Wandering Hamster (ubersetzung) 2007????
-VersionInfoVersion=2007.02.28.0
+AppVerName=Wandering Hamster (xocolatl+) 20081003
+VersionInfoVersion=2008.10.03.0
 AppPublisher=Hamster Republic Productions
 AppPublisherURL=http://HamsterRepublic.com/ohrrpgce/
 AppSupportURL=http://HamsterRepublic.com/ohrrpgce/index.php/Game_Wandering_Hamster.html
@@ -16,7 +16,7 @@ DefaultGroupName=Wandering Hamster
 DisableProgramGroupPage=yes
 AllowNoIcons=yes
 AllowUNCPath=no
-LicenseFile=LICENSE-binary.txt
+LicenseFile=LICENSE-wander.txt
 InfoAfterFile=readme-wander.txt
 OutputBaseFilename=wandering-hamster
 Compression=bzip
@@ -38,6 +38,7 @@ Source: "wander.rpg"; DestDir: "{app}"; Flags: ignoreversion
 Source: "wanderp.hss"; DestDir: "{app}"; Flags: ignoreversion
 Source: "wander.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "readme-wander.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "LICENSE-wander.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "LICENSE-binary.txt"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
