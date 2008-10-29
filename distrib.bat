@@ -14,7 +14,7 @@ cp %USEVER%\game.exe wander.exe
 rm Output\wandering-hamster.exe
 "C:\Program Files\Inno Setup 5\iscc" wander.iss
 rm Output\wandering-hamster.zip
-zip Output\wandering-hamster.zip wander.rpg LICENSE-*.txt readme-wander.txt readme-how-do-I-play.txt wanderp.hss
+zip Output\wandering-hamster.zip wander.exe wander.rpg LICENSE-*.txt readme-wander.txt wanderp.hss
 
 rm wander.rpg wander.exe SDL*.dll
 pause
