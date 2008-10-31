@@ -1,5 +1,5 @@
 ------------------------------------------------------------
- Wandering Hamster O.H.R.RPG.C.E Demo     (October 03 2008)
+ Wandering Hamster O.H.R.RPG.C.E Demo     (Month Day Year)
 ------------------------------------------------------------
 
 This is a Work-in-Progress demo of Wandering Hamster. This version
@@ -9,7 +9,11 @@ contains roughly three hours of playing time
 
 NEW IN THIS RELEASE
 
-  * Updated game engine
+  * Character portraits
+  * Some reworked dialog
+
+RECENT CHANGES
+
   * Game data is now GPL licenced
   * New music by Mike Caron
   * New music by Jabbercat
@@ -17,17 +21,6 @@ NEW IN THIS RELEASE
   * Unfinished Mini-Golf Mini-Game playtestable at the end
   * Spelling fixes
   * Misc minor bugfixes
-
-RECENT CHANGES
-
-  * Uses layers so you don't disappear when you walk behind
-    trees and things
-  * Fixed crash while sleeping at Inns later in the game
-  * New battle theme by Cartlemmy (Josh Merritt)
-  * Added a rope-ladder to the roof of Flanat Castle
-  * Removed the unreasonable water-resistance previously
-    Enjoyed by the Myrmidon mini-boss
-
 
 ---
 HOW TO PLAY
