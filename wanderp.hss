@@ -70,8 +70,6 @@ define script (46,dustyleavesangry,none)
 
 define script (autonumber,Spin NPC,3,0,2,1)
 
-define script (11, death script backcompat, none)
-
 #---------------------------------------------------------------------------
 
 #global variable(0,SPAM icons)
@@ -877,12 +875,6 @@ plotscript, Sleep at the Inn, begin
 end
 
 #---------------------------------------------------------------------------
-
-script, death script backcompat, begin
- # This old-style script with ID #11 provides backcompat for
- # old SAV files that still point to the old death script ID number :(
- die in battle
-end
 
 plotscript,die in battle,begin
  suspend player
