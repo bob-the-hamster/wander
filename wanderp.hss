@@ -38,11 +38,8 @@ define script (6,hide and seek,none)
 define script (7,reset hide and seek,none)
 define script (8,Panic and Run Around,none)
 define script (9,Show James House,none)
-define script (10,Sleep at the Inn,none)
 define script (12,broaste lackeys block castle,none)
  define script (autonumber,plot boulder mover,none)
-define script (14,broaste castle inn,none)
-define script (15,ixnekolan inn,none)
 define script (16,Cactus Sighting in Flanat,none)
 define script (17,Cactus Sighting on Mountain,none)
 define script (18,World Map Autorun,none)
@@ -53,16 +50,11 @@ define script (22,Mount Myrmidon,none)
 define script (23,Dismount Myrmidon,none)
 define script (24,Broaste Castle Autorun,none)
 define script (25,Broaste Castle Blocked Door,none)
-define script (26,Attack Broaste Ghost,none)
- define script (autonumber,Attack Broaste Ghost sans Teddy,none)
- define script (autonumber,Attack Broaste Ghost with Teddy,none)
-define script (27,null death script,none)
 define script (28,tweak bridges,1,0)
 define script (29,stealgrueber'slunch,none)
 define script (30,scaredbymyrmidon,none)
 define script (31,castlebreakwall,none)
 define script (32,dustyleaves,none)
-define script (33,fadeandrest,none)
 define script (34,dustysequipment,none)
 define script (35,broastecastleexterior,none)
 define script (36,fightarchguardians,none)
@@ -77,6 +69,8 @@ define script (44,Rathmara Finds Rope,none)
 define script (46,dustyleavesangry,none)
 
 define script (autonumber,Spin NPC,3,0,2,1)
+
+define script (11, death script backcompat, none)
 
 #---------------------------------------------------------------------------
 
@@ -105,6 +99,29 @@ global variable(100,array)
 # Timer notes: must suffice to avoid timer collisions
 # 1 Temporary short-term single map uses
 #   golf score
+
+#---------------------------------------------------------------------------
+
+script, key wait, ticks, begin
+  # Returns true if the wait was canceled by a keypress.
+  variable(i)
+  for(i, 1, ticks) do, begin
+    wait(1)
+    if(key is pressed(key:ENTER)) then(exit returning(true))
+    if(key is pressed(key:SPACE)) then(exit returning(true))
+    if(key is pressed(key:CTRL)) then(exit returning(true))
+    if(key is pressed(key:ALT)) then(exit returning(true))
+    if(key is pressed(key:ESC)) then(exit returning(true))
+    if(key is pressed(joy:button 1)) then(exit returning(true))
+    if(key is pressed(joy:button 2)) then(exit returning(true))
+  end
+  exit returning(false)
+end
+
+script, key wait seconds, seconds, begin
+  # Returns true if the wait was canceled by a keypress.
+  exit returning(key wait(18 * seconds))
+end
 
 #---------------------------------------------------------------------------
 
@@ -734,7 +751,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script, Sleep at the Inn, begin
+plotscript, Sleep at the Inn, begin
  suspend player
  focus camera (hero x(me),+,1,hero y(me) -- 2,2)
  walk hero (me,east,2)
@@ -785,8 +802,9 @@ script, Sleep at the Inn, begin
  end
 
  play song (song:Sleeping Music)
- fade screen out (0,0,20)
- wait (15)
+ tweak palette(-40, -40, -10)
+ fade screen in
+ wait (18 * 3) # 3 seconds
  if (room in active party == 0)
  then,begin
   set hero speed (2,20)
@@ -801,6 +819,8 @@ script, Sleep at the Inn, begin
   set hero speed (3,4)
   wait (1)
  end
+ key wait seconds(8)
+ reset palette
  fade screen in
  play song (song:Soldier's Chorus)
  wait (5)
@@ -857,6 +877,12 @@ script, Sleep at the Inn, begin
 end
 
 #---------------------------------------------------------------------------
+
+script, death script backcompat, begin
+ # This old-style script with ID #11 provides backcompat for
+ # old SAV files that still point to the old death script ID number :(
+ die in battle
+end
 
 plotscript,die in battle,begin
  suspend player
@@ -1038,7 +1064,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script,Broaste Castle Inn,begin
+plotscript,Broaste Castle Inn,begin
   suspend player
   walk hero to X (me,55)
   wait for hero (me)
@@ -1051,16 +1077,19 @@ script,Broaste Castle Inn,begin
   walk hero (me,right,4)
   wait for hero (me)
 
-  variable (i)
-  for (i,0,9)
-  do,begin
+  play song (song:Sleeping Music)
+  tweak palette (-40, -40, -10)
+  fade screen in
+
+  variable (i, ticks, total)
+  for (i,0,18) do, begin
     set hero direction (random(0,3),random(0,3))
-    wait (random(2,8))
+    wait (4)
+    total += 4
     end
 
-  play song (song:Sleeping Music)
-  fade screen out (0,0,20)
-  wait (15)
+  key wait (18 * 8 - total)
+  reset palette
   fade screen in
   play song (song:Royal March)
   wait (5)
@@ -1083,7 +1112,7 @@ script,Broaste Castle Inn,begin
 
 #---------------------------------------------------------------------------
 
-script,Ixnekolan Inn,begin
+plotscript,Ixnekolan Inn,begin
   variable (i)
   suspend player
   walk hero to X (me,32)
@@ -1123,8 +1152,10 @@ script,Ixnekolan Inn,begin
     end
 
   play song (song:Sleeping Music)
-  fade screen out (0,0,20)
-  wait (15)
+  tweak palette(-40, -40, -10)
+  fade screen in
+  key wait seconds (11)
+  reset palette
   fade screen in
   play song (song:Ruins Theme)
   wait (5)
@@ -1373,7 +1404,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script,Attack Broaste Ghost,begin
+plotscript,Attack Broaste Ghost,begin
   if (check tag(tag:have teddy bear))
   then (Attack Broaste Ghost with Teddy)
   else (Attack Broaste Ghost sans Teddy)
@@ -1436,7 +1467,7 @@ script,Attack Broaste Ghost sans Teddy,begin
     walk NPC (0,east,3)
     wait for NPC (0)
     set NPC direction (0,north)
-    set death script (27)
+    set death script (@null death script)
     fight formation (83)
     camera follows hero (me)
     Set NPC position (0,7,4)
@@ -1454,7 +1485,7 @@ script,Attack Broaste Ghost sans Teddy,begin
     set hero speed (me,4)
     walk hero (me,south,1)
     wait for hero (me)
-    set death script (11)
+    set death script (@die in battle)
     resume NPC walls     
     resume player
     resume NPCs
@@ -1549,7 +1580,7 @@ script,Attack Broaste Ghost with Teddy,begin
   end
 
   force equip    (Bob,slot:weapon,item:teddy)
-  set NPC position (Broaste,0,0)
+  set NPC position (Broaste,0,1)
   fight formation(78)
   unequip        (Bob,slot:weapon)
   delete item    (item:teddy)
@@ -1559,6 +1590,12 @@ script,Attack Broaste Ghost with Teddy,begin
   end
 
   play song (song:Triumphant Music)
+
+  # hack in case the myrmidon suit is already in a bad place
+  if(myrmidon x == 0 && myrmidon y == 0) then, begin
+    myrmidon y := 1
+    set NPC position(4, 0, 1)
+  end
 
   Bob:=rank in caterpillar(hero:Bob the Hamster)
   James:=rank in caterpillar(hero:James)
@@ -1647,9 +1684,10 @@ script,Attack Broaste Ghost with Teddy,begin
   walk hero (Bob, south, 3)
   wait for hero (Bob)
 
-  fade screen out (0,0,0)
-
   play song (song:Sleeping Music)
+
+  fade screen out
+  wait(1)
 
   set hero position (Bob,57,40)
   set hero direction (Bob,west)
@@ -1664,9 +1702,13 @@ script,Attack Broaste Ghost with Teddy,begin
   camera follows hero (me)
   resume caterpillar
 
-  wait (20)
+  reset palette
+  tweak palette (-40, -40, -10)
+  fade screen in
 
-  stop song
+  key wait seconds (9)
+
+  reset palette
   fade screen in
   play song (song:Royal March)
 
@@ -1869,10 +1911,18 @@ end
 
 #---------------------------------------------------------------------------
 
-script,fade and rest,begin
-  fade screen out (0,0,20)
-  wait (15)
+plot script,fade and rest,begin
+  variable(remember song)
+  remember song := current song
+  play song(song:Sleeping Music)
+  tweak palette (-40, -40, -10)
   fade screen in
+  key wait seconds (11)
+  reset palette
+  fade screen in
+  if(remember song == 0)
+    then(stop song)
+    else(play song(remember song))
   wait (5)
 end
 
@@ -1973,7 +2023,7 @@ script,Fight Arch Guardians,begin
 
   set NPC position (suit,0,0)
   Myrmidon X:=0
-  Myrmidon Y:=0
+  Myrmidon Y:=1
 
   fight formation (84)
 
@@ -2622,12 +2672,12 @@ script, Jormungand Encounter, begin
   set hero direction (Skeppio,west)
   set hero direction (Rathmara,west)
 
-  set death script (27) # cannot die in this battle!
+  set death script (@null death script) # cannot die in this battle!
 
   # fight the boss!
   fight formation (92)
 
-  set death script (11) # normal death script
+  set death script (@die in battle) # normal death script
 
   show text box (340) # Skeppio: Its no good [...]
                       # Rathmara: What a waste [...]
