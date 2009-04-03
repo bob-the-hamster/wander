@@ -35,7 +35,6 @@ define script (3,fluffy-mu,none)
 define script (4,shell game,none)
 define script (5,pick a shell,2,0,0)
 define script (6,hide and seek,none)
-define script (7,reset hide and seek,none)
 define script (8,Panic and Run Around,none)
 define script (9,Show James House,none)
 define script (12,broaste lackeys block castle,none)
@@ -672,7 +671,7 @@ script, Hide and Seek, begin
    show text box (202)
    wait for text box
    alter NPC (14,NPCstat:MoveType,NPCmovetype:ChaseYou)
-   alter NPC (14,NPCstat:Script,7)
+   alter NPC (14,NPCstat:Script,@Reset Hide and Seek)
    alter NPC (14,NPCstat:activation,NPCactivation:touch)
   end #then
  end #then
