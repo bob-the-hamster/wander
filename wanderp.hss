@@ -1903,6 +1903,7 @@ end
 #---------------------------------------------------------------------------
 
 plot script,fade and rest,begin
+  suspend player
   variable(remember song)
   remember song := current song
   play song(song:Sleeping Music)
@@ -1915,6 +1916,7 @@ plot script,fade and rest,begin
     then(stop song)
     else(play song(remember song))
   wait (5)
+  resume player
 end
 
 #---------------------------------------------------------------------------
