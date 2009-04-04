@@ -30,11 +30,6 @@ include, scancode.hsi  #keyboard constants
 
 #---------------------------------------------------------------------------
 
-define script (2,broaste returns,none)
-define script (3,fluffy-mu,none)
-define script (4,shell game,none)
-define script (5,pick a shell,2,0,0)
-define script (6,hide and seek,none)
 define script (8,Panic and Run Around,none)
 define script (9,Show James House,none)
 define script (12,broaste lackeys block castle,none)
@@ -345,7 +340,7 @@ end
 #NPC 16 is Lord Hasim
 #NPC 29 is Lord Broaste
 
-script, Broaste Returns, begin
+plotscript, Broaste Returns, begin
  suspend player
  suspend NPCs
  suspend random enemys
@@ -397,7 +392,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script, Fluffy-Mu, begin
+plotscript, Fluffy-Mu, begin
   if (check tag(tag:joined cat's quest))
   then(
     if (check tag(tag:betrayed by cats))
@@ -436,7 +431,7 @@ end
 # where you pay 10$ and then try to guess which of five clam shells
 # contains the 50$ pearl. It is dependent on NPCs already placed on the map
 
-script, shell game, begin
+plotscript, shell game, begin
   # this variable is a loop counter
   if (checktag(tag:playing shell game))
   then,begin
@@ -562,7 +557,7 @@ end
 
 # NPCs automatically pass a reference to themselves as the second
 # script argument 
-script, pick a shell, arg, my shell, begin
+plotscript, pick a shell, arg, my shell, begin
  variable (i)
  if (check tag(tag:playing shell game))
  then(
@@ -642,7 +637,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script, Hide and Seek, begin
+plotscript, Hide and Seek, begin
  variable (i)
  # Want to play hide and Seek?
  show text box (201)
@@ -679,7 +674,7 @@ end #script
 
 script,Reset Hide and Seek, begin
  alter NPC (14,NPCstat:MoveType,NPCmovetype:standstill)
- alter NPC (14,NPCstat:Script,6)
+ alter NPC (14,NPCstat:Script,@Hide and Seek)
  alter NPC (14,NPCstat:activation,NPCactivation:use)
  show text box (203)
 end
