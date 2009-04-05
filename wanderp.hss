@@ -1143,7 +1143,7 @@ plotscript,Ixnekolan Inn,begin
   key wait seconds (11)
   reset palette
   fade screen in
-  play song (song:Ruins Theme)
+  play song (song:Ruin Exploration)
   wait (5)
 
   resume caterpillar
@@ -2067,7 +2067,7 @@ script,Cats Enlist Bob,begin
 
   wait for camera
 
-  play song(song: Ruins Theme)
+  play song(song: Ruin Exploration)
 
   set NPC position(skeppio,hero X(me),14)
   set NPC position(rathmara,hero X(me),15)
@@ -2502,7 +2502,7 @@ script, Jormungand Encounter, begin
   wait for hero (Rathmara)
   set hero direction (Rathmara,south)
 
-  play song(song: Ruins Theme)
+  play song(song: Ruin Exploration)
 
   wait for hero (Bob)
   wait (1)
