@@ -1995,6 +1995,7 @@ plotscript,World Map Afterbattle,begin
   if (check tag(tag:Riding the Ship)) then,begin
     play song(song:vehicle riding)
   end
+  tweak bridges
 end
 
 #---------------------------------------------------------------------------
