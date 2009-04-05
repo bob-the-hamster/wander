@@ -30,42 +30,6 @@ include, scancode.hsi  #keyboard constants
 
 #---------------------------------------------------------------------------
 
-define script (8,Panic and Run Around,none)
-define script (9,Show James House,none)
-define script (12,broaste lackeys block castle,none)
- define script (autonumber,plot boulder mover,none)
-define script (16,Cactus Sighting in Flanat,none)
-define script (17,Cactus Sighting on Mountain,none)
-define script (18,World Map Autorun,none)
-define script (19,Dismount ship,none)
-define script (20,Dismount baloon,none)
-define script (21,Myrmidon Suit,none)
-define script (22,Mount Myrmidon,none)
-define script (23,Dismount Myrmidon,none)
-define script (24,Broaste Castle Autorun,none)
-define script (25,Broaste Castle Blocked Door,none)
-define script (28,tweak bridges,1,0)
-define script (29,stealgrueber'slunch,none)
-define script (30,scaredbymyrmidon,none)
-define script (31,castlebreakwall,none)
-define script (32,dustyleaves,none)
-define script (34,dustysequipment,none)
-define script (35,broastecastleexterior,none)
-define script (36,fightarchguardians,none)
-define script (37,mountship,none)
-define script (38,worldmapafterbattle,none)
-define script (39,Cyclic James Saying,none)
-define script (40,Cats Enlist Bob,none)
-define script (41,Rathmara Burn Log,none)
-define script (42,Gallopeg Autorun,none)
-define script (43,Jormungand Encounter,none)
-define script (44,Rathmara Finds Rope,none)
-define script (46,dustyleavesangry,none)
-
-define script (autonumber,Spin NPC,3,0,2,1)
-
-#---------------------------------------------------------------------------
-
 #global variable(0,SPAM icons)
 global variable(1,shell game variable)
 global variable(
@@ -681,7 +645,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script,Panic and Run Around,begin
+plotscript,Panic and Run Around,begin
  suspend player
 
  reset palette
@@ -728,7 +692,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script, Show James House, begin
+plotscript, Show James House, begin
  suspend player
  focus camera (41,23,5)
  wait (20)
@@ -881,7 +845,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script, Broaste Lackeys Block Castle,begin
+plotscript, Broaste Lackeys Block Castle,begin
  suspend player
  suspend obstruction
  pan camera (north,3,4)
@@ -1152,7 +1116,7 @@ plotscript,Ixnekolan Inn,begin
 
 #---------------------------------------------------------------------------
 
-script,Cactus sighting in Flanat,begin
+plotscript,Cactus sighting in Flanat,begin
   variable (cactus)
   cactus:=NPC reference(10)
 
@@ -1174,7 +1138,7 @@ script,Cactus sighting in Flanat,begin
 
 #---------------------------------------------------------------------------
 
-script,Cactus Sighting on Mountain,begin
+plotscript,Cactus Sighting on Mountain,begin
   variable (i)
   suspend player
   suspend random enemys
@@ -1219,7 +1183,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script,Spin NPC,who,speed,turns,begin
+script,Spin NPC,who,speed=2,turns=1,begin
   variable(i)
   for (i,1,turns) do,begin
     set NPC direction (who,(i,mod,4))
@@ -1229,7 +1193,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script,World Map Autorun,begin
+plotscript,World Map Autorun,begin
  if (check tag(tag:vehicle loc flag))
  then(
   set tag(tag:vehicle loc flag,OFF)
@@ -1247,7 +1211,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script,Dismount Ship,begin
+plotscript,Dismount Ship,begin
   ship X:=NPC X(2)
   ship Y:=NPC Y(2)
   play song(song:overworld music)
@@ -1255,20 +1219,20 @@ end
 
 #---------------------------------------------------------------------------
 
-script,Mount Ship,begin
+plotscript,Mount Ship,begin
   play song(song:vehicle riding)
 end
 
 #---------------------------------------------------------------------------
 
-script,Dismount Baloon,begin
+plotscript,Dismount Baloon,begin
   baloon X:=NPC X(3)
   baloon Y:=NPC Y(3)
 end
 
 #---------------------------------------------------------------------------
 
-script,Myrmidon Suit,begin
+plotscript,Myrmidon Suit,begin
   increment(myrmidon text)
   if (myrmidon text>>2)
      then (myrmidon text:=0)
@@ -1281,7 +1245,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script,Mount Myrmidon,begin
+plotscript,Mount Myrmidon,begin
   myrmidon text := 0
   if (check tag(tag:used myrmidon suit)==OFF)
   then,begin
@@ -1294,7 +1258,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script,Dismount Myrmidon,begin
+plotscript,Dismount Myrmidon,begin
   alter NPC (4,NPCstat:picture,19)
   Myrmidon X:=NPC X(4)
   Myrmidon Y:=NPC Y(4)
@@ -1302,7 +1266,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script,Broaste Castle Autorun,begin
+plotscript,Broaste Castle Autorun,begin
 
  if (check tag(tag:myrmidon suit))
  then,begin
@@ -1328,7 +1292,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script,Broaste Castle Blocked Door,begin
+plotscript,Broaste Castle Blocked Door,begin
   variable (i)
   suspend player
   suspend NPCs
@@ -1715,7 +1679,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script, tweak bridges, flag, begin
+plotscript, tweak bridges, flag=0, begin
   if (flag==1) then (under bridge:=true)
   if (flag==2) then (under bridge:=false)
   if (under bridge)
@@ -1725,7 +1689,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script, steal Grueber's lunch, begin
+plotscript, steal Grueber's lunch, begin
   suspend player
   if (check tag(tag:stole lunch))
   then(
@@ -1788,7 +1752,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script,scared by myrmidon,begin
+plotscript,scared by myrmidon,begin
   suspend player
   walk hero (me,north,3)
   wait for hero(me)
@@ -1826,7 +1790,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script,castle break wall,begin
+plotscript,castle break wall,begin
   write map block(70,26,57)
   write pass block(70,26,west wall+east wall)
   set NPC position(17,69,26)
@@ -1835,7 +1799,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script,Dusty Leaves,begin
+plotscript,Dusty Leaves,begin
   suspend player
   suspend obstruction
   suspend caterpillar
@@ -1864,7 +1828,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script,Dusty Leaves Angry,begin
+plotscript,Dusty Leaves Angry,begin
   suspend player
   suspend obstruction
   suspend caterpillar
@@ -1916,7 +1880,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script,Dustys Equipment,begin
+plotscript,Dustys Equipment,begin
   suspend NPCs
   variable(Dusty,slot,box)
   dusty:=find hero(hero:Dusty)
@@ -1935,13 +1899,13 @@ end
 
 #---------------------------------------------------------------------------
 
-script,Broaste Castle Exterior,begin
+plotscript,Broaste Castle Exterior,begin
  resume random enemys
 end
 
 #---------------------------------------------------------------------------
 
-script,Fight Arch Guardians,begin
+plotscript,Fight Arch Guardians,begin
   variable(guard1,guard2,suit,loop)
   guard1:=NPC reference(24)
   guard2:=NPC reference(25)
@@ -2027,7 +1991,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script,World Map Afterbattle,begin
+plotscript,World Map Afterbattle,begin
   if (check tag(tag:Riding the Ship)) then,begin
     play song(song:vehicle riding)
   end
@@ -2035,7 +1999,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script,Cyclic James Saying,begin
+plotscript,Cyclic James Saying,begin
   show text box(283+James Saying)
   wait for text Box
   increment(James Saying,1)
@@ -2044,7 +2008,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script,Cats Enlist Bob,begin
+plotscript,Cats Enlist Bob,begin
   variable(Bob,skeppio,rathmara,guard)
   Bob:=me
   skeppio:=NPC reference(27)
@@ -2219,7 +2183,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script, Rathmara Burn Log, begin
+plotscript, Rathmara Burn Log, begin
 
   variable(Bob, Skeppio, Rathmara)
   variable(loop)
@@ -2450,7 +2414,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script, Gallopeg Autorun, begin
+plotscript, Gallopeg Autorun, begin
 
   # also run as an afterbattle script
 
@@ -2471,7 +2435,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script, Jormungand Encounter, begin
+plotscript, Jormungand Encounter, begin
   variable (Bob,Skeppio,Rathmara)
   Bob:=rank in caterpillar (hero:Bob the Hamster)
   Skeppio:=rank in caterpillar (hero:Skeppio)
@@ -2765,7 +2729,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script, Rathmara Finds Rope, begin
+plotscript, Rathmara Finds Rope, begin
   suspend player
   suspend NPCs
   suspend random enemys
