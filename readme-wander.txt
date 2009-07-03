@@ -65,7 +65,7 @@ source code, visit http://HamsterRepublic.com/ohrrpgce/source.php
 
 WANDER.RPG (the game data) is Copyright 1998 James Paige. It is also
 free software under the GPL license. Read LICENSE-wander.txt for details.
-Source code is included in the files wander.rpg and wanderp.hss
+Source code is included in the files wander.rpg and wander.hss
 
 Anyone who wants to write a review or walkthrough has pre-emptive
 permission to do so.

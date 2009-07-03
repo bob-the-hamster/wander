@@ -35,7 +35,7 @@ Source: "wander.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "SDL.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "SDL_mixer.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "wander.rpg"; DestDir: "{app}"; Flags: ignoreversion
-Source: "wanderp.hss"; DestDir: "{app}"; Flags: ignoreversion
+Source: "wander.hss"; DestDir: "{app}"; Flags: ignoreversion
 Source: "wander.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "readme-wander.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "LICENSE-wander.txt"; DestDir: "{app}"; Flags: ignoreversion
