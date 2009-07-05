@@ -46,6 +46,7 @@ global variable(10,James Saying)
 global variable(11,hit golf ball too hard)
 global variable(12,golf round)
 global variable(13,golf hits)
+global variable(14,golf total)
 
 # variables after 100 used for temporary fake-array
 global variable(100,array)
@@ -2892,18 +2893,100 @@ plotscript, golf game start tile, arg, ref, begin
   set tag(tag:can open a golf door, ON)
   destroy NPC(ref)
   golf round := 0
+  golf hits := 0
+  golf total := 0
 end
 
 plotscript, open a golf door, arg, ref, begin
   if(check tag(tag:can open a golf door)) then, begin
     destroy NPC(ref)
-    increment(golf round)
-    show text box(402) # golf round number
     set tag(tag:can open a golf door, OFF)
+    golf total += golf hits
     golf hits := 0
+    increment(golf round)
+    if(golf round <= 9) then(
+      show text box(402) # golf round number
+    )else(
+      show final golf score
+    )
   end, else, begin
     show text box(403) # must finish round
   end
+end
+
+script, show final golf score, begin
+   variable(reward box)
+   reward box := 438 # no reward
+   golf score hide
+   while(1) do(
+     if(golf total <= 8) then(
+       $1="cheatastic!"
+       break
+     )
+     if(golf total == 9) then(
+       # all holes-in-one
+       $1="PERFECT!"
+       reward box := 439 # golf club
+       break
+     )
+     if(golf total <= 10) then(
+       # 8 holes-in-one, one birdie
+       $1="fantastic!"
+       reward box := 440 # fruit basket
+       break
+     )
+     if(golf total <= 11) then(
+       $1="excellent!"
+       reward box := 441 # $500
+       break
+     )
+     if(golf total <= 13) then(
+       $1="great!"
+       reward box := 442 # mage jar
+       break
+     )
+     if(golf total <= 15) then(
+       $1="above par"
+       reward box := 443 # socks
+       break
+     )
+     if(golf total <= 16) then(
+       $1="par for the course"
+       reward box := 444 # $10
+       break
+     )
+     if(golf total <= 18) then(
+       $1="little below par"
+       break
+     )
+     if(golf total <= 22) then(
+       $1="not too good"
+       break
+     )
+     if(golf total <= 26) then(
+       $1="needs work"
+       break
+     )
+     if(golf total <= 30) then(
+       $1="poor"
+       break
+     )
+     if(golf total >= 80) then(
+       $1="astonishingly bad"
+       reward box := 445 # chai tea
+       break
+     )
+     if(golf total <= 150) then(
+       $1="INSANELY bad"
+       reward box := 446 # fight snake spleen again
+       break
+     )
+     $1="terrible"
+     break
+   )
+   show text box(437)
+   wait for text box
+   show text box(reward box)
 end
 
 #---------------------------------------------------------------------------
@@ -2932,7 +3015,7 @@ plotscript, whack the golf ball, arg=0, ref=0, begin
     while(holding action key) do, begin
       charge += 1
       if ((charge, mod, 3) == 0) then, begin
-       if(force << 30) then, begin
+       if(force << 32) then, begin
         force += 1
         append ascii(0, 42)
        end
@@ -2964,6 +3047,7 @@ end
 
 script, golf score hide, begin
   hide string(1) # Hide display of hits
+  stop timer(1)
 end
 
 script, move golf ball, ref, d, force, begin
@@ -3003,8 +3087,8 @@ script, move golf ball, ref, d, force, begin
 
     decrement(force)
   end
-  # Score should vanish after 10 seconds
-  set timer(1, 10, 16, @golf score hide)
+  # Score should vanish after 6 seconds
+  set timer(1, 6, 16, @golf score hide)
   # re-run collision check, in case the ball landed on the hole
   if(check golf ball bounces(ref, d, force) == -1)
     then(exit returning(true))
@@ -3050,7 +3134,7 @@ script, check golf ball bounces, ref, d, force, begin
   if(ahead==100 && d==left) then(bounce:=right)
   if(bounce>=0) then, begin
     # a bounce occured
-    if(force<<22) then, begin
+    if(force<<30) then, begin
       exit returning(bounce)
     end, else, begin
       hit golf ball too hard := true
@@ -3198,6 +3282,140 @@ plotscript, climb flanat castle rope ladder, begin
   resume random enemies
   resume hero walls
   resume obstruction
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, fruit basket, begin
+  get item(item:grapes, 3)
+  get item(item:apple, 5)
+  get item(item:rutabaga, 3)
+  get item(item:carrot, 10)
+  get item(item:life, 1)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, snake backtrack, begin
+  suspend player
+  suspend NPCs
+  suspend random enemies
+  
+  variable(duck, cell)
+  
+  duck := NPC reference(18)
+  cell := NPC reference(19)
+  
+  walk NPC(duck, right, 1)
+  wait for NPC(duck)
+  set NPC direction(duck, left)
+  suspend hero walls
+  suspend NPC walls
+  suspend obstruction
+  walk hero(me, north, 2)
+  wait for hero(me)
+  
+  write map block(25, 52, 34, 2)
+  walk hero(me, south, 1)
+  walk NPC(cell, south, 1)
+  wait for hero(me)
+  wait for NPC(me)
+  fade screen out
+  wait(1)
+  
+  write map block(25, 52, 0, 2)
+  walk NPC (duck, right, 1)
+  set NPC direction(duck, south)
+  
+  write map block(92, 19, 10, 2)
+  write map block(92, 20, 1, 2)
+  set hero position(me, 92, 20)
+  set NPC position(cell, 92, 20)
+  
+  wait(8)
+  fade screen in
+  
+  variable(other cell)
+
+  other cell := NPC at spot(93, 16)
+  if(other cell <> 0) then(
+    walk NPC(other cell, north, 1)
+  )
+
+  other cell := NPC at spot(93, 17)
+  if(other cell <> 0) then(
+    walk NPC(other cell, south, 1)
+  )
+  
+  walk hero (me, north, 4)
+  walk NPC (cell, north, 4)
+  wait for hero(me)
+  wait for NPC(cell)
+
+  write map block(92, 19, 0, 2)
+  write map block(92, 20, 0, 2)
+
+  walk hero (me, right, 2)
+  walk NPC (cell, right, 1)
+
+  wait for hero(me)
+  set hero direction(me, south)
+  wait(2)
+  set hero direction(me, west)
+  wait(1)  
+  
+  wait for NPC(cell)
+  write map block(93, 17, 160, 2) 
+  walk NPC(cell, south, 1)
+  wait for NPC(cell)
+  set NPC position(cell, 25, 51)
+  wait(1)
+  write map block(93, 17, 0, 2) 
+
+  resume hero walls
+  resume NPC walls
+  resume obstruction
+  
+  resume player
+  resume NPCs
+  resume random enemies
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, quack inn, begin
+  suspend player
+  suspend obstruction
+  
+  variable(remember song)
+  remember song := current song
+  play song(song:Sleeping Music)
+  
+  walk hero to x(me, 99)
+  walk hero to y(me, 9)
+  wait for hero(me)
+
+  variable(innkeeper, save x, save y)
+  innkeeper := NPC reference(10)
+  save x := NPC x(innkeeper)
+  save y := NPC y(innkeeper)
+  
+  tweak palette (-50, -50, -30)
+  fade screen in
+  reset map state
+  
+  set NPC position(innkeeper, save x, save y)
+  
+  key wait seconds (11)
+  reset palette
+  fade screen in
+  if(remember song == 0)
+    then(stop song)
+    else(play song(remember song))
+  wait (5)
+  
+  resume obstruction
+  resume player
 end
 
 #---------------------------------------------------------------------------
