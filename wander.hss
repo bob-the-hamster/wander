@@ -1059,7 +1059,7 @@ plotscript,Broaste Castle Inn,begin
   walk hero (me,down,3)
   wait for hero (me)
   resume player
-  end
+end
 
 #---------------------------------------------------------------------------
 
@@ -1113,11 +1113,15 @@ plotscript,Ixnekolan Inn,begin
 
   resume caterpillar
   resume player
-  end
+end
 
 #---------------------------------------------------------------------------
 
 plotscript,Cactus sighting in Flanat,begin
+  variable(mus)
+  mus := current song
+  play song(song:Cactus Theme)
+
   variable (cactus)
   cactus:=NPC reference(10)
 
@@ -1135,11 +1139,18 @@ plotscript,Cactus sighting in Flanat,begin
   wait for NPC (cactus)
   set NPC position (cactus,0,0)
   set tag (tag:flanat cactus,ON)
-  end
+  
+  play song(mus)
+end
 
 #---------------------------------------------------------------------------
 
 plotscript,Cactus Sighting on Mountain,begin
+
+  variable(mus)
+  mus := current song
+  play song(song:Cactus Theme)
+
   variable (i)
   suspend player
   suspend random enemys
@@ -1180,6 +1191,7 @@ plotscript,Cactus Sighting on Mountain,begin
   resume random enemys
   resume NPCs
   resume NPC walls
+  play song(mus)
 end
 
 #---------------------------------------------------------------------------
