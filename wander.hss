@@ -3074,7 +3074,6 @@ script, move golf ball, ref, d, force, begin
     $1="Hits: "
     append number(1, golf hits)
     show string at(1, 0, 0)
-    stop timer(1) # this is the timer for hiding hits. it gets re-started when this script ends
   end
   while(force >> 0) do, begin
     x := NPC x(ref)
@@ -3124,6 +3123,7 @@ script, check golf ball bounces, ref, d, force, begin
     force := 0
     set tag(tag:can open a golf door, ON)
     destroy NPC(ref)
+    golf score hide
     show text box(406) # Hole in X
     wait for text box
     exit returning(-1) # signal abort
