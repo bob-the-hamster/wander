@@ -47,6 +47,7 @@ global variable(11,hit golf ball too hard)
 global variable(12,golf round)
 global variable(13,golf hits)
 global variable(14,golf total)
+global variable(15,ship effect)
 
 # variables after 100 used for temporary fake-array
 global variable(100,array)
@@ -54,8 +55,14 @@ global variable(100,array)
 #---------------------------------------------------------------------------
 
 # Timer notes: must suffice to avoid timer collisions
+
+define constant(1, temp timer)
 # 1 Temporary short-term single map uses
-#   golf score
+#   golf score timer
+
+define constant(2, big effect timer)
+# 2 big effects on a single map
+#   viking ship in Jormungand's belly
 
 #---------------------------------------------------------------------------
 
@@ -2639,7 +2646,6 @@ plotscript, Jormungand Encounter, begin
   # fight the boss!
   variable(won)
   won := fight formation (92)
-  won := true
 
   set death script (@die in battle) # normal death script
 
@@ -3511,6 +3517,75 @@ script, quake camera, ticks, distance=4, begin
     put camera(oldx + random(distance * -1, distance), oldy + random(distance * -1, distance))
     wait(1)
   )
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, jormungandling belly autorun, begin
+  ship in jorm belly
+end
+
+#---------------------------------------------------------------------------
+
+script, ship in jorm belly, begin
+  variable(sl)
+  sl := load large enemy sprite(16)
+  set parent(sl, lookup slice(sl:map layer 1))
+  set horiz anchor(sl, edge:center)
+  set vert anchor(sl, edge:bottom)
+  set slice x(sl, 16 * 20)
+  set slice y(sl, 23 * 20)
+  set slice extra(sl, extra 0, -1) # direction
+  set slice extra(sl, extra 1, 10) # drift counter
+  ship effect := sl
+  set timer(big effect timer, 2, 1, @ship in jorm belly moves)
+end
+
+script, ship in jorm belly moves, begin
+  variable(sl, x, d, drift)
+  if(current map <> map:Jormungandling's Belly) then(
+    free slice(ship effect)
+    ship effect := 0
+  )
+  if(ship effect) then(
+    sl := ship effect
+    x := slice x(sl)
+    d := get slice extra(sl, extra 0)
+    drift := get slice extra(sl, extra 1)
+    drift -= 1
+    if (drift <= 0) then(
+      d := d * -1
+      drift := 10
+    )
+    x += 1 * d
+    set slice x(sl, x)
+    set slice extra(sl, extra 0, d)
+    set slice extra(sl, extra 1, drift)
+    set timer(big effect timer, 2, 1, @ship in jorm belly moves)
+  )
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, admire viking wreck, begin
+  suspend player
+  pan camera(north, 2, 2)
+  wait(8)
+  show text box(459)
+  wait for text box
+  wait for camera
+  pan camera(south, 2, 5)
+  wait for camera
+  camera follows hero
+  resume player
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, viking behind uvula, begin
+  suspend player
+  show text box(461)
+  resume player
 end
 
 #---------------------------------------------------------------------------
