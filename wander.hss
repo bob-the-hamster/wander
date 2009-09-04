@@ -3583,9 +3583,123 @@ end
 #---------------------------------------------------------------------------
 
 plotscript, viking behind uvula, begin
+  variable(ref)
   suspend player
-  show text box(461)
+  suspend random enemies
+  
+  show text box(461) # what is that?
+  wait for text box
+
+  ref := NPC reference(20) # Gisli
+
+  set hero speed(me, 5)
+  set NPC speed(ref, 5)
+  
+  suspend box advance
+  
+  show text box(462) # GRRAAA!
+  walk NPC(ref, south, 1)
+  walk hero(me, south, 2)
+  set hero direction(me, north)
+  wait for hero(me)
+  
+  wait(18)
+  advance text box
+
+  walk npc and hero(ref, south, me, south, 1)
+  walk npc and hero(ref, south, me, west, 1)
+  walk npc and hero(ref, south, me, south, 1)
+  walk npc and hero(ref, south, me, west, 1)
+  walk npc and hero(ref, south, me, south, 1)
+  
+  show text box(463) # Oh gosh Oh Gosh!
+  
+  walk npc and hero(ref, west, me, south, 1)
+  walk npc and hero(ref, south, me, south, 1)
+  walk npc and hero(ref, west, me, south, 1)
+  walk npc and hero(ref, south, me, south, 3)
+
+  walk npc and hero(ref, south, me, east, 1)
+  walk npc and hero(ref, south, me, south, 1)
+  walk npc and hero(ref, south, me, east, 2)
+
+  advance text box
+
+  walk npc and hero(ref, east, me, east, 1)
+  walk npc and hero(ref, south, me, east, 1)
+  walk npc and hero(ref, east, me, east, 1)
+
+  walk npc and hero(ref, east, me, south, 2)
+  walk npc and hero(ref, east, me, east, 2)
+  walk npc and hero(ref, south, me, east, 1)
+  walk npc and hero(ref, east, me, east, 1)
+  
+  walk npc and hero(ref, south, me, south, 1)
+  walk npc and hero(ref, east, me, east, 3)
+  walk npc and hero(ref, south, me, south, 1)
+  walk npc and hero(ref, east, me, east, 3)
+
+  # Bob stops to glance back
+  walk NPC(ref, south, 1)
+  wait(1)
+  set hero direction(me, south)
+  wait(1)
+  set hero direction(me, west)
+  wait for NPC(ref)
+
+  show text box(464) # Help Help Help!
+  
+  walk npc and hero(ref, east, me, east, 1)
+  walk npc and hero(ref, east, me, north, 1)
+  walk npc and hero(ref, east, me, east, 1)
+  walk npc and hero(ref, east, me, north, 1)
+  walk npc and hero(ref, north, me, north, 1)
+  walk npc and hero(ref, east, me, east, 2)
+  walk npc and hero(ref, north, me, east, 1)
+  
+  advance text box
+
+  walk npc and hero(ref, north, me, north, 1)
+  walk npc and hero(ref, east, me, east, 2)
+  walk npc and hero(ref, north, me, east, 1)
+  walk npc and hero(ref, east, me, east, 5)
+  
+  # Bob trips
+  set hero picture(leader, 48)
+  set hero speed(me, 4)
+  walk hero(me, east, 1)
+  walk NPC (ref, east, 3)
+  wait for hero(me)
+  set hero direction(me, north)
+  set hero frame(me, 1)
+  set hero picture(leader, 48) # Why do I have to do this twice?
+  wait(2)
+  set hero direction(me, east)
+  wait for NPC(ref)
+  
+  # Hesitate before battle
+  wait(10)
+  
+  resume box advance
+  
+  fight formation(102)
+  wait(1)
+  set hero picture(leader, 0)
+
+  alter NPC(ref, NPCstat:picture, 5)
+  
   resume player
+  resume random enemies
+end
+
+#---------------------------------------------------------------------------
+
+script, walk npc and hero, npc, npc dir, hero, hero dir, steps, begin
+  # This script assumes that the hero and the NPC have the same walking speed
+  walk NPC(npc, npc dir, steps)
+  walk hero(hero, hero dir, steps)
+  wait for NPC(npc)
+  wait for hero(hero)
 end
 
 #---------------------------------------------------------------------------
