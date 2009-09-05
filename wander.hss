@@ -3621,18 +3621,24 @@ plotscript, viking behind uvula, begin
 
   walk npc and hero(ref, south, me, east, 1)
   walk npc and hero(ref, south, me, south, 1)
-  walk npc and hero(ref, south, me, east, 2)
 
   advance text box
+
+  walk npc and hero(ref, south, me, east, 2)
 
   walk npc and hero(ref, east, me, east, 1)
   walk npc and hero(ref, south, me, east, 1)
   walk npc and hero(ref, east, me, east, 1)
 
   walk npc and hero(ref, east, me, south, 2)
+
+  show text box(462) # Graaa!
+  
   walk npc and hero(ref, east, me, east, 2)
   walk npc and hero(ref, south, me, east, 1)
   walk npc and hero(ref, east, me, east, 1)
+
+  advance text box
   
   walk npc and hero(ref, south, me, south, 1)
   walk npc and hero(ref, east, me, east, 3)
@@ -3660,9 +3666,16 @@ plotscript, viking behind uvula, begin
   advance text box
 
   walk npc and hero(ref, north, me, north, 1)
+
+  show text box(462) # Graa!
+  
   walk npc and hero(ref, east, me, east, 2)
   walk npc and hero(ref, north, me, east, 1)
-  walk npc and hero(ref, east, me, east, 5)
+  walk npc and hero(ref, east, me, east, 2)
+  
+  advance text box
+
+  walk npc and hero(ref, east, me, east, 3)
   
   # Bob trips
   set hero picture(leader, 48)
@@ -3685,8 +3698,44 @@ plotscript, viking behind uvula, begin
   fight formation(102)
   wait(1)
   set hero picture(leader, 0)
+  
+  set hero speed(me, 4)
+  set NPC speed(ref, 4)
 
   alter NPC(ref, NPCstat:picture, 5)
+  set hero direction(me, west)
+  
+  walk NPC(ref, west, 1)
+  set NPC direction(ref, east)
+  
+  # Gislit takes one step back 
+  walk NPC(ref, west, 2)
+  wait for NPC(ref)
+  
+  # after battle conversation
+  show text box(465) # introduce Gisli
+  wait for text box
+  
+  show text box(472) # Gisli starts his Tale
+  wait for text box
+  
+  walk NPC (ref, west, 8)
+  wait(5)
+  show text box(474) # Curious...
+  walk hero(me, west, 10)
+  wait for hero(me)
+  wait for text box
+  
+  show text box(475)
+  wait for text box
+  set NPC direction(ref, east)
+  show text box(477)
+  wait for text box
+
+  set NPC direction(ref, west)
+  show text box(485)
+  wait for text box
+  
   
   resume player
   resume random enemies
