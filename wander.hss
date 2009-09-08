@@ -3584,6 +3584,8 @@ end
 
 plotscript, viking behind uvula, begin
   variable(ref)
+  variable(saved song)
+  saved song := current song
   suspend player
   suspend random enemies
   
@@ -3596,7 +3598,8 @@ plotscript, viking behind uvula, begin
   set NPC speed(ref, 5)
   
   suspend box advance
-  
+
+  play song(song: evil plip's dirge)
   show text box(462) # GRRAAA!
   walk NPC(ref, south, 1)
   walk hero(me, south, 2)
@@ -3715,7 +3718,8 @@ plotscript, viking behind uvula, begin
   # after battle conversation
   show text box(465) # introduce Gisli
   wait for text box
-  
+
+  play song (song:Gisli Theme)
   show text box(472) # Gisli starts his Tale
   wait for text box
   
@@ -3735,7 +3739,45 @@ plotscript, viking behind uvula, begin
   set NPC direction(ref, west)
   show text box(485)
   wait for text box
+ 
+  play song(saved song)
+  wait(18 * 6)
   
+  show text box(496) # Is that the end?
+  wait for text  box
+  wait(18)
+  
+  walk NPC (ref, east, 1)
+  wait for NPC(ref)
+  
+  show text box(497) # The rest of the story has not yet unfolded
+  wait for text box
+  
+  wait(18)
+
+  show text box(498) # Going now...
+  wait for text box
+
+  swap by position(0, find hero(hero:Bob the Hamster)) # force Bob into slot 0
+  add hero(hero:Gisli)
+  set hero position(rank in caterpillar(hero:Gisli), NPC X(ref), NPC Y(ref))
+  set hero direction(rank in caterpillar(hero:Gisli), NPC direction(ref))
+  set tag(tag:Gisli joined, ON) # makes the NPC vanish
+
+  variable(i)
+  for(i, 0, 3) do(
+    walk hero(me, south, 1)
+    wait for hero(me)
+    walk hero(me, west, 1)
+    wait for hero(me)
+  )
+  walk hero(me, west, 3)
+  wait for hero(me)
+
+  wait(14)
+  set hero direction(me, right)
+  show text box(499)
+  wait for text box
   
   resume player
   resume random enemies
