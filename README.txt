@@ -9,18 +9,10 @@ contains roughly three hours of playing time
 
 NEW IN THIS RELEASE
 
-  * Character portraits
+  * More Character portraits
   * Some reworked dialog
-
-RECENT CHANGES
-
-  * Game data is now GPL licenced
-  * New music by Mike Caron
+  * Mini-Golf Mini-game finished 
   * New music by Jabbercat
-  * All non-GPL-compatible music removed
-  * Unfinished Mini-Golf Mini-Game playtestable at the end
-  * Spelling fixes
-  * Misc minor bugfixes
 
 ---
 HOW TO PLAY

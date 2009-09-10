@@ -3794,3 +3794,31 @@ script, walk npc and hero, npc, npc dir, hero, hero dir, steps, begin
 end
 
 #---------------------------------------------------------------------------
+
+plotscript, uvula battle, begin
+  variable(ref)
+  ref := NPC reference(21)
+  
+  show text box(519)
+  wait for text box
+
+  variable(i, delay)
+  for(delay, 3, 1, -1) do(
+    for(i, 0, 5 * delay) do(
+      set NPC direction(ref, east)
+      wait(delay)
+      set NPC direction(ref, east)
+      wait(delay)
+    )
+  )
+  
+  fight formation(103)
+
+  set NPC direction(ref, south)
+  wait (9)
+
+  set tag(tag:Beat Uvula, ON)
+  
+end
+
+#---------------------------------------------------------------------------
