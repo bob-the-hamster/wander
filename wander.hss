@@ -2793,6 +2793,7 @@ script, beat unbeatable jormungandling, skeppio, rathmara, jorm, begin
   # Jorm returns
   quake camera(30)
   focus camera (23,11)
+  
   show text box(458)
   set hero direction(skeppio, south)
   walk hero(rathmara, east, 1)
@@ -3521,6 +3522,19 @@ end
 
 #---------------------------------------------------------------------------
 
+script, quake camera until text box, distance=4, begin
+  wait(1)
+  variable(i, oldx, oldy)
+  oldx := camera pixel x
+  oldy := camera pixel y
+  while(current text box >= 0) do(
+    put camera(oldx + random(distance * -1, distance), oldy + random(distance * -1, distance))
+    wait(1)
+  )
+end
+
+#---------------------------------------------------------------------------
+
 plotscript, jormungandling belly autorun, begin
   ship in jorm belly
 end
@@ -3796,28 +3810,123 @@ end
 #---------------------------------------------------------------------------
 
 plotscript, uvula battle, begin
+  suspend player
+  
   variable(ref)
   ref := NPC reference(21)
-  
+
+  play song(song: evil plip's dirge)  
   show text box(519)
   wait for text box
 
+  pan camera(north, 1, 1)
+
   variable(i, delay)
   for(delay, 3, 1, -1) do(
-    for(i, 0, 5 * delay) do(
+    for(i, 0, 3 * delay) do(
       set NPC direction(ref, east)
       wait(delay)
-      set NPC direction(ref, east)
+      set NPC direction(ref, west)
       wait(delay)
     )
   )
   
   fight formation(103)
+  play song(song: evil plip's dirge)  
 
   set NPC direction(ref, south)
-  wait (9)
+  quake camera(34, 1)
 
   set tag(tag:Beat Uvula, ON)
+  
+  quake camera(16)
+  show text box(522)
+  quake camera until text box
+    
+  jorm vomits the ship
+  
+  resume player
+end
+
+#---------------------------------------------------------------------------
+
+script, jorm vomits the ship, begin
+  fade screen out(63, 0, 0)
+  wait(1)
+  fade screen out(50, 50, 63)
+  wait(1)
+  teleport to map(map:Where Jorm vomits the ship, 0, 0)
+
+  play song (song: Gisli Theme)
+
+  put camera(20 * 84, 0)
+  pan camera(west, 80)
+
+  wait(1)
+
+  fade screen in
+  
+  wait(18 * 6)
+  
+  variable(sl, jorm, ship)
+  
+  sl := create container(80, 80)
+  set slice x(sl, 320)
+  set slice y(sl, 60)
+  
+  ship := load large enemy sprite(16)
+  horiz flip sprite(ship)
+  set parent(ship, sl)
+  set slice x(ship, 80)
+  
+  jorm := load large enemy sprite(3)
+  horiz flip sprite(jorm)
+  set parent(jorm, sl)
+  
+  variable(i)
+  
+  for(i, 1, 20) do(
+    set slice x(sl, slice x(sl) -- 4)
+    wait(1)
+  )
+  
+  set slice x(ship, 0)
+  
+  for(i, 1, 20) do(
+    set slice x(sl, slice x(sl) -- 4)
+    set slice x(jorm, slice x(jorm) + 8)
+    wait(1)
+  )
+
+  wait(18 * 5)
+
+  fade screen out(45, 45, 63)
+  wait(1)
+  free slice(sl)
+  suspend map music
+  teleport to map(map: World Map, 0, 0)
+  resume map music
+  
+  variable(ref)
+  ref := create NPC(6, 35, 36, up)
+
+  camera follows NPC(ref)
+
+  wait(1)
+  fade screen in
+  walk NPC(ref, west, 20)
+
+  set NPC direction(ref, up)
+  wait(50)
+  set NPC direction(ref, right)
+  wait(50)
+  set NPC direction(ref, down)
+  wait(50)
+  set NPC direction(ref, left)
+  wait(50)
+  pan camera(west, 5, 2)
+  destroy NPC(ref)
+  wait for camera
   
 end
 
