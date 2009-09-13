@@ -2709,8 +2709,9 @@ plotscript, Jormungand Encounter, begin
   # restore Bob's picture
   set hero picture(find hero(hero:Bob the Hamster),0)
 
-  # Set Bob's HP to 1
-  set hero stat (find hero(hero:Bob the Hamster),stat:HP,1)
+  # Set Bob's HP to 25%
+  Bob := find hero(hero:Bob the Hamster)
+  set hero stat (Bob, stat:HP, get hero stat(Bob, stat:HP, maximum stat) / 4)
 
   set hero speed (me,4)
 
@@ -3203,6 +3204,9 @@ script, check golf ball bounces, ref, d, force, begin
     destroy NPC(ref)
     golf score hide
     show text box(406) # Hole in X
+    wait(1)
+    if (golf hits == 1) then(change box face(8))
+    if (golf hits >> 5) then(change box face(4))
     wait for text box
     exit returning(-1) # signal abort
   end
@@ -3931,3 +3935,12 @@ script, jorm vomits the ship, begin
 end
 
 #---------------------------------------------------------------------------
+
+script, change box face, portrait id, begin
+  variable(sl)
+  sl := lookup slice(sl:textbox portrait)
+  replace portrait sprite(sl, portrait id)
+end
+
+#---------------------------------------------------------------------------
+
