@@ -3931,6 +3931,18 @@ script, jorm vomits the ship, begin
   pan camera(west, 5, 2)
   destroy NPC(ref)
   wait for camera
+
+  fade screen out
+  wait(1)
+  teleport to map(map:Kelp Reef, 30, 6)
+  camera follows hero(me)
+  wait(1)
+  fade screen in
+  walk hero(me, south, 1)
+  wait for hero(me)
+  
+  show text box(381)
+  wait for text box
   
 end
 
