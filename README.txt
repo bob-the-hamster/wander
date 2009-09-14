@@ -1,5 +1,5 @@
 ------------------------------------------------------------
- Wandering Hamster O.H.R.RPG.C.E Demo     (Month Day Year)
+ Wandering Hamster O.H.R.RPG.C.E Demo        (Sept 13 2009)
 ------------------------------------------------------------
 
 This is a Work-in-Progress demo of Wandering Hamster. This version
@@ -13,6 +13,9 @@ NEW IN THIS RELEASE
   * Some reworked dialog
   * Mini-Golf Mini-game finished 
   * New music by Jabbercat
+  * Jormungand belly dungeon completable
+  * New playable character: Gisli the Viking
+  * Teaser of Kelp Reef stage
 
 ---
 HOW TO PLAY
