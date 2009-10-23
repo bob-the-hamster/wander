@@ -3564,6 +3564,7 @@ script, ship in jorm belly moves, begin
   if(current map <> map:Jormungandling's Belly) then(
     free slice(ship effect)
     ship effect := 0
+    exit script
   )
   if(ship effect) then(
     sl := ship effect
@@ -3952,6 +3953,41 @@ script, change box face, portrait id, begin
   variable(sl)
   sl := lookup slice(sl:textbox portrait)
   replace portrait sprite(sl, portrait id)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, wrapped equip menu, begin
+  if(room in active party == 3) then(
+    # only one hero
+    equip menu
+    update hero sprites
+    exit script
+  )
+  
+  # more than one hero, pick one
+  variable(who)
+  who := pick hero
+  if(who >= 0) then(
+    equip menu(who)
+    update hero sprites
+  )
+end
+
+#---------------------------------------------------------------------------
+
+script, update hero sprites, begin
+  variable(hero)
+  hero := find hero(hero:James)
+  if(hero >= 0) then(
+    if(check tag(tag:James is wearing hat)) then(
+      set hero picture(hero, 4, outside battle)
+      set hero picture(hero, 1, inside battle)
+    )else(
+      set hero picture(hero, 57, outside battle)
+      set hero picture(hero, 9, inside battle)
+    )
+  )
 end
 
 #---------------------------------------------------------------------------
