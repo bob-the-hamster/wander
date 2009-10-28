@@ -3564,6 +3564,7 @@ script, ship in jorm belly moves, begin
   if(current map <> map:Jormungandling's Belly) then(
     free slice(ship effect)
     ship effect := 0
+    stop timer(big effect timer)
     exit script
   )
   if(ship effect) then(
