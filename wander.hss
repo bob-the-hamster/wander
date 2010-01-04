@@ -3977,7 +3977,7 @@ end
 
 #---------------------------------------------------------------------------
 
-script, update hero sprites, begin
+plotscript, update hero sprites, begin
   variable(hero)
   hero := find hero(hero:James)
   if(hero >= 0) then(
