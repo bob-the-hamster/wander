@@ -3982,8 +3982,8 @@ plotscript, update hero sprites, begin
   hero := find hero(hero:James)
   if(hero >= 0) then(
     if(check tag(tag:James is wearing hat)) then(
-      set hero picture(hero, 4, outside battle)
-      set hero picture(hero, 1, inside battle)
+      reset hero picture(hero, outside battle)
+      reset hero picture(hero, inside battle)
     )else(
       set hero picture(hero, 57, outside battle)
       set hero picture(hero, 9, inside battle)
