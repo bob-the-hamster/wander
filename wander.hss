@@ -1046,7 +1046,7 @@ plotscript,Broaste Castle Inn,begin
     total += 4
     end
 
-  key wait (18 * 8 - total)
+  key wait (18 * 8 -- total)
   reset palette
   fade screen in
   play song (song:Royal March)
