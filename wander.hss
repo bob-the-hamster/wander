@@ -4003,3 +4003,31 @@ plotscript, on load, begin
 end
 
 #---------------------------------------------------------------------------
+
+plotscript, spell tester, begin
+  variable(menu, mi, i, h, j)
+  if(keyval(key:ctrl) >> 0 && keyval(key:T) >> 1) then(
+    menu := create menu
+    set menu text align(menu, align:left)
+    for(i, 1, read general(34) + 1) do(
+      mi := add menu item(menu)
+      read attack name(0, i)
+      for(h, 0, 3) do(
+        if(knows spell(h, i)) then(
+          $0 + " "
+          get hero name(1, h)
+          0 $+ 1
+        )
+        for(j, 0, spells learnt(h, get count) -- 1) do(
+          if(i == spells learnt(h, j)) then(
+            $0 + "(+)"
+          )
+        )
+      )
+      set menu item caption(mi, 0)
+    )
+    wait for menu(menu)
+  )
+end
+
+#---------------------------------------------------------------------------
