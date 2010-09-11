@@ -4018,8 +4018,8 @@ plotscript, spell tester, begin
           get hero name(1, h)
           0 $+ 1
         )
-        for(j, 0, spells learnt(h, get count) -- 1) do(
-          if(i == spells learnt(h, j)) then(
+        for(j, 0, spells learned(h, get count) -- 1) do(
+          if(i == spells learned(h, j)) then(
             $0 + "(+)"
           )
         )
