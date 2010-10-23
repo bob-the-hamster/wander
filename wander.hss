@@ -4031,3 +4031,11 @@ plotscript, spell tester, begin
 end
 
 #---------------------------------------------------------------------------
+
+plotscript, pick and eat a carrot, arg, ref, begin
+  show text box(197)
+  wait for text box
+  if(use item(item:carrot)) then(
+    destroy NPC(ref)
+  )
+end
