@@ -55,15 +55,15 @@ global variable(100,array)
 
 #---------------------------------------------------------------------------
 
-# Timer notes: must suffice to avoid timer collisions
+define constant(1, golf score timer)
+define constant(2, jorm viking ship timer)
+define constant(3, air timer)
 
-define constant(1, temp timer)
-# 1 Temporary short-term single map uses
-#   golf score timer
-
-define constant(2, big effect timer)
-# 2 big effects on a single map
-#   viking ship in Jormungand's belly
+define constant(0, str:golf swing)
+define constant(1, str:golf score)
+define constant(2, str:breath caption)
+define constant(3, str:breath)
+define constant(10, str:temp)
 
 #---------------------------------------------------------------------------
 
@@ -691,8 +691,8 @@ plotscript,Panic and Run Around,begin
  reset palette
  fade screen in
 
-get hero name(0, find hero(hero by rank(0)))
-show string(0)
+get hero name(str:temp, find hero(hero by rank(0)))
+show string(str:temp)
 wait(20)
 show no value
 
@@ -3012,68 +3012,68 @@ script, show final golf score, begin
    golf score hide
    while(1) do(
      if(golf total <= 8) then(
-       $1="cheatastic!"
+       $str:golf score="cheatastic!"
        break
      )
      if(golf total == 9) then(
        # all holes-in-one
-       $1="PERFECT!"
+       $str:golf score="PERFECT!"
        reward box := 439 # golf club
        break
      )
      if(golf total <= 10) then(
        # 8 holes-in-one, one birdie
-       $1="fantastic!"
+       $str:golf score="fantastic!"
        reward box := 440 # fruit basket
        break
      )
      if(golf total <= 11) then(
-       $1="excellent!"
+       $str:golf score="excellent!"
        reward box := 441 # $500
        break
      )
      if(golf total <= 13) then(
-       $1="great!"
+       $str:golf score="great!"
        reward box := 442 # mage jar
        break
      )
      if(golf total <= 15) then(
-       $1="above par"
+       $str:golf score="above par"
        reward box := 443 # socks
        break
      )
      if(golf total <= 16) then(
-       $1="par for the course"
+       $str:golf score="par for the course"
        reward box := 444 # $10
        break
      )
      if(golf total <= 18) then(
-       $1="little below par"
+       $str:golf score="little below par"
        break
      )
      if(golf total <= 22) then(
-       $1="not too good"
+       $str:golf score="not too good"
        break
      )
      if(golf total <= 26) then(
-       $1="needs work"
+       $str:golf score="needs work"
        break
      )
      if(golf total <= 30) then(
-       $1="poor"
+       $str:golf score="poor"
        break
      )
      if(golf total >= 80) then(
-       $1="astonishingly bad"
+       $str:golf score="astonishingly bad"
        reward box := 445 # chai tea
        break
      )
      if(golf total <= 150) then(
-       $1="INSANELY bad"
+       $str:golf score="INSANELY bad"
        reward box := 446 # fight snake spleen again
        break
      )
-     $1="terrible"
+     $str:golf score="terrible"
      break
    )
    show text box(437)
@@ -3096,8 +3096,8 @@ plotscript, whack the golf ball, arg=0, ref=0, begin
   
   # Animate Bob
   if (check tag(tag: Bob is leader) == ON) then, begin
-    $0="Swing *"
-    show string at (0, 0, 190)
+    $str:golf swing="Swing *"
+    show string at (str:golf swing, 0, 190)
     club := create NPC(9)
     set hero picture(me, 0)
     set NPC position(club, hero X(me), hero Y(me))
@@ -3109,12 +3109,12 @@ plotscript, whack the golf ball, arg=0, ref=0, begin
       if ((charge, mod, 3) == 0) then, begin
        if(force << 32) then, begin
         force += 1
-        append ascii(0, 42)
+        append ascii(str:golf swing, 42)
        end
       end
       wait(1)
     end
-    hide string(0) # Hide display of force
+    hide string(str:golf swing) # Hide display of force
     advance NPC by pixels(club, -15)
     spin golf club(club)
     destroy NPC(club)
@@ -3138,8 +3138,8 @@ plotscript, whack the golf ball, arg=0, ref=0, begin
 end
 
 script, golf score hide, begin
-  hide string(1) # Hide display of hits
-  stop timer(1)
+  hide string(str:golf score) # Hide display of hits
+  stop timer(golf score timer)
 end
 
 script, move golf ball, ref, d, force, begin
@@ -3151,9 +3151,9 @@ script, move golf ball, ref, d, force, begin
   if(force >> 0) then, begin
     play sound(sfx:lilhit)
     increment(golf hits)
-    $1="Hits: "
-    append number(1, golf hits)
-    show string at(1, 0, 0)
+    $str:golf score="Hits: "
+    append number(str:golf score, golf hits)
+    show string at(str:golf score, 0, 0)
   end
   while(force >> 0) do, begin
     x := NPC x(ref)
@@ -3179,7 +3179,7 @@ script, move golf ball, ref, d, force, begin
     decrement(force)
   end
   # Score should vanish after 6 seconds
-  set timer(1, 6, 16, @golf score hide)
+  set timer(golf score timer, 6, 16, @golf score hide)
   # re-run collision check, in case the ball landed on the hole
   if(check golf ball bounces(ref, d, force) == -1)
     then(exit returning(true))
@@ -3265,8 +3265,8 @@ script, fix stuck golf ball, ref, begin
   wait(15)
   show text box (398) # Hope that wasn't cheating
   increment(golf hits)
-  $1="Hits: "
-  append number(1, golf hits)
+  $str:golf score="Hits: "
+  append number(str:golf score, golf hits)
   wait for text box
 end
 
@@ -3554,36 +3554,35 @@ script, ship in jorm belly, begin
   set vert anchor(sl, edge:bottom)
   set slice x(sl, 16 * 20)
   set slice y(sl, 23 * 20)
-  set slice extra(sl, extra 0, -1) # direction
-  set slice extra(sl, extra 1, 10) # drift counter
   ship effect := sl
-  set timer(big effect timer, 2, 1, @ship in jorm belly moves)
+  set timer(jorm viking ship timer, 0, 1, @ship in jorm belly moves left)
 end
 
-script, ship in jorm belly moves, begin
-  variable(sl, x, d, drift)
+script, ship in jorm belly moves, x dir, next script, begin
+  variable(sl)
   if(current map <> map:Jormungandling's Belly) then(
-    free slice(ship effect)
-    ship effect := 0
-    stop timer(big effect timer)
+    cleanup jorm belly ship
     exit script
   )
   if(ship effect) then(
     sl := ship effect
-    x := slice x(sl)
-    d := get slice extra(sl, extra 0)
-    drift := get slice extra(sl, extra 1)
-    drift -= 1
-    if (drift <= 0) then(
-      d := d * -1
-      drift := 10
-    )
-    x += 1 * d
-    set slice x(sl, x)
-    set slice extra(sl, extra 0, d)
-    set slice extra(sl, extra 1, drift)
-    set timer(big effect timer, 2, 1, @ship in jorm belly moves)
+    set slice velocity x(sl, x dir)
+    set timer(jorm viking ship timer, 10, 1, next script)
   )
+end
+
+script, ship in jorm belly moves left, begin
+  ship in jorm belly moves(-1, @ship in jorm belly moves right)
+end
+
+script, ship in jorm belly moves right, begin
+  ship in jorm belly moves(1, @ship in jorm belly moves left)
+end
+
+script, cleanup jorm belly ship, begin
+  free slice(ship effect)
+  ship effect := 0
+  stop timer(jorm viking ship timer)
 end
 
 #---------------------------------------------------------------------------
@@ -4038,13 +4037,13 @@ plotscript, spell tester, begin
       read attack name(0, i)
       for(h, 0, 3) do(
         if(knows spell(h, i)) then(
-          $0 + " "
+          $str:temp + " "
           get hero name(1, h)
-          0 $+ 1
+          str:temp $+ 1
         )
         for(j, 0, spells learned(h, get count) -- 1) do(
           if(i == spells learned(h, j)) then(
-            $0 + "(+)"
+            $str:temp + "(+)"
           )
         )
       )
@@ -4080,18 +4079,39 @@ plotscript, kelp reef each step, begin
 end
 
 script, inside a bubble, begin
+  cancel air timer
   if(check tag(tag:need air)) then(
     gather party to leader
     set tag(tag:need air, OFF)
   )
   set tag(tag:holding breath, OFF)
+  set tag(tag:need air timer, ON)
   update hero sprites
 end
 
 script, holding breath, begin
+  if(check tag(tag:need air timer)) then(
+    start air timer
+    set tag(tag: need air timer, OFF)
+  )
   set tag(tag:holding breath, ON)
   set tag(tag:need air, ON)
   update hero sprites
+end
+
+script, start air timer, begin
+  variable(flags)
+  flags := timer flag:battle, or, timer flag:critical
+  set timer(air timer, 60, 18, str:breath, flags)
+  $str:breath caption="Breath:"
+  show string at(str:breath caption, 0, 190)
+  show string at(str:breath, 56, 190)
+end
+
+script, cancel air timer, begin
+  hide string(str:breath caption)
+  hide string(str:breath)
+  stop timer(air timer)
 end
 
 #---------------------------------------------------------------------------
