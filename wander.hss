@@ -4172,10 +4172,6 @@ end
 #---------------------------------------------------------------------------
 
 plotscript, troll mountain autorun, begin
-  start troll mountain parallax
-end
-
-script, start troll mountain parallax, begin
   update troll mountain parallax
 end
 
