@@ -1,13 +1,18 @@
 ------------------------------------------------------------
- Wandering Hamster O.H.R.RPG.C.E Demo        (Sept 13 2009)
+ Wandering Hamster O.H.R.RPG.C.E Demo        (Jun 9 2011)
 ------------------------------------------------------------
 
 This is a Work-in-Progress demo of Wandering Hamster. This version
 contains roughly three hours of playing time
 
----
 
 NEW IN THIS RELEASE
+
+  * Parallax scrolling background layer behind the Troll Mountain map
+
+---
+
+IN PREVIOUS RELEASE
 
   * More Character portraits
   * Some reworked dialog
