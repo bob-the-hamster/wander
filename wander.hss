@@ -4176,11 +4176,14 @@ plotscript, troll mountain autorun, begin
 end
 
 script, update troll mountain parallax, begin
+  variable(sl, mapw, maph, screenw, screenh, layerw, layerh)
   if(current map <> map:troll mountain) then(
     stop timer(troll mountain parallax timer)
+    sl := lookup slice(sl:map layer 0)
+    set slice x(sl, 0)
+    set slice y(sl, 0)
     exit script
   )
-  variable(sl, mapw, maph, screenw, screenh, layerw, layerh)
   mapw := map width * 20
   maph := map height * 20
   screenw := slice width(sprite layer)
