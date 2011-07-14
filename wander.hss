@@ -2963,7 +2963,7 @@ plotscript, fight snake spleen, begin
   set tag(tag:beat snake spleen1, ON)
   variable(ref)
   ref := NPC reference(14)
-  set NPC position(ref, 50,18)
+  set NPC position(ref, 50, 18)
   wait(10)
   show text box(404)
   wait for text box
