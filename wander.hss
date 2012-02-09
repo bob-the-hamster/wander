@@ -1305,11 +1305,6 @@ plotscript,Broaste Castle Autorun,begin
   myrmidon Y:=NPC Y(4)
  end
 
- if (check tag(tag:Beat Broaste Ghost))
- then,begin
-   suspend random enemys
- end
-
 end
 
 #---------------------------------------------------------------------------
@@ -1917,12 +1912,6 @@ plotscript,Dustys Equipment,begin
   show text box(box)
   wait for text box
   resume NPCs
-end
-
-#---------------------------------------------------------------------------
-
-plotscript,Broaste Castle Exterior,begin
- resume random enemys
 end
 
 #---------------------------------------------------------------------------
