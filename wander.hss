@@ -4184,3 +4184,15 @@ script, update troll mountain parallax, begin
   set slice y(sl, (camera pixel y  * (maph -- layerh) / (maph -- screenh)))
   set timer(troll mountain parallax timer, 0, 1, @update troll mountain parallax)
 end
+
+#---------------------------------------------------------------------------
+
+plotscript, tenpepper, begin
+  # Not intended for real gameplay, this debugging item changes the hero's walking speed.
+  set hero speed(0, 10)
+end
+
+plotscript, fourpepper, begin
+  # Not intended for real gameplay, this debugging item changes the hero's walking speed.
+  set hero speed(0, 4)
+end
