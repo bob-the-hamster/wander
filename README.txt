@@ -80,7 +80,7 @@ Camdog
 Cartlemmy (Josh Merritt)
 Colin Bunnell
 Fenrir-Lunaris
-Jabbercat (Nigel McBride)
+Jabbercat (John Sebastian Willow)
 Jeremy Jacobs
 Mike Caron
 Shael Riley
