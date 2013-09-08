@@ -717,6 +717,55 @@ end
 
 #---------------------------------------------------------------------------
 
+plotscript, James Castle Hint, begin
+  suspend player
+  suspend NPCs
+  variable(bobx, boby, bobd)
+  variable(james, jamesx, jamesy, jamesd)
+  bobx := hero x(me)
+  boby := hero y(me)
+  bobd := hero direction(me)
+  james := NPC Reference(0)
+  jamesx := NPC x(james)
+  jamesy := NPC y(james)
+  jamesd := NPC direction(james)
+  
+  teleport to map(0, 41, 21)
+  
+  show text box(548)
+  wait for text box
+
+  suspend box advance
+  show text box(549)
+
+  focus camera(32, 21, 10)
+  wait for camera
+  focus camera(6, 5, 10)
+  wait for camera
+
+  resume box advance
+  wait for text box
+  
+  camera follows hero(me)
+  teleport to map(2, bobx, boby)
+  set hero direction(me, bobd)
+
+  suspend NPCs
+  james := NPC Reference(0)
+  set NPC position(james, jamesx, jamesy)
+  set NPC direction(james, jamesd)
+
+  if(check tag(tag:plot boulders gone) == OFF) then(
+    set tag(tag:saw plot boulders, ON)
+  )
+  show text box(408)
+  
+  resume NPCs
+  resume player
+end
+
+#---------------------------------------------------------------------------
+
 plotscript, Sleep at the Inn, begin
  suspend player
  focus camera (hero x(me),+,1,hero y(me) -- 2,2)
