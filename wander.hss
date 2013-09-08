@@ -759,6 +759,7 @@ plotscript, James Castle Hint, begin
     set tag(tag:saw plot boulders, ON)
   )
   show text box(408)
+  wait for text box
   
   resume NPCs
   resume player
