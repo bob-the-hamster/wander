@@ -3620,8 +3620,10 @@ script, ship in jorm belly moves right, begin
 end
 
 script, cleanup jorm belly ship, begin
-  free slice(ship effect)
-  ship effect := 0
+  if(slice is valid(ship effect)) then(
+    free slice(ship effect)
+    ship effect := 0
+  )
   stop timer(jorm viking ship timer)
 end
 
