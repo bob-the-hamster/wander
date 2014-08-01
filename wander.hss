@@ -4248,3 +4248,23 @@ plotscript, fourpepper, begin
   # Not intended for real gameplay, this debugging item changes the hero's walking speed.
   set hero speed(0, 4)
 end
+
+plotscript, portrait plus, begin
+  variable(slot)
+  slot := pick hero
+  if(slot >= 0) then(
+    set hero picture(slot, get hero picture(slot, hero portrait), hero portrait)
+  )else(
+    get item(item:p_plus)
+  )
+end
+
+plotscript, portrait reset, begin
+  variable(slot)
+  slot := pick hero
+  if(slot >= 0) then(
+    reset hero picture(slot, hero portrait)
+  )else(
+    get item(item:p_reset)
+  )
+end
