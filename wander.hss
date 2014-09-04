@@ -4065,6 +4065,11 @@ plotscript, on load, begin
       update level up learning(i, false)
     )
   )
+  if(not(check tag(tag:init battle wait))) then(
+    set tag(tag:init battle wait, true)
+    set tag(tag:battle wait, true)
+  )
+  update battle pause on menus
 end
 
 #---------------------------------------------------------------------------
@@ -4249,22 +4254,18 @@ plotscript, fourpepper, begin
   set hero speed(0, 4)
 end
 
-plotscript, portrait plus, begin
-  variable(slot)
-  slot := pick hero
-  if(slot >= 0) then(
-    set hero picture(slot, get hero picture(slot, hero portrait), hero portrait)
-  )else(
-    get item(item:p_plus)
-  )
+script, update battle pause on menus, begin
+  set active battle pause on all menus(check tag(tag:battle wait))
 end
 
-plotscript, portrait reset, begin
-  variable(slot)
-  slot := pick hero
-  if(slot >= 0) then(
-    reset hero picture(slot, hero portrait)
+plotscript, update battle pause on menus with info, begin
+  update battle pause on menus
+  set menu bit(top menu, menubit:no controls, true)
+  if(check tag(tag:battle wait)) then(
+    show text box(591)
   )else(
-    get item(item:p_reset)
+    show text box(592)
   )
+  wait for text box
+  set menu bit(top menu, menubit:no controls, false)
 end
