@@ -70,18 +70,20 @@ define constant(10, str:temp)
 
 script, key wait, ticks, begin
   # Returns true if the wait was canceled by a keypress.
+  show virtual gamepad
+  return(false)
   variable(i)
   for(i, 1, ticks) do, begin
     wait(1)
-    if(key is pressed(key:ENTER)) then(exit returning(true))
-    if(key is pressed(key:SPACE)) then(exit returning(true))
-    if(key is pressed(key:CTRL)) then(exit returning(true))
-    if(key is pressed(key:ALT)) then(exit returning(true))
-    if(key is pressed(key:ESC)) then(exit returning(true))
-    if(key is pressed(joy:button 1)) then(exit returning(true))
-    if(key is pressed(joy:button 2)) then(exit returning(true))
+    if(key is pressed(key:ENTER)) then(return(true), break)
+    if(key is pressed(key:SPACE)) then(return(true), break)
+    if(key is pressed(key:CTRL)) then(return(true), break)
+    if(key is pressed(key:ALT)) then(return(true), break)
+    if(key is pressed(key:ESC)) then(return(true), break)
+    if(key is pressed(joy:button 1)) then(return(true), break)
+    if(key is pressed(joy:button 2)) then(return(true), break)
   end
-  exit returning(false)
+  auto virtual gamepad
 end
 
 script, key wait seconds, seconds, begin
