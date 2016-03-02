@@ -4424,3 +4424,12 @@ end
 
 #---------------------------------------------------------------------------
 
+plotscript, notice flanat weapon shop, begin
+  suspend player
+  set hero direction(me, north)
+  wait(3)
+  show text box(593)
+  wait for text box
+  resume player
+end
+
