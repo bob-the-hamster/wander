@@ -4433,3 +4433,11 @@ plotscript, notice flanat weapon shop, begin
   resume player
 end
 
+#---------------------------------------------------------------------------
+
+plotscript, visited hasim castle, begin
+  set tag(tag:visited hasim castle, ON)
+end
+
+plotscript, cart from monastery to flanat, begin
+end
