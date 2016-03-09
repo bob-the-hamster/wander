@@ -4440,4 +4440,154 @@ plotscript, visited hasim castle, begin
 end
 
 plotscript, cart from monastery to flanat, begin
+  if(not(pay money(5))) then(
+    show text box(604)
+    wait for text box
+    exit script
+  )
+  suspend player
+  suspend random enemies
+  
+  set friar cart obstruction(false)
+  
+  # Get the party in position
+  walk hero to Y(me, 66)
+  wait for hero(me)
+  walk hero to X(me, 17)
+  wait for hero(me)
+  walk hero to X(me, 13 + room in active party)
+  wait for hero(me)
+  walk hero to X(me, 16)
+  wait for hero(me)
+  suspend caterpillar
+  
+  # Mount the carts
+  variable(cart, who, hero pic, cart pic, sl)
+  for(who, 0, 3) do(
+    if(hero by rank(who) >= 0) then(
+      cart := NPC reference(21, who)
+      hero pic := lookup slice(sl:walkabout sprite component, get hero slice(who))
+      cart pic := lookup slice(sl:walkabout sprite component, get npc slice(cart))
+      sl := clone sprite(hero pic)
+      set slice lookup(sl, sli:walkabout extra)
+      set parent(sl, cart pic)
+      set slice y(sl, 20)
+      move slice by(sl, 0, -28, 4)
+      set slice visible(hero pic, false)
+    )
+  )
+  wait(4)
+  
+  variable(friar)
+  friar := NPC reference(20)
+  focus camera(NPC X(friar), NPC Y(friar), 10)
+  wait for camera
+  camera follows NPC(friar)
+  
+  walk friar cart(east, 1)
+  walk friar cart(south, 5)
+  walk friar cart(west, 3)
+  walk friar cart(south, 1)
+  walk friar cart(west, 3)
+  walk friar cart(south, 1)
+  walk friar cart(west, 1)
+  walk friar cart(south, 8)
+  walk friar cart(east, 1)
+  walk friar cart(south, 1)
+  walk friar cart(east, 1)
+  walk friar cart(south, 6)
+  walk friar cart(east, 2)
+  walk friar cart(south, 6)
+  walk friar cart(east, 16)
+  walk friar cart(north, 1)
+  walk friar cart(east, 8)
+  walk friar cart(south, 2)
+  walk friar cart(east, 2)
+  walk friar cart(south, 1)
+  walk friar cart(east, 3)
+
+  cart := NPC reference(21, 0)
+  focus camera(NPC X(cart), NPC Y(cart), 10)
+  wait for camera
+
+  # Dismount the carts
+  for(who, 0, 3) do(
+    if(hero by rank(who) >= 0) then(
+      cart := NPC reference(21, who)
+      sl := lookup slice(sli:walkabout extra, get npc slice(cart))
+      free slice(sl)
+      set hero position(who, NPC X(cart), NPC Y(cart))
+      hero pic := lookup slice(sl:walkabout sprite component, get hero slice(who))
+      set slice visible(hero pic, true)
+      walk hero(who, south, 1)
+    )
+  )
+  camera follows hero(me)
+  wait for hero(me)
+  
+  walk friar cart(west, 3)
+  walk friar cart(north, 1)
+  walk friar cart(west, 2)
+  walk friar cart(north, 2)
+  walk friar cart(west, 8)
+  walk friar cart(south, 1)
+  walk friar cart(west, 5)
+  
+  reset friar cart
+  set friar cart obstruction(true)
+  
+  resume player
+  resume random enemies
+  resume caterpillar
 end
+
+script, walk friar cart, dir, dist, begin
+  variable(friar, cart, iter, cart num, dest NPC, last dir, rider)
+  friar := NPC reference(20)
+  set NPC speed(friar, 10)
+  set NPC speed(NPC reference(21), 10)
+  for(iter, 1, dist) do(
+    walk NPC(friar, dir, 1)
+    last dir := dir
+    for(cart num, 0, 3) do(
+      cart := NPC reference(21, cart num)
+      if(cart num == 0)
+        then(dest NPC := friar)
+        else(dest NPC := NPC reference(21, cart num -- 1))
+      walk NPC to X(cart, NPC X(dest NPC))
+      walk NPC to Y(cart, NPC Y(dest NPC))
+      rider := lookup slice(sli:walkabout extra, get NPC slice(cart))
+      if(rider) then(
+        set sprite frame(rider, last dir * 2)
+      )
+      last dir := NPC direction(cart)
+    )
+    wait for NPC(friar)
+  )
+end
+
+script, reset friar cart, begin
+  variable(friar, cart, i)
+  friar := NPC reference(20)
+  set NPC position(friar, 17, 65)
+  set NPC direction(friar, south)
+  for(i, 0, 3) do(
+    cart := NPC reference(21, i)
+    set NPC position(cart, 16 -- i, 65)
+    set NPC direction(cart, east)
+  )
+end
+
+script, set friar cart obstruction, val, begin
+  variable(friar, cart, i)
+  friar := NPC reference(20)
+  set NPC obstructs(friar, val)
+  for(i, 0, 3) do(
+    cart := NPC reference(21, i)
+    set NPC obstructs(cart, val)
+  )
+end
+
+
+
+
