@@ -61,6 +61,8 @@ global variable(100,array)
 
 #---------------------------------------------------------------------------
 
+define constant(1, hero:James) # temporary, remove this when Misa conversion is done
+
 define constant(1, golf score timer)
 define constant(2, jorm viking ship timer)
 define constant(3, air timer)
@@ -4078,6 +4080,16 @@ plotscript, on load, begin
     set tag(tag:battle wait, true)
   )
   update battle pause on menus
+
+  # Rename James to Misa in old save slots
+  variable(misa)
+  misa := find hero(hero:misa duhamstre)
+  if(misa >= 0) then(
+    get hero name(0, misa)
+    if(string compare(0, $1="James")) then(
+      set hero name($0="Misa Duhamstre", misa)
+    )
+  )
 end
 
 #---------------------------------------------------------------------------
