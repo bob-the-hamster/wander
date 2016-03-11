@@ -48,6 +48,8 @@ global variable(13,golf hits)
 global variable(14,golf total)
 global variable(15,ship effect)
 global variable(16,need air)
+global variable(17,friar harvey ID)
+global variable(18,friar cart ID)
 
 # Used by TMC's parallax voodoo
 global variable(50, camera slice)
@@ -4449,6 +4451,9 @@ plotscript, visited hasim castle, begin
 end
 
 plotscript, cart from monastery to flanat, begin
+  friar harvey ID := 20
+  friar cart ID := 21
+  
   if(not(pay money(5))) then(
     show text box(604)
     wait for text box
@@ -4470,25 +4475,10 @@ plotscript, cart from monastery to flanat, begin
   wait for hero(me)
   suspend caterpillar
   
-  # Mount the carts
-  variable(cart, who, hero pic, cart pic, sl)
-  for(who, 0, 3) do(
-    if(hero by rank(who) >= 0) then(
-      cart := NPC reference(21, who)
-      hero pic := lookup slice(sl:walkabout sprite component, get hero slice(who))
-      cart pic := lookup slice(sl:walkabout sprite component, get npc slice(cart))
-      sl := clone sprite(hero pic)
-      set slice lookup(sl, sli:walkabout extra)
-      set parent(sl, cart pic)
-      set slice y(sl, 20)
-      move slice by(sl, 0, -28, 4)
-      set slice visible(hero pic, false)
-    )
-  )
-  wait(4)
+  mount friar cart
   
   variable(friar)
-  friar := NPC reference(20)
+  friar := NPC reference(friar harvey ID)
   focus camera(NPC X(friar), NPC Y(friar), 10)
   wait for camera
   camera follows NPC(friar)
@@ -4513,56 +4503,79 @@ plotscript, cart from monastery to flanat, begin
   walk friar cart(south, 2)
   walk friar cart(east, 2)
   walk friar cart(south, 1)
-  walk friar cart(east, 3)
+  suspend NPC walls # last step has a wall
+  walk friar cart(east, 6)
+  resume NPC walls
+  
+  # Move to Flanat Map
+  fade screen out
+  wait(1)
+  teleport to map(0, 5, 6)
+  friar harvey ID := 24
+  friar cart ID := 25
+  quick mount friar cart
+  put friar cart(4, 5)
+  suspend NPCs
+  set friar cart obstruction(false)
+  # Update camera following
+  friar := NPC reference(friar harvey ID)
+  camera follows NPC(friar)
+  wait(1)
+  fade screen in
 
-  cart := NPC reference(21, 0)
+  suspend NPC walls # last cart starts in a wall
+  walk friar cart(east, 2)
+  
+  variable(jake)
+  jake := NPC reference(6)
+  walk NPC(jake, north, 1)
+  set NPC direction(jake, west)
+  resume NPC walls
+
+  walk friar cart(east, 2)
+  walk friar cart(south, 1)
+  set NPC direction(jake, south)
+  walk friar cart(east, 4)
+  set NPC direction(jake, east)
+  walk friar cart(east, 2)
+  walk friar cart(south, 4)
+  walk friar cart(east, 6)
+  walk friar cart(south, 6)
+  walk friar cart(west, 1)
+  walk friar cart(south, 1)
+  walk friar cart(east, 4)
+  set NPC direction(friar, west)
+  set NPC direction(NPC reference(friar cart ID, 3), east)
+  set NPC direction(jake, south)
+
+  variable(cart)
+  cart := NPC reference(friar cart ID, 0)
   focus camera(NPC X(cart), NPC Y(cart), 10)
   wait for camera
 
-  # Dismount the carts
-  for(who, 0, 3) do(
-    if(hero by rank(who) >= 0) then(
-      cart := NPC reference(21, who)
-      sl := lookup slice(sli:walkabout extra, get npc slice(cart))
-      free slice(sl)
-      set hero position(who, NPC X(cart), NPC Y(cart))
-      hero pic := lookup slice(sl:walkabout sprite component, get hero slice(who))
-      set slice visible(hero pic, true)
-      walk hero(who, south, 1)
-    )
-  )
-  camera follows hero(me)
-  wait for hero(me)
+  dismount friar cart
   
-  walk friar cart(west, 3)
-  walk friar cart(north, 1)
-  walk friar cart(west, 2)
-  walk friar cart(north, 2)
-  walk friar cart(west, 8)
-  walk friar cart(south, 1)
-  walk friar cart(west, 5)
-  
-  reset friar cart
   set friar cart obstruction(true)
   
   resume player
   resume random enemies
   resume caterpillar
+  resume NPCs
 end
 
 script, walk friar cart, dir, dist, begin
   variable(friar, cart, iter, cart num, dest NPC, last dir, rider)
-  friar := NPC reference(20)
+  friar := NPC reference(friar harvey ID)
   set NPC speed(friar, 10)
-  set NPC speed(NPC reference(21), 10)
+  set NPC speed(NPC reference(friar cart ID), 10)
   for(iter, 1, dist) do(
     walk NPC(friar, dir, 1)
     last dir := dir
     for(cart num, 0, 3) do(
-      cart := NPC reference(21, cart num)
+      cart := NPC reference(friar cart ID, cart num)
       if(cart num == 0)
         then(dest NPC := friar)
-        else(dest NPC := NPC reference(21, cart num -- 1))
+        else(dest NPC := NPC reference(friar cart ID, cart num -- 1))
       walk NPC to X(cart, NPC X(dest NPC))
       walk NPC to Y(cart, NPC Y(dest NPC))
       rider := lookup slice(sli:walkabout extra, get NPC slice(cart))
@@ -4575,28 +4588,76 @@ script, walk friar cart, dir, dist, begin
   )
 end
 
-script, reset friar cart, begin
+script, put friar cart, dest x, dest y, begin
   variable(friar, cart, i)
-  friar := NPC reference(20)
-  set NPC position(friar, 17, 65)
+  friar := NPC reference(friar harvey ID)
+  set NPC position(friar, dest x, dest y)
   set NPC direction(friar, south)
   for(i, 0, 3) do(
-    cart := NPC reference(21, i)
-    set NPC position(cart, 16 -- i, 65)
+    cart := NPC reference(friar cart ID, i)
+    set NPC position(cart, dest x -- 1 -- i, dest y)
     set NPC direction(cart, east)
   )
 end
 
 script, set friar cart obstruction, val, begin
   variable(friar, cart, i)
-  friar := NPC reference(20)
+  friar := NPC reference(friar harvey ID)
   set NPC obstructs(friar, val)
   for(i, 0, 3) do(
-    cart := NPC reference(21, i)
+    cart := NPC reference(friar cart ID, i)
     set NPC obstructs(cart, val)
   )
 end
 
+script, mount friar cart, begin
+  quick mount friar cart
+  # Animate the mounting
+  variable(cart, who, hero pic, cart pic, sl)
+  for(who, 0, 3) do(
+    if(hero by rank(who) >= 0) then(
+      cart := NPC reference(friar cart ID, who)
+      sl := lookup slice(sli:walkabout extra, get NPC slice(cart))
+      set slice y(sl, 20)
+      move slice by(sl, 0, -28, 4)
+    )
+  )
+  wait(4)
+end
 
+script, quick mount friar cart, begin
+  # Mount the carts with no animation
+  variable(cart, who, hero pic, cart pic, sl)
+  for(who, 0, 3) do(
+    if(hero by rank(who) >= 0) then(
+      cart := NPC reference(friar cart ID, who)
+      hero pic := lookup slice(sl:walkabout sprite component, get hero slice(who))
+      cart pic := lookup slice(sl:walkabout sprite component, get npc slice(cart))
+      sl := clone sprite(hero pic)
+      set slice lookup(sl, sli:walkabout extra)
+      set parent(sl, cart pic)
+      set slice y(sl, -8)
+      set slice visible(hero pic, false)
+    )
+  )
+end
+
+script, dismount friar cart, begin
+  # Dismount the carts
+  variable(cart, who, sl, hero pic)
+  for(who, 0, 3) do(
+    if(hero by rank(who) >= 0) then(
+      cart := NPC reference(friar cart ID, who)
+      sl := lookup slice(sli:walkabout extra, get npc slice(cart))
+      free slice(sl)
+      set hero position(who, NPC X(cart), NPC Y(cart))
+      hero pic := lookup slice(sl:walkabout sprite component, get hero slice(who))
+      set slice visible(hero pic, true)
+      walk hero(who, south, 1)
+    )
+  )
+  camera follows hero(me)
+  wait for hero(me)
+end
 
 
