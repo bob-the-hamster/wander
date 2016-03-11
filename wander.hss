@@ -3,7 +3,7 @@
 # Although Wandering Hamster is licenced under the GPL, this script
 # file is licenced under the terms of the MIT license.
 #
-# Copyright (c) 2000 James Paige
+# Copyright (c) 2000-2016 James Paige
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,6 @@ include, scancode.hsi  #keyboard constants
 
 #---------------------------------------------------------------------------
 
-#global variable(0,SPAM icons)
 global variable(1,shell game variable)
 global variable(
  2,ship X
@@ -42,7 +41,7 @@ global variable(
  8,myrmidon text
 )
 global variable(9,under bridge)
-global variable(10,James Saying)
+global variable(10,Misa Saying)
 global variable(11,hit golf ball too hard)
 global variable(12,golf round)
 global variable(13,golf hits)
@@ -60,8 +59,6 @@ global variable(53, next camera pixel y)
 global variable(100,array)
 
 #---------------------------------------------------------------------------
-
-define constant(1, hero:James) # temporary, remove this when Misa conversion is done
 
 define constant(1, golf score timer)
 define constant(2, jorm viking ship timer)
@@ -150,7 +147,7 @@ plotscript, introduction, begin
  fade screen out
  advance text box
 
- # James with Bubbles
+ # Misa with Bubbles
  load tileset (11)
  put camera (1*20,20*20)
  show text box (384)
@@ -712,7 +709,7 @@ end
 
 #---------------------------------------------------------------------------
 
-plotscript, Show James House, begin
+plotscript, Show Misa House, begin
  suspend player
  focus camera (41,23,5)
  wait (20)
@@ -727,18 +724,18 @@ end
 
 #---------------------------------------------------------------------------
 
-plotscript, James Castle Hint, begin
+plotscript, Misa Castle Hint, begin
   suspend player
   suspend NPCs
   variable(bobx, boby, bobd)
-  variable(james, jamesx, jamesy, jamesd)
+  variable(misa, misax, misay, misad)
   bobx := hero x(me)
   boby := hero y(me)
   bobd := hero direction(me)
-  james := NPC Reference(0)
-  jamesx := NPC x(james)
-  jamesy := NPC y(james)
-  jamesd := NPC direction(james)
+  misa := NPC Reference(0)
+  misax := NPC x(misa)
+  misay := NPC y(misa)
+  misad := NPC direction(misa)
   
   teleport to map(0, 41, 21)
   
@@ -761,9 +758,9 @@ plotscript, James Castle Hint, begin
   set hero direction(me, bobd)
 
   suspend NPCs
-  james := NPC Reference(0)
-  set NPC position(james, jamesx, jamesy)
-  set NPC direction(james, jamesd)
+  misa := NPC Reference(0)
+  set NPC position(misa, misax, misay)
+  set NPC direction(misa, misad)
 
   if(check tag(tag:plot boulders gone) == OFF) then(
     set tag(tag:saw plot boulders, ON)
@@ -1522,7 +1519,7 @@ end
 #---------------------------------------------------------------------------
 
 script,Attack Broaste Ghost with Teddy,begin
-  variable(remember weapon,Bob,James,Broaste,i,j)
+  variable(remember weapon,Bob,Misa,Broaste,i,j)
 
   Broaste:=NPC reference(0)
 
@@ -1625,45 +1622,45 @@ script,Attack Broaste Ghost with Teddy,begin
   end
 
   Bob:=rank in caterpillar(hero:Bob the Hamster)
-  James:=rank in caterpillar(hero:James)
+  Misa:=rank in caterpillar(hero:Misa DuHamstre)
 
   pan camera (north,1,2)
 
-  set hero speed (James,2)
-  walk hero to X (James,7)
-  walk hero      (James,north,1)
-  wait for hero  (James)
+  set hero speed (Misa,2)
+  walk hero to X (Misa,7)
+  walk hero      (Misa,north,1)
+  wait for hero  (Misa)
 
   wait for camera
-  camera follows hero (James)
+  camera follows hero (Misa)
 
-  set hero speed (James,5)
-  walk hero      (James,north,3)
-  wait for hero  (James)
+  set hero speed (Misa,5)
+  walk hero      (Misa,north,3)
+  wait for hero  (Misa)
 
   show text box (267)
 
-  set hero direction (James,west)
+  set hero direction (Misa,west)
   wait               (1)
-  set hero direction (James,south)
+  set hero direction (Misa,south)
 
   wait for text box 
 
   show text box  (268)
 
-  focus camera(hero X(James),hero Y(James),10)
+  focus camera(hero X(Misa),hero Y(Misa),10)
 
   wait for camera
 
-  set hero speed (James, 10)
+  set hero speed (Misa, 10)
   suspend hero walls
 
   for(i,0,6) do,begin
-    walk hero          (James,north,1)
-    set hero direction (James,south)
-    wait for hero      (James)
-    walk hero          (James,south,1)
-    wait for hero      (James)
+    walk hero          (Misa,north,1)
+    set hero direction (Misa,south)
+    wait for hero      (Misa)
+    walk hero          (Misa,south,1)
+    wait for hero      (Misa)
     wait               (2)
   end
   
@@ -1681,23 +1678,23 @@ script,Attack Broaste Ghost with Teddy,begin
 
   show text box (271)
   for (i,0,1) do,begin
-    set hero direction (James,east)
+    set hero direction (Misa,east)
     wait (2)
-    set hero direction (James,south)
+    set hero direction (Misa,south)
     wait (2)
-    set hero direction (James,west)
+    set hero direction (Misa,west)
     wait (2)
-    set hero direction (James,south)
+    set hero direction (Misa,south)
     wait (2)
   end
   wait for text box
 
-  set hero speed (James,4)
-  walk hero      (James,south,1)
-  wait for hero  (James)
-  set hero direction (James,west)
+  set hero speed (Misa,4)
+  walk hero      (Misa,south,1)
+  wait for hero  (Misa)
+  set hero direction (Misa,west)
   wait (1)
-  set hero direction (James,north)
+  set hero direction (Misa,north)
 
   show text box (274)
   wait for text box
@@ -1719,10 +1716,10 @@ script,Attack Broaste Ghost with Teddy,begin
   set hero position (Bob,57,40)
   set hero direction (Bob,west)
 
-  swap out hero (hero:James)
-  lock hero     (hero:James)
-  set tag       (tag:James took Castle,ON)
-  James Saying := 0
+  swap out hero (hero:Misa DuHamstre)
+  lock hero     (hero:Misa DuHamstre)
+  set tag       (tag:Misa took Castle,ON)
+  Misa Saying := 0
 
   set tag (tag:Beat Broaste Ghost,ON)
 
@@ -1922,7 +1919,7 @@ plotscript,Dusty Leaves Angry,begin
   wait for hero  (dusty)
 
   set hero direction(rank in caterpillar(hero:Bob the Hamster),west)
-  set hero direction(rank in caterpillar(hero:James),west)
+  set hero direction(rank in caterpillar(hero:Misa DuHamstre),west)
 
   show text box(182)
   wait for text box
@@ -2071,11 +2068,11 @@ end
 
 #---------------------------------------------------------------------------
 
-plotscript,Cyclic James Saying,begin
-  show text box(283+James Saying)
+plotscript,Cyclic Misa Saying,begin
+  show text box(283+Misa Saying)
   wait for text Box
-  increment(James Saying,1)
-  if (James Saying >> 3 ,or, James Saying << 0) then(James Saying:=0)
+  increment(Misa Saying,1)
+  if (Misa Saying >> 3 || Misa Saying << 0) then(Misa Saying:=0)
 end
 
 #---------------------------------------------------------------------------
@@ -2148,7 +2145,7 @@ plotscript,Cats Enlist Bob,begin
 
   wait for text Box
 
-  show text box(288) #James says Broaste is gone
+  show text box(288) #Misa says Broaste is gone
 
   walk hero(Bob,north,5)
   wait for hero (Bob)
@@ -2178,7 +2175,7 @@ plotscript,Cats Enlist Bob,begin
   show text box(290) #cats introduce themselves
   wait for text box
 
-  show text box(291) #James has no army
+  show text box(291) #Misa has no army
   wait for text box
   
   walk NPC (rathmara,east,1)
@@ -4049,9 +4046,9 @@ plotscript, update hero sprites, begin
       reset hero pics(hero)
     )
   )
-  hero := find hero(hero:James)
+  hero := find hero(hero:Misa DuHamstre)
   if(hero >= 0) then(
-    if(check tag(tag:James is wearing hat)) then(
+    if(check tag(tag:Misa is wearing Ribn)) then(
       reset hero pics(hero)
     )else(
       set hero picture(hero, 57, outside battle)
