@@ -147,16 +147,16 @@ plotscript, introduction, begin
  fade screen out
  advance text box
 
- # Misa with Bubbles
- load tileset (11)
- put camera (1*20,20*20)
- show text box (384)
- wait(6)
- fade screen in
- pan camera (east,7,2)
- wait for camera
- fade screen out
- advance text box
+# # James with Bubbles
+# load tileset (11)
+# put camera (1*20,20*20)
+# show text box (384)
+# wait(6)
+# fade screen in
+# pan camera (east,7,2)
+# wait for camera
+# fade screen out
+# advance text box
 
  # Penguin Pirate Ship
  load tileset (12)
