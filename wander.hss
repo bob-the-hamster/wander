@@ -4563,6 +4563,118 @@ plotscript, cart from monastery to flanat, begin
   resume NPCs
 end
 
+plotscript, cart from flanat to monastery, begin
+  friar harvey ID := 24
+  friar cart ID := 25
+  
+  if(not(pay money(5))) then(
+    show text box(604)
+    wait for text box
+    exit script
+  )
+  suspend player
+  suspend random enemies
+  suspend NPCs
+  suspend obstruction
+  
+  set friar cart obstruction(false)
+  
+  # Get the party in position
+  if(hero Y(me) <= 16) then(
+    walk hero to X(me, 24)
+    wait for hero(me)
+  )
+  if(hero X(me) >= 24) then(
+    walk hero to Y(me, 18)
+    wait for hero(me)
+  )
+  walk hero to X(me, 19 + room in active party)
+  wait for hero(me)
+  walk hero to X(me, 22)
+  wait for hero(me)
+  suspend caterpillar
+  
+  mount friar cart
+  
+  variable(friar)
+  friar := NPC reference(friar harvey ID)
+  focus camera(NPC X(friar), NPC Y(friar), 10)
+  wait for camera
+  camera follows NPC(friar)
+
+  variable(jake)
+  jake := NPC reference(6)
+  set NPC speed(jake, 10)
+  walk NPC(jake, north, 8)
+  set NPC direction(jake, south)
+  
+  walk friar cart(north, 7)
+  walk friar cart(west, 9)
+  walk friar cart(north, 4)
+  walk friar cart(west, 6)
+  walk friar cart(north, 1)
+  suspend NPC walls # last step has a wall
+  walk friar cart(west, 8)
+  resume NPC walls
+  
+  # Move to Flanat Castle Area Map
+  fade screen out
+  wait(1)
+  teleport to map(1, 43, 94)
+  friar harvey ID := 20
+  friar cart ID := 21
+  quick mount friar cart
+  put friar cart(43, 95, -1)
+  suspend NPCs
+  set friar cart obstruction(false)
+  # Update camera following
+  friar := NPC reference(friar harvey ID)
+  camera follows NPC(friar)
+  wait(1)
+  fade screen in
+
+  suspend NPC walls # last cart starts in a wall
+  walk friar cart(west, 2)
+  resume NPC walls
+  
+  walk friar cart(north, 1)
+  walk friar cart(west, 2)
+  walk friar cart(north, 2)
+  walk friar cart(west, 8)
+  walk friar cart(south, 1)
+  walk friar cart(west, 16)
+  walk friar cart(north, 12)
+  walk friar cart(west, 3)
+  walk friar cart(north, 1)
+  walk friar cart(west, 1)
+  walk friar cart(north, 8)
+  walk friar cart(east, 1)
+  walk friar cart(north, 1)
+  walk friar cart(east, 3)
+  walk friar cart(north, 1)
+  walk friar cart(east, 3)
+  walk friar cart(north, 3)
+  walk friar cart(west, 5)
+  walk friar cart(north, 2)
+  walk friar cart(east, 4)
+  set NPC direction(NPC reference(friar cart ID, 3), east)
+
+  variable(cart)
+  cart := NPC reference(friar cart ID, 0)
+  focus camera(NPC X(cart), NPC Y(cart), 10)
+  wait for camera
+
+  dismount friar cart
+  
+  set friar cart obstruction(true)
+  
+  resume player
+  resume random enemies
+  resume caterpillar
+  resume NPCs
+  resume obstruction
+end
+
 script, walk friar cart, dir, dist, begin
   variable(friar, cart, iter, cart num, dest NPC, last dir, rider)
   friar := NPC reference(friar harvey ID)
@@ -4588,14 +4700,14 @@ script, walk friar cart, dir, dist, begin
   )
 end
 
-script, put friar cart, dest x, dest y, begin
+script, put friar cart, dest x, dest y, offset=1, begin
   variable(friar, cart, i)
   friar := NPC reference(friar harvey ID)
   set NPC position(friar, dest x, dest y)
   set NPC direction(friar, south)
   for(i, 0, 3) do(
     cart := NPC reference(friar cart ID, i)
-    set NPC position(cart, dest x -- 1 -- i, dest y)
+    set NPC position(cart, dest x -- offset -- (i * offset), dest y)
     set NPC direction(cart, east)
   )
 end
