@@ -4772,4 +4772,51 @@ script, dismount friar cart, begin
   wait for hero(me)
 end
 
+#---------------------------------------------------------------------------
+
+plotscript,Rolf Inn,begin
+  variable(i)
+
+  suspend player
+  suspend random enemies
+  suspend hero walls
+
+  walk hero to X(me, 66)
+  wait for hero(me)
+  walk hero to Y(me, 33)
+  wait for hero(me)
+  walk hero to X(me, 68)
+  wait for hero(me)
+  
+  for (i,0,3) do(
+    set hero direction (i,south)
+  )
+
+  play song (song:Sleeping Music)
+  tweak palette (-40, -40, -10)
+  fade screen in
+
+  key wait (18 * 8)
+  reset palette
+  fade screen in
+  play song (song:Castle Theme)
+  wait (5)
+
+  for (i,0,2) do(
+    set hero direction (i,east)
+  )
+  set hero direction(3, north)
+
+  walk hero (me,south,2)
+  wait for hero (me)
+  walk hero (me,west,1)
+  wait for hero (me)
+
+  resume player
+  resume random enemies
+  resume hero walls
+end
+
+
+
 
