@@ -4908,5 +4908,65 @@ plotscript,Monastery Inn,begin
   resume obstruction
 end
 
+#---------------------------------------------------------------------------
+
+plotscript, use the outhouse, begin
+  suspend player
+  suspend caterpillar
+  show text box(617)
+  set hero direction(0, south)
+  
+  wait(5)
+  
+  variable(who)
+  for(who, 1, 3) do(
+    walk hero to X(who, hero X(0))
+  )
+
+  variable(ready)
+  while(true) do(
+    ready := true
+    for(who, 1, 3) do(
+      if(hero by rank(who) >= 0) then(
+        if(hero is walking(who)) then(
+          ready := false
+        )else(
+          walk hero to Y(who, hero Y(0) + 3)
+        )
+      )
+    )
+    if(ready) then(break)
+    wait(1)
+  )
+
+  for(who, 1, 3) do(
+    wait for hero(who)
+  )
+  
+  wait for text box
+  
+  fade screen out
+  wait(5)
+  fade screen in
+  wait(1)
+  
+  walk hero(1, north, 1)
+  walk hero(0, south, 1)
+  
+  wait for hero(1)
+  wait for hero(0)
+  set hero direction(0, west)
+  
+  resume caterpillar
+  resume player
+  
+end
+
+
+
+
+
+
+
 
 
