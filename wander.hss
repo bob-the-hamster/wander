@@ -4962,7 +4962,29 @@ plotscript, use the outhouse, begin
   
 end
 
+#---------------------------------------------------------------------------
 
+plotscript, stress cat battle, begin
+  if(check tag(tag:got dusty) == false) then(
+    # Never got Dusty, cannot battle stress cat.
+    show text box(620)
+    wait for text box
+    exit script
+  )
+  if(check tag(tag:battled stress cat) == true) then(
+    show text box(619)
+    wait for text box
+    fight formation(114)
+    exit script
+  )
+  # First stress cat battle, can get Whisker item
+  show text box(141)
+  wait for text box
+  if(fight formation(67)) then(
+    # If you ran away, don't count this battle
+    set tag(tag:battled stress cat, true)
+  )
+end
 
 
 
