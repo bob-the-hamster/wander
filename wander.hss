@@ -4987,6 +4987,11 @@ plotscript, stress cat battle, begin
 end
 
 
+#---------------------------------------------------------------------------
+
+plotscript, troll mountain map, begin
+  show text box(621)
+end
 
 
 
