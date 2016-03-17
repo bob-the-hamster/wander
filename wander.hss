@@ -4286,6 +4286,7 @@ end
 
 script, trying to move direction, begin
   return (-1)
+  if(top menu) then(exit script)
   if (key is pressed(key:right)) then (return (right))
   if (key is pressed(key:left)) then (return (left))
   if (key is pressed(key:down)) then (return (down))
