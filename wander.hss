@@ -1876,6 +1876,10 @@ end
 #---------------------------------------------------------------------------
 
 plotscript,Dusty Leaves,begin
+  if(check tag(tag:dusty left angry)) then(
+    exit script
+  )
+  
   suspend player
   suspend obstruction
   suspend caterpillar
@@ -4965,9 +4969,21 @@ end
 
 #---------------------------------------------------------------------------
 
+plotscript, dusty says this is my house, begin
+  if(check tag(tag:dusty left angry)) then(
+    exit script
+  )
+  suspend player
+  show text box(138)
+  wait for text box
+  resume player
+end
+
+#---------------------------------------------------------------------------
+
 plotscript, stress cat battle, begin
-  if(check tag(tag:got dusty) == false) then(
-    # Never got Dusty, cannot battle stress cat.
+  if(check tag(tag:got dusty) == false || check tag(tag:took dusty home) == false) then(
+    # Never got Dusty, or failed to take him home; cannot battle stress cat.
     show text box(620)
     wait for text box
     exit script
@@ -4984,6 +5000,18 @@ plotscript, stress cat battle, begin
   if(fight formation(67)) then(
     # If you ran away, don't count this battle
     set tag(tag:battled stress cat, true)
+  )
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, stress cat couch action, begin
+  if(check tag(tag:got dusty) == false) then(
+    show text box(618)
+  )else if(check tag(tag:took dusty home) == false) then(
+    show text box(618)
+  )else(
+    show text box(140)
   )
 end
 
@@ -5035,5 +5063,20 @@ plotscript, troll mountain campfire, begin
   fade and rest
 end
 
+#---------------------------------------------------------------------------
+
+plotscript, broaste courtyard inn focus, begin
+  suspend player
+  show text box(631)
+  wait for text box
+  focus camera(21, 7, 5)
+  show text box(633)
+  wait for text box
+  wait for camera
+  focus camera(hero X(me), hero Y(me) 20)
+  wait for camera
+  camera follows hero(me)
+  resume player
+end
 
 
