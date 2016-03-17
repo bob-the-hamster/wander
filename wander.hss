@@ -4994,7 +4994,46 @@ plotscript, troll mountain map, begin
   show text box(621)
 end
 
+#---------------------------------------------------------------------------
 
+plotscript, troll mountain campfire, begin
+  suspend player
+  suspend random enemies
+  suspend NPCs
+  suspend obstruction
+  suspend hero walls
+  suspend caterpillar
+  
+  variable(x, y)
+  x := 90
+  y := 20
+  walk hero to X(0, x -- 1)
+  walk hero to Y(0, y)
+  walk hero to X(1, x)
+  walk hero to Y(1, y + 1)
+  walk hero to X(2, x + 1)
+  walk hero to Y(2, y)
+  walk hero to X(3, x)
+  walk hero to Y(3, y -- 1)
+  variable(who)
+  for(who, 0, 3) do(
+    wait for hero(who)
+  )
+  set hero direction(0, east)
+  set hero direction(1, north)
+  set hero direction(2, west)
+  set hero direction(3, south)
+  wait(1)
+
+  resume player
+  resume random enemies
+  resume NPCs
+  resume obstruction
+  resume hero walls
+  resume caterpillar
+  
+  fade and rest
+end
 
 
 
