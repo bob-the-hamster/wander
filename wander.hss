@@ -5079,4 +5079,193 @@ plotscript, broaste courtyard inn focus, begin
   resume player
 end
 
+#---------------------------------------------------------------------------
+
+plotscript, rock owl flight, begin
+  if(inventory(item:trollegg) == 0) then(
+    show text box(641)
+    wait for text box
+    exit script
+  )
+  if(hero X(me) < map width / 2) then(
+    rock owl flight west to east
+  )else(
+    rock owl flight east to west
+  )
+end
+
+script, owl picks up the party, owl, begin
+  set NPC speed(owl, 5)
+  variable(who)
+  for(who, 0, 3 -- room in active party) do(
+    owl picks up hero(owl, who)
+  )
+end
+
+script, owl picks up hero, owl, who, begin
+  walk NPC to X(owl, hero X(who))
+  walk NPC to Y(owl, hero Y(who) -- (who + 1))
+  wait for NPC(owl)
+  put npc(owl, NPC pixel X(owl), NPC pixel Y(owl) + 3)
+  wait(1)
+  put npc(owl, NPC pixel X(owl), NPC pixel Y(owl) -- 3)
+  attach hero sprite to owl(owl, who)
+end
+
+script, attach hero sprite to owl, owl, who, begin
+  variable(owl sl, hero sl, sl)
+  owl sl := lookup slice(sl:walkabout sprite component, get NPC slice(owl))
+  hero sl := lookup slice(sl:walkabout sprite component, get hero slice(who))
+  set sprite visible(hero sl, false)
+  sl := clone sprite(hero sl)
+  set slice lookup(sl, sli:walkabout extra)
+  set sprite frame(sl, hero direction(who) * 2)
+  set parent(sl, owl sl)
+  set slice y(sl, (who + 1) * 20)
+end
+
+script, move owl to, guide, owl, tile x, tile y, ticks, begin
+  move slice to(guide, tile x*20, tile y*20, ticks)
+  while(slice is moving(guide)) do(
+    put npc(owl, slice x(guide), slice y(guide))
+    update troll mountain parallax
+    wait(1)
+  )
+end
+
+script, owl drops party, owl, begin
+  focus camera(NPC X(owl), NPC Y(owl) + 4, 6)
+  variable(who, owl sl, hero sl, sl)
+  owl sl := lookup slice(sl:walkabout sprite component, get NPC slice(owl))
+  for(who, 0, 3) do(
+    sl := lookup slice(sli:walkabout extra, owl sl)
+    if(not(sl)) then(break)
+    set slice lookup(sl, none)
+    move slice by(sl, 0, 80 -- slice y(sl), 5)
+  )
+  wait(5)
+  free slice children(owl sl)
+  move slice to(owl sl, 0, 0, 4)
+  for(who, 0, 3) do(
+    set hero position(who, NPC X(owl), NPC Y(owl) + 4)
+    hero sl := lookup slice(sl:walkabout sprite component, get hero slice(who))
+    set slice visible(hero sl, true)
+  )
+  wait for camera
+  camera follows hero(me)
+end
+
+script, recreate owls, begin
+  variable(owl)
+  owl := create NPC(23, 138, 48)
+  set NPC direction(owl, left)
+  owl := create NPC(23, 5, 53)
+  set NPC direction(owl, right)
+end
+
+script, make owl guide, owl, begin
+  variable(guide, campoint)
+  guide := create container(0, 0)
+  set parent(guide, lookup slice(sl:walkabout layer))
+  put slice(guide, npc pixel x(owl), npc pixel y(owl))
+
+  campoint := create container(0, 0)
+  set parent(campoint, guide)
+  set slice x(campoint, 10)
+  set slice y(campoint, 10)
+  camera follows slice(campoint)
+  exit returning(guide)
+end
+
+script, rock owl flight west to east, begin
+  suspend player
+  suspend caterpillar
+  
+  variable(owl)
+  owl := NPC reference(23, 0)
+  set NPC obstructs(owl, false)
+  set NPC ignores walls(owl, true)
+  delete NPC(NPC reference(23, 1))
+  
+  start flapping owl overlay(owl)
+    
+  owl picks up the party(owl)
+  set NPC direction(owl, north)
+
+  focus camera(NPC X(owl), NPC Y(owl), 10)
+  wait for camera
+
+  variable(guide)
+  guide := make owl guide(owl)
+
+  move owl to(guide, owl, 46, 32, 2*18)
+  move owl to(guide, owl, 75, 22, 2*18)
+  move owl to(guide, owl, 106, 32, 2*18)
+  move owl to(guide, owl, 138, 46, 2*18)
+
+  free slice(guide)
+  
+  owl drops party(owl)
+  resume caterpillar
+  walk hero(me, left, 1)
+  walk NPC to X(owl, 138)
+  walk NPC to Y(owl, 47)
+  wait for NPC(owl)
+  delete NPC(owl)
+  recreate owls
+  
+  resume player
+end
+
+script, rock owl flight east to west, begin
+  suspend player
+  suspend caterpillar
+  
+  variable(owl)
+  owl := NPC reference(23, 1)
+  set NPC obstructs(owl, false)
+  set NPC ignores walls(owl, true)
+  delete NPC(NPC reference(23, 0))
+  
+  start flapping owl overlay(owl, true)
+    
+  owl picks up the party(owl)
+  set NPC direction(owl, south)
+
+  focus camera(NPC X(owl), NPC Y(owl), 10)
+  wait for camera
+
+  variable(guide)
+  guide := make owl guide(owl)
+
+  move owl to(guide, owl, 106, 32, 2*18)
+  move owl to(guide, owl, 75, 22, 2*18)
+  move owl to(guide, owl, 46, 32, 2*18)
+  move owl to(guide, owl, 9, 50, 2*18)
+
+  free slice(guide)
+  
+  owl drops party(owl)
+  resume caterpillar
+  walk hero(me, left, 1)
+  walk NPC to X(owl, 5)
+  walk NPC to Y(owl, 53)
+  wait for NPC(owl)
+  delete NPC(owl)
+  recreate owls
+  
+  resume player
+end
+
+script, start flapping owl overlay, owl, flip=false, begin
+  variable(owl sl, wing sl)
+  owl sl := lookup slice(sl:walkabout sprite component, get NPC slice(owl))
+  wing sl := load attack sprite(84)
+  set slice lookup(wing sl, sli:wings) 
+  set parent(wing sl, owl sl)
+  center slice(wing sl)
+  horiz flip sprite(wing sl, flip)
+end
+
+
 

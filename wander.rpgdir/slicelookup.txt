@@ -3,3 +3,4 @@ suitmark
 cardnum
 tinysuit
 walkabout extra
+wings
