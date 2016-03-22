@@ -5087,6 +5087,7 @@ plotscript, rock owl flight, begin
     wait for text box
     exit script
   )
+  delete item(item:trollegg, 1)
   if(hero X(me) < map width / 2) then(
     rock owl flight west to east
   )else(
@@ -5114,29 +5115,52 @@ end
 
 script, attach hero sprite to owl, owl, who, begin
   variable(owl sl, hero sl, sl)
-  owl sl := lookup slice(sl:walkabout sprite component, get NPC slice(owl))
+  owl sl := get owl sl(owl)
   hero sl := lookup slice(sl:walkabout sprite component, get hero slice(who))
   set sprite visible(hero sl, false)
   sl := clone sprite(hero sl)
   set slice lookup(sl, sli:walkabout extra)
   set sprite frame(sl, hero direction(who) * 2)
   set parent(sl, owl sl)
-  set slice y(sl, (who + 1) * 20)
+  set slice y(sl, (who + 1) * 16)
 end
 
-script, move owl to, guide, owl, tile x, tile y, ticks, begin
+script, move owl to, guide, owl, tile x, tile y, ticks, flap, begin
   move slice to(guide, tile x*20, tile y*20, ticks)
   while(slice is moving(guide)) do(
     put npc(owl, slice x(guide), slice y(guide))
     update troll mountain parallax
+    if(flap) then(
+      flap owl wings(owl)
+    )else(
+      owl glide(owl)
+    )
     wait(1)
   )
+end
+
+script, get owl sl, owl, begin
+  exit returning(lookup slice(sl:walkabout sprite component, get NPC slice(owl)))
+end
+
+script, flap owl wings, owl, begin
+  variable(owl sl, wings sl)
+  owl sl := get owl sl(owl)
+  wings sl := lookup slice(sli:wings, owl sl)
+  loop frame(wings sl, 0, 2)
+end
+
+script, owl glide, owl, begin
+  variable(owl sl, wings sl)
+  owl sl := get owl sl(owl)
+  wings sl := lookup slice(sli:wings, owl sl)
+  set sprite frame(wings sl, 0)
 end
 
 script, owl drops party, owl, begin
   focus camera(NPC X(owl), NPC Y(owl) + 4, 6)
   variable(who, owl sl, hero sl, sl)
-  owl sl := lookup slice(sl:walkabout sprite component, get NPC slice(owl))
+  owl sl := get owl sl(owl)
   for(who, 0, 3) do(
     sl := lookup slice(sli:walkabout extra, owl sl)
     if(not(sl)) then(break)
@@ -5187,7 +5211,7 @@ script, rock owl flight west to east, begin
   set NPC ignores walls(owl, true)
   delete NPC(NPC reference(23, 1))
   
-  start flapping owl overlay(owl)
+  make flapping owl overlay(owl)
     
   owl picks up the party(owl)
   set NPC direction(owl, north)
@@ -5198,10 +5222,10 @@ script, rock owl flight west to east, begin
   variable(guide)
   guide := make owl guide(owl)
 
-  move owl to(guide, owl, 46, 32, 2*18)
-  move owl to(guide, owl, 75, 22, 2*18)
-  move owl to(guide, owl, 106, 32, 2*18)
-  move owl to(guide, owl, 138, 46, 2*18)
+  move owl to(guide, owl, 46, 32, 2*18, true)
+  move owl to(guide, owl, 75, 22, 2*18, true)
+  move owl to(guide, owl, 106, 32, 2*18, false)
+  move owl to(guide, owl, 138, 46, 2*18, false)
 
   free slice(guide)
   
@@ -5227,7 +5251,7 @@ script, rock owl flight east to west, begin
   set NPC ignores walls(owl, true)
   delete NPC(NPC reference(23, 0))
   
-  start flapping owl overlay(owl, true)
+  make flapping owl overlay(owl, true)
     
   owl picks up the party(owl)
   set NPC direction(owl, south)
@@ -5238,10 +5262,10 @@ script, rock owl flight east to west, begin
   variable(guide)
   guide := make owl guide(owl)
 
-  move owl to(guide, owl, 106, 32, 2*18)
-  move owl to(guide, owl, 75, 22, 2*18)
-  move owl to(guide, owl, 46, 32, 2*18)
-  move owl to(guide, owl, 9, 50, 2*18)
+  move owl to(guide, owl, 106, 32, 2*18, true)
+  move owl to(guide, owl, 75, 22, 2*18, true)
+  move owl to(guide, owl, 46, 32, 2*18, false)
+  move owl to(guide, owl, 9, 50, 2*18, false)
 
   free slice(guide)
   
@@ -5257,9 +5281,9 @@ script, rock owl flight east to west, begin
   resume player
 end
 
-script, start flapping owl overlay, owl, flip=false, begin
+script, make flapping owl overlay, owl, flip=false, begin
   variable(owl sl, wing sl)
-  owl sl := lookup slice(sl:walkabout sprite component, get NPC slice(owl))
+  owl sl := get owl sl(owl)
   wing sl := load attack sprite(84)
   set slice lookup(wing sl, sli:wings) 
   set parent(wing sl, owl sl)
@@ -5267,5 +5291,14 @@ script, start flapping owl overlay, owl, flip=false, begin
   horiz flip sprite(wing sl, flip)
 end
 
+#---------------------------------------------------------------------------
 
+script, loop frame, sl, first, last, begin
+  variable(fr)
+  fr := get sprite frame(sl)
+  fr += 1
+  if(fr < first) then(fr := first)
+  if(fr > last) then(fr := first)
+  set sprite frame(sl, fr)
+end
 
