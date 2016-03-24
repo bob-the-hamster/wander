@@ -1314,26 +1314,32 @@ end
 #---------------------------------------------------------------------------
 
 plotscript,Myrmidon Suit,begin
+  suspend player
   increment(myrmidon text)
   if (myrmidon text>>2)
      then (myrmidon text:=0)
   show text box (225+myrmidon text)
   wait for text box
-  if (check tag(tag:Dismount Myrmidon))
-     then (dismount vehicle)
-  set tag(tag:Dismount Myrmidon,OFF)
+  variable(m)
+  m := open menu(menu:Myrmidon Suit)
+  wait for menu(m)
+  resume player
+end
+
+plotscript, do myrmidon dismount, begin
+  wait(1)
+  dismount vehicle
 end
 
 #---------------------------------------------------------------------------
 
 plotscript,Mount Myrmidon,begin
   myrmidon text := 0
-  if (check tag(tag:used myrmidon suit)==OFF)
-  then,begin
+  if (check tag(tag:used myrmidon suit)==OFF) then(
     show text box(249)
     wait for text box
     set tag(tag:used myrmidon suit,ON)
-  end
+  )
   alter NPC (4,NPCstat:picture,36)
 end
 
