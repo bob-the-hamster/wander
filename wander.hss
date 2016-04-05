@@ -1131,17 +1131,20 @@ end
 
 #---------------------------------------------------------------------------
 
-plotscript,Ixnekolan Inn,begin
+plotscript, Ixnekolan Inn,begin
+  if(check tag(tag:Rathmara in party)) then(
+    Ixnekolan Inn with Cats
+    exit script
+  )
   variable (i)
   suspend player
   walk hero to X (me,32)
   wait for hero (me)
   show text box (217)
   suspend caterpillar
-  for (i,0,3)
-  do,begin
+  for (i,0,3) do(
     set hero direction (i,west)
-    end 
+  )
   resume caterpillar
   wait for text box
   wait (8)
@@ -1165,10 +1168,58 @@ plotscript,Ixnekolan Inn,begin
   walk hero (3,west,1)
   wait for hero (me)
 
-  for (i,0,3)
-  do,begin
+  for (i,0,3) do(
     set hero direction (i,east)
-    end
+  )
+
+  play song (song:Sleeping Music)
+  tweak palette(-40, -40, -10)
+  fade screen in
+  key wait seconds (11)
+  reset palette
+  fade screen in
+  play song (song:Ruin Exploration)
+  wait (5)
+
+  resume caterpillar
+  resume player
+end
+
+plotscript, Ixnekolan Inn With Cats, begin
+  suspend player
+  walk hero to X (me,32)
+  wait for hero (me)
+  show text box (643)
+  suspend caterpillar
+  variable(who)
+  for (who,0,3) do(
+    set hero direction (who,west)
+  )
+  resume caterpillar
+  wait for text box
+  wait (8)
+  walk hero to Y(me, 6)
+  wait for hero(me)
+  walk hero to X(me, 35)
+  wait for hero(me)
+
+  suspend caterpillar
+  walk hero (0,north,1)
+  walk hero (0,east,1)
+  walk hero (1,north,1)
+  walk hero (2,south,1)  
+  walk hero (2,east,1)  
+  walk hero (3,south,2)
+  wait for hero (3)
+  set hero direction(0, south)
+  set hero direction(1, south)
+  set hero direction(2, south)
+  walk hero(3, east, 2)
+  wait for hero(3)
+  walk hero(3, north, 1)
+  walk hero(3, east, 1)
+  wait for hero(3)
+  set hero direction(3, south)
 
   play song (song:Sleeping Music)
   tweak palette(-40, -40, -10)
