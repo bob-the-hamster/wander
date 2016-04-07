@@ -4150,6 +4150,12 @@ plotscript, on load, begin
       set hero name($0="Misa Duhamstre", misa)
     )
   )
+  
+  # A quick fix for save-games that have never run the script that
+  # triggers the owl to appear on Troll Mountain
+  if(check tag(tag:saw broaste ghost)) then(
+    set tag(tag:saw broaste castle, ON)
+  )
 end
 
 #---------------------------------------------------------------------------
