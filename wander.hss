@@ -50,6 +50,10 @@ global variable(15,ship effect)
 global variable(16,need air)
 global variable(17,friar harvey ID)
 global variable(18,friar cart ID)
+global variable(19,skill point level display)
+global variable(20,skill point bean count)
+global variable(21,skill point cur)
+global variable(22,skill point max)
 
 # Used by TMC's parallax voodoo
 global variable(50, camera slice)
@@ -72,6 +76,7 @@ define constant(1, str:golf score)
 define constant(2, str:breath caption)
 define constant(3, str:breath)
 define constant(10, str:temp)
+define constant(11, str:intobox)
 
 #---------------------------------------------------------------------------
 
@@ -5364,4 +5369,82 @@ script, loop frame, sl, first, last, begin
   if(fr > last) then(fr := first)
   set sprite frame(sl, fr)
 end
+
+#---------------------------------------------------------------------------
+
+plotscript, skill point bean 1, begin
+  skill point bean(0, item:BlueBean)
+end
+
+plotscript, skill point bean 2, begin
+  skill point bean(1, item:RedBean)
+end
+
+plotscript, skill point bean 3, begin
+  skill point bean(2, item:TealBean)
+end
+
+plotscript, skill point bean 4, begin
+  skill point bean(3, item:TanBean)
+end
+
+plotscript, skill point bean 5, begin
+  skill point bean(4, item:PinkBean)
+end
+
+plotscript, skill point bean 6, begin
+  skill point bean(5, item:PuceBean)
+end
+
+plotscript, skill point bean 7, begin
+  skill point bean(6, item:GrayBean)
+end
+
+plotscript, skill point bean 8, begin
+  skill point bean(7, item:GoldBean)
+end
+
+script, skill point bean, lev, item, begin
+  # Set globals for display in text boxes
+  skill point level display := lev + 1
+  get item name(str:intobox, item)
+  # Check if Bob is really in the active party
+  variable(who)
+  who := find hero(hero:Bob the Hamster)
+  if (who == -1 || who > 3) then(
+    # Bob is not in the active party
+    show text box(657)
+    exit script
+  )
+  # Check to see if Bob can use this Skill Point level at all yet
+  variable(max)
+  max := get level mp(who, lev, maximum stat)
+  if(max <= 0) then(
+    show text box(677)
+    exit script
+  )
+  while(true) do(
+    # Loop while we want to keep eating beans
+    variable(cur)
+    cur := get level mp(who, lev, current stat)
+    if(cur >= max) then(
+      # This level of skill points is already full
+      show text box(658)
+      exit script
+    )
+    # Remove the item, and restore the skill point
+    delete item(item)
+    set level mp(who, lev, cur + 1)
+    show text box(659)
+    wait for text box
+    # Set globals for display in the next text box
+    skill point bean count := inventory(item)
+    skill point cur := get level mp(who, lev, current stat)
+    skill point max := max
+    show text box(668)
+    wait for text box
+    if(check tag(tag:eat another bean) == OFF) then(exit script)
+  )
+end
+
 
