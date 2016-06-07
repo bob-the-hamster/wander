@@ -3237,7 +3237,9 @@ plotscript, whack the golf ball, arg=0, ref=0, begin
   end
   
   moved := move golf ball(ref, d, force)
-
+  focus camera(hero X(0), hero Y(0), 10)
+  wait for camera
+  camera follows hero(0)
 
   if(force>>0 && not(moved)) then, begin
     # No movement!
@@ -3280,7 +3282,7 @@ script, move golf ball, ref, d, force, begin
     if(d==-1) then(exit returning(true))
     if(hit golf ball too hard && force>>2) then(force:=2)
     walk NPC(ref, d, 1)
-    wait for NPC(ref)
+    wait for golf ball(ref)
     
     #Bounce agains normal obstruction walls
     if(NPC x(ref)==x && NPC y(ref)==y) then, begin
@@ -3299,6 +3301,30 @@ script, move golf ball, ref, d, force, begin
   if(check golf ball bounces(ref, d, force) == -1)
     then(exit returning(true))
   exit returning(moved)
+end
+
+script, wait for golf ball, ref, begin
+  while(NPC is walking(ref)) do(
+    update golf camera(ref)
+    wait(1)
+  )
+end
+
+script, update golf camera, ref, begin
+  variable(ax, ay, bx, by, cx, cy, w, h)
+  ax := hero pixel x(0)
+  ay := hero pixel y(0)
+  bx := NPC pixel x(ref)
+  by := NPC pixel y(ref)
+  w := slice width(sprite layer) / 2 -- 10
+  h := slice height(sprite layer) / 2 -- 10
+  cx := (ax + bx) / 2
+  cy := (ay + by) / 2
+  while(bx <= cx -- w) do(cx -= 1)
+  while(bx >= cx + w) do(cx += 1)
+  while(by <= cy -- h) do(cy -= 1)
+  while(by >= cy + h) do(cy += 1)
+  put camera(cx -- w, cy -- h)
 end
 
 script, check golf ball bounces, ref, d, force, begin
