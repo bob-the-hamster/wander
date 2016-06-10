@@ -4211,8 +4211,8 @@ script, jorm belly onload, begin
         set hero direction(i, south)
       )
     )
+    reset golf game
   )
-  reset golf game
 end
 
 #---------------------------------------------------------------------------
