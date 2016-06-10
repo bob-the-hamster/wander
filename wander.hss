@@ -3097,11 +3097,16 @@ end
 #---------------------------------------------------------------------------
 
 plotscript, golf game start tile, arg, ref, begin
-  set tag(tag:can open a golf door, ON)
   destroy NPC(ref)
-  golf round := 0
-  golf hits := 0
-  golf total := 0
+  reset golf game
+end
+
+script, reset golf game, begin
+ hit golf ball too hard := false
+ golf round := 0
+ golf hits := 0
+ golf total := 0
+ set tag(tag:can open a golf door, ON)
 end
 
 plotscript, open a golf door, arg, ref, begin
@@ -3560,7 +3565,7 @@ plotscript, snake backtrack, begin
   wait(1)
   
   write map block(25, 52, 0, 2)
-  walk NPC (duck, right, 1)
+  walk NPC (duck, left, 1)
   set NPC direction(duck, south)
   
   write map block(92, 19, 10, 2)
@@ -3607,6 +3612,9 @@ plotscript, snake backtrack, begin
   set NPC position(cell, 25, 51)
   wait(1)
   write map block(93, 17, 0, 2) 
+
+  reset golf game
+  reset map state
 
   resume hero walls
   resume NPC walls
@@ -4171,6 +4179,10 @@ plotscript, on load, begin
     set tag(tag:battle wait, true)
   )
   update battle pause on menus
+  
+  if(current map == map:jormungandling's belly) then(
+    jorm belly on load
+  )
 
   # Rename James to Misa in old save slots
   variable(misa)
@@ -4187,6 +4199,20 @@ plotscript, on load, begin
   if(check tag(tag:saw broaste ghost)) then(
     set tag(tag:saw broaste castle, ON)
   )
+end
+
+script, jorm belly onload, begin
+  variable(i)
+  if(read zone(2, hero X(0), hero Y(0))) then(
+    # Currently standing on the golf course
+    for(i, 0, 3) do(
+      if(hero by rank(i) >= 0) then(
+        set hero position(i, 47, 22 -- i)
+        set hero direction(i, south)
+      )
+    )
+  )
+  reset golf game
 end
 
 #---------------------------------------------------------------------------
