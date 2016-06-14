@@ -3141,58 +3141,66 @@ script, show final golf score, begin
        reward box := 439 # golf club
        break
      )
-     if(golf total <= 10) then(
-       # 8 holes-in-one, one birdie
+     if(golf total <= 14) then(
+       # at least 4 holes-in-one
        $str:golf score="fantastic!"
        reward box := 440 # fruit basket
        break
      )
-     if(golf total <= 11) then(
+     if(golf total <= 16) then(
+       # at least 2 holes-in-one
        $str:golf score="excellent!"
        reward box := 441 # $500
        break
      )
-     if(golf total <= 13) then(
+     if(golf total <= 18) then(
+       # maybe all birdies
        $str:golf score="great!"
        reward box := 442 # mage jar
        break
      )
-     if(golf total <= 15) then(
+     if(golf total <= 22) then(
        $str:golf score="above par"
        reward box := 443 # socks
        break
      )
-     if(golf total <= 16) then(
+     if(golf total <= 27) then(
+       # average 3 hits per hole
        $str:golf score="par for the course"
        reward box := 444 # $10
        break
      )
-     if(golf total <= 18) then(
+     if(golf total <= 30) then(
        $str:golf score="little below par"
        break
      )
-     if(golf total <= 22) then(
+     if(golf total <= 33) then(
        $str:golf score="not too good"
        break
      )
-     if(golf total <= 26) then(
+     if(golf total <= 36) then(
+       # average 4 hits per hole
        $str:golf score="needs work"
        break
      )
-     if(golf total <= 30) then(
+     if(golf total <= 45) then(
+       # average 5 hits per hole
        $str:golf score="poor"
        break
      )
-     if(golf total >= 80) then(
+     if(golf total >= 63) then(
+       # average 7 hits per hole
        $str:golf score="astonishingly bad"
        reward box := 445 # chai tea
        break
      )
-     if(golf total <= 150) then(
+     if(golf total <= 117) then(
+       # average 13 hits per hole
        $str:golf score="INSANELY bad"
        reward box := 446 # fight snake spleen again
        break
      )
+     # between 46 and 62
      $str:golf score="terrible"
      break
    )
