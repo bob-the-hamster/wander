@@ -70,6 +70,7 @@ define constant(1, golf score timer)
 define constant(2, jorm viking ship timer)
 define constant(3, air timer)
 define constant(4, troll mountain parallax timer)
+define constant(5, splash animation timer)
 
 define constant(0, str:golf swing)
 define constant(1, str:golf score)
@@ -3713,6 +3714,7 @@ script, ship in jorm belly, begin
   set slice y(sl, 23 * 20)
   ship effect := sl
   set timer(jorm viking ship timer, 0, 1, @ship in jorm belly moves left)
+  viking ship splash animation
 end
 
 script, ship in jorm belly moves, x dir, next script, begin
@@ -3742,18 +3744,34 @@ script, cleanup jorm belly ship, begin
     ship effect := 0
   )
   stop timer(jorm viking ship timer)
+  stop timer(splash animation timer)
+end
+
+script, viking ship splash animation, begin
+  if(ship effect && slice is valid(ship effect)) then(
+    variable(splash)
+    splash := lookup slice(sli:splash effect, ship effect)
+    if(not(splash)) then(
+      splash := load large enemy sprite(26)
+      set parent(splash, ship effect)
+      set slice lookup(splash, sli:splash effect)
+      set slice y(splash, 5)
+    )
+    loop frame set(splash, 26, 27)
+    set timer(splash animation timer, 0, 3, @viking ship splash animation)
+  )
 end
 
 #---------------------------------------------------------------------------
 
 plotscript, admire viking wreck, begin
   suspend player
-  pan camera(north, 2, 2)
+  pan camera(west, 5, 4)
   wait(8)
   show text box(459)
   wait for text box
   wait for camera
-  pan camera(south, 2, 5)
+  pan camera(east, 5, 5)
   wait for camera
   camera follows hero
   resume player
@@ -5428,6 +5446,15 @@ script, loop frame, sl, first, last, begin
   if(fr < first) then(fr := first)
   if(fr > last) then(fr := first)
   set sprite frame(sl, fr)
+end
+
+script, loop frame set, sl, first, last, begin
+  variable(fr)
+  fr := get sprite set number(sl)
+  fr += 1
+  if(fr < first) then(fr := first)
+  if(fr > last) then(fr := first)
+  set sprite set number(sl, fr)
 end
 
 #---------------------------------------------------------------------------
