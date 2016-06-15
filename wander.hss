@@ -3565,7 +3565,7 @@ plotscript, snake backtrack, begin
   walk hero(me, north, 2)
   wait for hero(me)
   
-  write map block(25, 52, 34, 2)
+  write map block(25, 52, 34, 3)
   walk hero(me, south, 1)
   walk NPC(cell, south, 1)
   wait for hero(me)
@@ -3573,12 +3573,12 @@ plotscript, snake backtrack, begin
   fade screen out
   wait(1)
   
-  write map block(25, 52, 0, 2)
+  write map block(25, 52, 0, 3)
   walk NPC (duck, left, 1)
   set NPC direction(duck, south)
   
-  write map block(92, 19, 10, 2)
-  write map block(92, 20, 1, 2)
+  write map block(92, 19, 10, 3)
+  write map block(92, 20, 1, 3)
   set hero position(me, 92, 20)
   set NPC position(cell, 92, 20)
   
@@ -3602,8 +3602,8 @@ plotscript, snake backtrack, begin
   wait for hero(me)
   wait for NPC(cell)
 
-  write map block(92, 19, 0, 2)
-  write map block(92, 20, 0, 2)
+  write map block(92, 19, 0, 3)
+  write map block(92, 20, 0, 3)
 
   walk hero (me, right, 2)
   walk NPC (cell, right, 1)
@@ -3615,12 +3615,12 @@ plotscript, snake backtrack, begin
   wait(1)  
   
   wait for NPC(cell)
-  write map block(93, 17, 160, 2) 
+  write map block(93, 17, 160, 3) 
   walk NPC(cell, south, 1)
   wait for NPC(cell)
   set NPC position(cell, 25, 51)
   wait(1)
-  write map block(93, 17, 0, 2) 
+  write map block(93, 17, 0, 3) 
 
   reset golf game
   reset map state
