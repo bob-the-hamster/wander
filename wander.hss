@@ -3717,7 +3717,7 @@ script, ship in jorm belly, begin
   viking ship splash animation
 end
 
-script, ship in jorm belly moves, x dir, next script, begin
+script, ship in jorm belly moves, x dest, next script, begin
   variable(sl)
   if(current map <> map:Jormungandling's Belly) then(
     cleanup jorm belly ship
@@ -3725,17 +3725,17 @@ script, ship in jorm belly moves, x dir, next script, begin
   )
   if(ship effect) then(
     sl := ship effect
-    set slice velocity x(sl, x dir)
-    set timer(jorm viking ship timer, 10, 1, next script)
+    move slice to(sl, x dest, slice y(sl), 10)
+    set timer(jorm viking ship timer, 0, 10, next script)
   )
 end
 
 script, ship in jorm belly moves left, begin
-  ship in jorm belly moves(-1, @ship in jorm belly moves right)
+  ship in jorm belly moves(310, @ship in jorm belly moves right)
 end
 
 script, ship in jorm belly moves right, begin
-  ship in jorm belly moves(1, @ship in jorm belly moves left)
+  ship in jorm belly moves(320, @ship in jorm belly moves left)
 end
 
 script, cleanup jorm belly ship, begin
