@@ -31,15 +31,13 @@ include, scancode.hsi  #keyboard constants
 #---------------------------------------------------------------------------
 
 global variable(1,shell game variable)
-global variable(
- 2,ship X
- 3,ship Y
- 4,baloon X
- 5,baloon Y
- 6,myrmidon X
- 7,myrmidon Y
- 8,myrmidon text
-)
+global variable(2,ship X)
+global variable(3,ship Y)
+global variable(4,baloon X)
+global variable(5,baloon Y)
+global variable(6,myrmidon X)
+global variable(7,myrmidon Y)
+global variable(8,myrmidon text)
 global variable(9,under bridge)
 global variable(10,Misa Saying)
 global variable(11,hit golf ball too hard)
@@ -3624,6 +3622,90 @@ plotscript, snake backtrack, begin
 
   reset golf game
   reset map state
+  other cell := NPC at spot(94, 18)
+  set NPC position(other cell, 94, 23)
+
+  resume hero walls
+  resume NPC walls
+  resume obstruction
+  
+  resume player
+  resume NPCs
+  resume random enemies
+  set tag(tag:used snake backtrack, true)
+end
+
+plotscript, snake backbacktrack, begin
+  suspend player
+  suspend NPCs
+  suspend random enemies
+  
+  variable(duck, cell)
+  
+  duck := NPC reference(27) #technically a pidgeon! ;)
+  cell := NPC reference(28)
+  
+  if(hero X(me) == NPC X(duck)) then(
+    walk hero(me, west, 1)
+    wait for hero(me)
+  )
+  
+  walk NPC(duck, north, 1)
+  wait for NPC(duck)
+  set NPC direction(duck, left)
+  suspend hero walls
+  suspend NPC walls
+  suspend obstruction
+  walk hero to X(me, 99)
+  wait for hero(me)
+  walk hero to Y(me, 22)
+  wait for hero(me)
+  walk hero(me, east, 2)
+  wait for hero(me)
+  
+  # Sink under the snake juice
+  write map block(101, 22, 10, 3)
+  walk hero(me, south, 1)
+  walk NPC(cell, south, 1)
+  wait for hero(me)
+  wait for NPC(me)
+  fade screen out
+  wait(1)
+  
+  write map block(101, 22, 0, 3)
+  walk NPC (duck, south, 1)
+  set NPC direction(duck, west)
+  
+  write map block(19, 51, 34, 3)
+  set hero position(me, 19, 51)
+  set NPC position(cell, 19, 51)
+  
+  wait(8)
+  fade screen in
+  
+  walk hero (me, north, 1)
+  walk NPC (cell, north, 1)
+  wait for hero(me)
+  wait for NPC(cell)
+
+  write map block(19, 51, 0, 3)
+
+  walk hero (me, south, 1)
+  wait for hero(me)
+  
+  walk hero (me, west, 1)
+  set hero direction(me, east)
+  wait for hero(me)
+
+  write map block(19, 51, 34, 3) 
+  walk NPC(cell, south, 1)
+  wait for NPC(cell)
+  set NPC position(cell, 101, 22)
+  wait(1)
+  write map block(19, 51, 0, 3) 
+
+  reset golf game
+  reset map state
 
   resume hero walls
   resume NPC walls
@@ -3669,6 +3751,7 @@ plotscript, quack inn, begin
   
   resume obstruction
   resume player
+  
 end
 
 #---------------------------------------------------------------------------
