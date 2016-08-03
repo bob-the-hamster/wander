@@ -3650,6 +3650,7 @@ plotscript, snake backbacktrack, begin
     wait for hero(me)
   )
   
+  set NPC speed(duck, 4)
   walk NPC(duck, north, 1)
   wait for NPC(duck)
   set NPC direction(duck, left)
