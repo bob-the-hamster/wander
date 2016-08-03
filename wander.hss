@@ -5135,6 +5135,10 @@ plotscript,Monastery Inn,begin
     set hero direction(who, west)
   )
   resume caterpillar
+  
+  focus camera(hero X(me), hero Y(me), 4)
+  wait for camera
+  camera follows hero(me)
 
   resume player
   resume NPCs
