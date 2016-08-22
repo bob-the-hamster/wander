@@ -4432,19 +4432,30 @@ end
 #---------------------------------------------------------------------------
 
 script, gather party to leader, begin
-  variable(i)
+  variable(i, speed)
   suspend player
   suspend hero walls
   suspend obstruction
+  suspend caterpillar
+  speed := get hero speed(0)
   while(not(party is gathered)) do(
     for(i, 1, 3) do(
-      walk hero towards hero(i, i -- 1)
+      if(hero by rank(i) >= 0) then(
+        set hero speed(i, 10)
+        walk hero towards hero(i, i -- 1)
+      )
     )
     wait for heroes
+    for(i, 1, 3) do(
+      if(hero by rank(i) >= 0) then(
+        set hero speed(i, speed)
+      )
+    )
   )
   resume player
   resume hero walls
   resume obstruction
+  resume caterpillar
 end
 
 script, party is gathered, begin
@@ -4464,7 +4475,9 @@ end
 script, wait for heroes, begin
   variable(i)
   for(i, 0, 3) do(
-    wait for hero(i)
+    if(hero by rank(i) >= 0) then(
+      wait for hero(i)
+    )
   )
 end
 
