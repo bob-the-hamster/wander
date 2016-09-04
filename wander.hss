@@ -4402,7 +4402,7 @@ end
 script, start air timer, begin
   variable(flags)
   flags := timer flag:battle, or, timer flag:critical
-  set timer(air timer, 60, 18, str:breath, flags)
+  set timer(air timer, 60, 18, @air timer depleted, str:breath, flags)
   $str:breath caption="Breath:"
   show string at(str:breath caption, 0, 190)
   show string at(str:breath, 56, 190)
@@ -4412,6 +4412,9 @@ script, cancel air timer, begin
   hide string(str:breath caption)
   hide string(str:breath)
   stop timer(air timer)
+end
+
+script, air timer depleted, begin
 end
 
 #---------------------------------------------------------------------------
