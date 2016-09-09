@@ -52,6 +52,7 @@ global variable(19,skill point level display)
 global variable(20,skill point bean count)
 global variable(21,skill point cur)
 global variable(22,skill point max)
+global variable(23,breath memory)
 
 # Used by TMC's parallax voodoo
 global variable(50, camera slice)
@@ -4293,6 +4294,10 @@ plotscript, on load, begin
   if(current map == map:jormungandling's belly) then(
     jorm belly on load
   )
+  
+  if(current map == map:Kelp Reef || current map == map:Mersheep Village Interior) then(
+    kelp reef on load
+  )
 
   # Rename James to Misa in old save slots
   variable(misa)
@@ -4365,7 +4370,24 @@ end
 
 #---------------------------------------------------------------------------
 
+script, kelp reef on load, begin
+  variable(x, y)
+  x := hero x(me)
+  y := hero y(me)
+  if(not(read zone(1, x, y))) then(
+    # water
+    start air timer(10)
+    set tag(tag: need air timer, OFF)
+    set tag(tag:holding breath, ON)
+    set tag(tag:need air, ON)
+    update hero sprites
+  )
+end
+
 plotscript, kelp reef each step, begin
+  if(check tag(tag:using sheep inn)) then(
+    exit script
+  )
   variable(x, y)
   x := hero x(me)
   y := hero y(me)
@@ -4393,18 +4415,19 @@ end
 
 script, holding breath, begin
   if(check tag(tag:need air timer)) then(
-    start air timer
+    start air timer(10)
     set tag(tag: need air timer, OFF)
   )
   set tag(tag:holding breath, ON)
   set tag(tag:need air, ON)
   update hero sprites
+  breath memory := read timer(air timer)
 end
 
-script, start air timer, begin
+script, start air timer, secs, begin
   variable(flags)
   flags := timer flag:battle, or, timer flag:critical
-  set timer(air timer, 60, 18, @air timer depleted, str:breath, flags)
+  set timer(air timer, secs, 18, @air timer depleted, str:breath, flags)
   $str:breath caption="Breath:"
   show string at(str:breath caption, 0, 190)
   show string at(str:breath, 56, 190)
@@ -4417,6 +4440,79 @@ script, cancel air timer, begin
 end
 
 script, air timer depleted, begin
+  if(current map <> map:Kelp reef && current map <> map:Mersheep Village Interior) then(
+    # Wrong map, just quit
+    cancel air timer
+    exit script
+  )
+  while(current text box >= 0) do(advance text box)
+  flash screen(4)
+  wait(1)
+  fade screen out(20, 20, 63)
+  wait(1)
+  teleport to map(map:Kelp Reef, 20, 27)
+  cancel air timer
+  fade screen in
+  wait(1)
+end
+
+script, flash screen, flash color, begin
+  variable(sl)
+  sl := create rect(0, 0, -1)
+  fill parent(sl, true)
+  set rect border(sl, border:none)
+  set rect bg col(sl, flash color)
+  wait(1)
+  free slice(sl)
+end
+
+plotscript, sheep inn script, begin
+  cancel air timer
+  set tag(tag:using sheep inn, ON)
+  walk hero to X(me, 13)
+  wait for hero(me)
+  walk hero to Y(me, 25)
+
+  suspend caterpillar
+  walk hero to Y(me, 24)
+  if(hero by rank(1) >= 0) then(
+    walk hero to X(1, 15)
+    walk hero to Y(1, 25)
+  )
+  if(hero by rank(2) >= 0) then(
+    walk hero to X(2, 16)
+    walk hero to Y(2, 27)
+  )
+  if(hero by rank(3) >= 0) then(
+    walk hero to X(3, 14)
+    walk hero to Y(3, 28)
+  )
+  wait for hero(0)
+  set hero direction(0, south)
+  wait for hero(1)
+  set hero direction(1, west)
+  wait for hero(2)
+  wait for hero(3)
+
+  set tag(tag:holding breath, OFF)
+  update hero sprites
+
+  play song (song:Sleeping Music)
+  tweak palette(-40, -40, -10)
+  fade screen in
+  key wait seconds (11)
+  reset palette
+  fade screen in
+  play song (song:Currents Over Kelp Reef)
+  wait (5)
+  
+  resume caterpillar
+  walk hero(me, south, 2)
+  wait for hero(me)
+  set tag(tag:using sheep inn, OFF)
+  set tag(tag:need air timer, ON)
+  walk hero(me, south, 1)
+  wait for hero(me)
 end
 
 #---------------------------------------------------------------------------
