@@ -4381,7 +4381,9 @@ end
 script, inside a bubble, begin
   cancel air timer
   if(check tag(tag:need air)) then(
-    gather party to leader
+    if(not(hero will move)) then(
+      gather party to leader
+    )
     set tag(tag:need air, OFF)
   )
   set tag(tag:holding breath, OFF)
@@ -4444,7 +4446,7 @@ script, gather party to leader, begin
   while(not(party is gathered)) do(
     for(i, 1, 3) do(
       if(hero by rank(i) >= 0) then(
-        set hero speed(i, 10)
+        set hero speed(i, 5)
         walk hero towards hero(i, i -- 1)
       )
     )
