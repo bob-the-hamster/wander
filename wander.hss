@@ -53,6 +53,7 @@ global variable(20,skill point bean count)
 global variable(21,skill point cur)
 global variable(22,skill point max)
 global variable(23,breath memory)
+global variable(24, breath bonus)
 
 # Used by TMC's parallax voodoo
 global variable(50, camera slice)
@@ -4408,14 +4409,11 @@ script, inside a bubble, begin
     )
     set tag(tag:need air, OFF)
   )
-  set tag(tag:holding breath, OFF)
-  set tag(tag:need air timer, ON)
-  update hero sprites
 end
 
 script, holding breath, begin
   if(check tag(tag:need air timer)) then(
-    start air timer(10)
+    start air timer(10 + breath bonus)
     set tag(tag: need air timer, OFF)
   )
   set tag(tag:holding breath, ON)
@@ -4437,6 +4435,9 @@ script, cancel air timer, begin
   hide string(str:breath caption)
   hide string(str:breath)
   stop timer(air timer)
+  set tag(tag:holding breath, OFF)
+  set tag(tag:need air timer, ON)
+  update hero sprites
 end
 
 script, air timer depleted, begin
@@ -4445,15 +4446,44 @@ script, air timer depleted, begin
     cancel air timer
     exit script
   )
+  suspend player
   while(current text box >= 0) do(advance text box)
   flash screen(4)
   wait(1)
   fade screen out(20, 20, 63)
   wait(1)
+  wait for hero(me)
   teleport to map(map:Kelp Reef, 20, 27)
   cancel air timer
-  fade screen in
   wait(1)
+  fade screen in
+  resume player
+  if(not(check tag(tag:first breath bonus))) then(
+    variable(n)
+    n := NPC reference(3)
+    walk NPC to Y(n, 29)
+    wait for NPC(n)
+    walk NPC to X(n, 20)
+    wait for NPC(n)
+    walk NPC to Y(n, 28)
+    wait for NPC(n)
+    first breath bonus
+    walk NPC(n, south, 1)
+    wait for NPC(n)
+    set NPC direction(n, right)
+  )
+ 
+end
+
+plotscript, first breath bonus, begin
+  suspend player
+  show text box(689)
+  wait for text box
+  breath bonus += 5
+  show text box(690)
+  wait for text box
+  resume player
+  set tag(tag:first breath bonus, ON)
 end
 
 script, flash screen, flash color, begin
