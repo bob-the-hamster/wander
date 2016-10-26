@@ -4479,11 +4479,31 @@ plotscript, first breath bonus, begin
   suspend player
   show text box(689)
   wait for text box
-  breath bonus += 5
+  apply breath bonus(5)
   show text box(690)
   wait for text box
   resume player
   set tag(tag:first breath bonus, ON)
+end
+
+plotscript, jelly breath bonus, begin
+  suspend player
+  show text box(692)
+  wait for text box
+  show text box(693)
+  wait for text box
+  apply breath bonus(5)
+  delete item(item:PnkJelly)
+  resume player
+end
+
+script, apply breath bonus, amount, begin
+  breath bonus += amount
+  variable(secs)
+  secs := read timer(air timer)
+  if(secs > 0) then(
+    start air timer(secs + amount)
+  )
 end
 
 script, flash screen, flash color, begin
@@ -4543,6 +4563,15 @@ plotscript, sheep inn script, begin
   set tag(tag:need air timer, ON)
   walk hero(me, south, 1)
   wait for hero(me)
+end
+
+plotscript, pink jelly 1, begin
+  pink jelly battle
+  set tag(tag:pink jelly 1, ON)
+end
+
+script, pink jelly battle, begin
+  fight formation(131)
 end
 
 #---------------------------------------------------------------------------
