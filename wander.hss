@@ -4452,6 +4452,14 @@ script, air timer depleted, begin
   wait(1)
   fade screen out(20, 20, 63)
   wait(1)
+  fade screen out(0, 0, 30)
+  wait(1)
+  fade screen out(15, 15, 15)
+  wait(1)
+  fade screen out(0, 0, 50)
+  wait(1)
+  fade screen out(0, 0, 0)
+  wait(1)
   wait for hero(me)
   teleport to map(map:Kelp Reef, 20, 27)
   cancel air timer
@@ -4504,6 +4512,26 @@ script, apply breath bonus, amount, begin
   if(secs > 0) then(
     start air timer(secs + amount)
   )
+  animate breath bonus
+end
+
+script, animate breath bonus, begin
+  play sound(sfx:bub multi)
+  variable(sl)
+  sl := load attack sprite(90)
+  variable(walk)
+  walk := lookup slice(sl:walkabout sprite component, get hero slice(0))
+  set parent(sl, walk)
+  center slice(sl)
+  variable(set, fr)
+  for(set, 0, 4) do(
+    set sprite set number(sl, 90 + set)
+    for(fr, 0, 2) do(
+      set sprite frame(sl, fr)
+      wait(1)
+    )
+  )
+  free slice(sl)
 end
 
 script, flash screen, flash color, begin
@@ -4568,6 +4596,31 @@ end
 plotscript, pink jelly 1, begin
   pink jelly battle
   set tag(tag:pink jelly 1, ON)
+end
+
+plotscript, pink jelly 2, begin
+  pink jelly battle
+  set tag(tag:pink jelly 2, ON)
+end
+
+plotscript, pink jelly 3, begin
+  pink jelly battle
+  set tag(tag:pink jelly 3, ON)
+end
+
+plotscript, pink jelly 4, begin
+  pink jelly battle
+  set tag(tag:pink jelly 4, ON)
+end
+
+plotscript, pink jelly 5, begin
+  pink jelly battle
+  set tag(tag:pink jelly 5, ON)
+end
+
+plotscript, pink jelly 6, begin
+  pink jelly battle
+  set tag(tag:pink jelly 6, ON)
 end
 
 script, pink jelly battle, begin
