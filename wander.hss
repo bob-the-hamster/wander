@@ -4377,7 +4377,7 @@ script, kelp reef on load, begin
   y := hero y(me)
   if(not(read zone(1, x, y))) then(
     # water
-    start air timer(10)
+    start air timer(large(5, breath memory))
     set tag(tag: need air timer, OFF)
     set tag(tag:holding breath, ON)
     set tag(tag:need air, ON)
@@ -4419,7 +4419,9 @@ script, holding breath, begin
   set tag(tag:holding breath, ON)
   set tag(tag:need air, ON)
   update hero sprites
-  breath memory := read timer(air timer)
+  if(read timer(air timer) > 0) then(
+    breath memory := read timer(air timer)
+  )
 end
 
 script, start air timer, secs, begin
@@ -4429,6 +4431,7 @@ script, start air timer, secs, begin
   $str:breath caption="Breath:"
   show string at(str:breath caption, 0, 190)
   show string at(str:breath, 56, 190)
+  breath memory := secs
 end
 
 script, cancel air timer, begin
@@ -4502,6 +4505,14 @@ plotscript, jelly breath bonus, begin
   wait for text box
   apply breath bonus(5)
   delete item(item:PnkJelly)
+  while(inventory(item:PnkJelly)) do(
+    show text box(694)
+    wait for text box
+    show text box(693)
+    wait for text box
+    apply breath bonus(5)
+    delete item(item:PnkJelly)
+  )
   resume player
 end
 
@@ -4594,37 +4605,33 @@ plotscript, sheep inn script, begin
 end
 
 plotscript, pink jelly 1, begin
-  pink jelly battle
-  set tag(tag:pink jelly 1, ON)
+  pink jelly battle(tag:pink jelly 1)
 end
 
 plotscript, pink jelly 2, begin
-  pink jelly battle
-  set tag(tag:pink jelly 2, ON)
+  pink jelly battle(tag:pink jelly 2)
 end
 
 plotscript, pink jelly 3, begin
-  pink jelly battle
-  set tag(tag:pink jelly 3, ON)
+  pink jelly battle(tag:pink jelly 3)
 end
 
 plotscript, pink jelly 4, begin
-  pink jelly battle
-  set tag(tag:pink jelly 4, ON)
+  pink jelly battle(tag:pink jelly 4)
 end
 
 plotscript, pink jelly 5, begin
-  pink jelly battle
-  set tag(tag:pink jelly 5, ON)
+  pink jelly battle(tag:pink jelly 5)
 end
 
 plotscript, pink jelly 6, begin
-  pink jelly battle
-  set tag(tag:pink jelly 6, ON)
+  pink jelly battle(tag:pink jelly 6)
 end
 
-script, pink jelly battle, begin
-  fight formation(131)
+script, pink jelly battle, tag, begin
+  if(fight formation(131)) then(
+    set tag(tag, ON)
+  )
 end
 
 #---------------------------------------------------------------------------
@@ -5848,4 +5855,15 @@ script, skill point bean, lev, item, begin
   )
 end
 
+#---------------------------------------------------------------------------
+
+script, large, n1, n2, begin
+  if(n1 > n2) then(exit returning(n1)) else(exit returning(n2))
+end
+
+script, small, n1, n2, begin
+  if(n1 < n2) then(exit returning(n1)) else(exit returning(n2))
+end
+
+#---------------------------------------------------------------------------
 
