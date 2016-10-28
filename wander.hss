@@ -4530,9 +4530,7 @@ script, animate breath bonus, begin
   play sound(sfx:bub multi)
   variable(sl)
   sl := load attack sprite(90)
-  variable(walk)
-  walk := lookup slice(sl:walkabout sprite component, get hero slice(0))
-  set parent(sl, walk)
+  parent slice to hero(sl, 0)
   center slice(sl)
   variable(set, fr)
   for(set, 0, 4) do(
@@ -4632,6 +4630,32 @@ script, pink jelly battle, tag, begin
   if(fight formation(131)) then(
     set tag(tag, ON)
   )
+end
+
+plotscript, goblins shark approach, begin
+  suspend player
+  variable(n)
+  n := create NPC(11, 12, 41, right)
+  variable(spr)
+  spr := load small enemy sprite(43)
+  parent slice to npc(spr, n)
+  center slice(spr)
+  set NPC ignores walls(n, true)
+  set NPC obstructs(n, false)
+  walk npc(n, right, 8)
+  variable(tog)
+  while(npc is walking(n)) do(
+    tog := tog ,xor, 1
+    set sprite set number(spr, 43+tog)
+    wait(2)
+  )
+  if(fight formation(134)) then(
+    set tag(tag:beat goblin shark, ON)
+    set tag(tag:pink jelly cluster, ON)
+  )
+  free slice(spr)
+  delete npc(n)
+  resume player
 end
 
 #---------------------------------------------------------------------------
