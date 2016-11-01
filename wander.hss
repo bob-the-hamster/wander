@@ -4530,7 +4530,7 @@ script, animate breath bonus, begin
   play sound(sfx:bub multi)
   variable(sl)
   sl := load attack sprite(90)
-  parent slice to hero(sl, 0)
+  reparent to hero(sl, 0)
   center slice(sl)
   variable(set, fr)
   for(set, 0, 4) do(
@@ -4638,7 +4638,7 @@ plotscript, goblins shark approach, begin
   n := create NPC(11, 12, 41, right)
   variable(spr)
   spr := load small enemy sprite(43)
-  parent slice to npc(spr, n)
+  reparent to npc(spr, n)
   center slice(spr)
   set NPC ignores walls(n, true)
   set NPC obstructs(n, false)
