@@ -1,0 +1,15 @@
+* Add a few treasure chests in the snake
+
+=Sounds=
+** Every dang attack (don't have to be unique!)
+** Plip squee
+** Friar Cart Wheels
+** Rock Owl hoot and wings
+** Tetra knight grow arms
+* Make Mersheep village
+
+=LATER=
+* Bringing a card table to Palskovitch should unlock a blackjack game
+** Maybe the ELF card could be part of a fetch quest for the card table?
+* Dying in a Plip Tamer battle should not be a game-over
+* Item-collection mini-game similar to "Small Medals"
