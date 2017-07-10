@@ -784,7 +784,7 @@ end
 
 plotscript, Sleep at the Inn, begin
  suspend player
- focus camera (hero x(me),+,1,hero y(me) -- 2,2)
+ focus camera (hero x(me) + 1, hero y(me) -- 2,2)
  walk hero (me,east,2)
  wait for hero (me)
  walk hero (me,north,2)
@@ -4784,11 +4784,6 @@ script, trying to move direction, begin
   if (key is pressed(key:up)) then (return (up))
 end
 
-# Return true if "suspend player" is active
-script, player is suspended, begin
-  return ((read general(44), and, 2) <> 0)
-end
-
 # This will return true if hero 0 will start a new step
 # this tick because of player input. There are no commands
 # that can tell you that directly: you have to figure it out
@@ -5780,6 +5775,63 @@ script, make flapping owl overlay, owl, flip=false, begin
   set parent(wing sl, owl sl)
   center slice(wing sl)
   horiz flip sprite(wing sl, flip)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, fight louis and brickson, begin
+  if(fight formation(135)) then(
+    cancel air timer
+    suspend caterpillar
+    suspend player
+    # Put Louis on the anchor chain 
+    set npc position(14, 57, 19)
+    # Make Brickson sideways
+    alter npc(15, NPCStat:picture, 84)
+    set npc ignores walls(15, true)
+    # Make Bob and Gisli back up to the air bubble
+    walk hero to x(0, 51)
+    set hero direction(0, right)
+    walk hero to x(1, 50)
+    set hero direction(1, right)
+    # Make Brickson slide backwards
+    walk npc(15, right, 1)
+    set npc direction(15, left)
+    wait for npc(15)
+    # Then brickson falls
+    set npc speed(15, 1)
+    walk npc(15, down, 40)
+    # Let hero movement finish if it has not already
+    wait for hero(1)
+    # make Brickson spin a little
+    brickson spin(4)
+    # Mr Louis reacts
+    set npc direction(14, south)
+    show text box(711)
+    brickson spin(4)
+    wait for text box
+    show text box(712)
+    resume caterpillar
+    brickson spin(4)
+    wait for text box
+    # Mr Louis runs away
+    walk npc to y(14, 0)
+    brickson spin(20)
+    # Done
+    resume player
+    resume caterpillar
+    set tag(tag:Beat Brickson, ON)
+  )
+end
+
+script, brickson spin, n=1, begin
+  variable(i)
+  for(i, 1, n) do(
+    wait(3)
+    variable(d)
+    d := (npc direction(15) + 1) ,mod, 4
+    set npc direction(15, d)
+  )
 end
 
 #---------------------------------------------------------------------------
