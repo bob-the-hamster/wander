@@ -4653,8 +4653,15 @@ plotscript, goblins shark approach, begin
     set tag(tag:beat goblin shark, ON)
     set tag(tag:pink jelly cluster, ON)
   )
-  free slice(spr)
+  if(slice is valid(spr)) then(
+    free slice(spr)
+  )
   delete npc(n)
+  if(hero x(me) == 20 && hero y(me) == 27) then(
+    # This only happens if the timer runs out in the middle of the goblin shark battle
+    show text box(714)
+    wait for text box
+  )
   resume player
 end
 
