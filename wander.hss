@@ -5845,6 +5845,47 @@ script, brickson spin, n=1, begin
   )
 end
 
+plotscript, climb out of mersheep village, begin
+  suspend player
+  cancel air timer
+  set hero speed(me, 5)
+  suspend hero walls
+  walk hero to x(me, 57)
+  walk hero to y(me, 20)
+  wait for hero(me)
+  pan camera(up, 4, 2)
+  walk hero(me, north, 8)
+  wait for hero(me)
+  fade screen out
+  wait(1)
+  set hero speed(me, 4)
+  camera follows hero(me)
+  resume hero walls
+  resume player
+  cancel air timer
+  board the unfortunate turtle from mersheep village
+end
+
+script, board the unfortunate turtle from mersheep village, begin
+  teleport to map(map:deck of the unfortunate turtle, 30, 34)
+  suspend player
+  wait(1)
+  fade screen in
+  suspend hero walls
+  set hero speed(me, 10)
+  walk hero(me, north, 1)
+  walk hero(me, west, 1)
+  wait for hero(me)
+  walk hero(me, south, 1)
+  walk hero(me, west, 1)
+  wait for hero(me)
+  set hero speed(me, 4)
+  walk hero(me, west, 1)
+  wait for hero(me)
+  resume hero walls
+  resume player
+end
+
 #---------------------------------------------------------------------------
 
 script, loop frame, sl, first, last, begin
