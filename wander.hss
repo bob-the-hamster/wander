@@ -5885,8 +5885,54 @@ script, board the unfortunate turtle from mersheep village, begin
   set hero speed(me, 4)
   walk hero(me, west, 1)
   wait for hero(me)
+  if(check tag(tag:boarded pirate ship) == OFF) then(
+    first boarding of the unfortunate turtle
+  )
   resume hero walls
   resume player
+end
+
+script, first boarding of the unfortunate turtle, begin
+  walk hero(me, left, 2)
+  set tag(tag:boarded pirate ship, ON)
+  pan camera(left, 3, 4)
+  wait for camera
+  variable(louis)
+  louis := npc reference(0)
+  set npc direction(louis, right)
+  wait(2)
+  show text box(717)
+  set npc speed(louis, 10)
+  walk npc(louis, up, 1)
+  set npc direction(louis, right)
+  wait for npc(louis)
+  walk npc(louis, down, 1)
+  set npc direction(louis, right)
+  wait for npc(louis)
+  wait for text box
+  pan camera(up, 6, 2)
+  pathfind npc to(louis, 18, 20)
+  wait(10)
+  set hero direction(0, up)
+  wait(1)
+  set hero direction(1, up)
+  show text box(718)
+  wait(20)
+  advance text box
+  variable(pirate1, pirate2, pirate3)
+  pirate1 := npc reference(1,0)
+  pirate2 := npc reference(1,1)
+  pirate3 := npc reference(1,2)
+  pathfind npc to(pirate1, 24, 33)
+  pathfind npc to(pirate2, 25, 32)
+  pathfind npc to(pirate3, 26, 32)
+  wait(20)
+  pan camera(down, 3, 2)
+  wait for npc(pirate1)
+  wait for npc(pirate2)
+  wait for npc(pirate3)
+  fight formation(136)
+  camera follows hero(me)
 end
 
 #---------------------------------------------------------------------------
