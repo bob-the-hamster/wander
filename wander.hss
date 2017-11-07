@@ -5933,6 +5933,21 @@ script, first boarding of the unfortunate turtle, begin
   wait for npc(pirate3)
   fight formation(136)
   camera follows hero(me)
+  npc dissolve(pirate1)
+  wait(1)
+  npc dissolve(pirate2)
+  wait(1)
+  npc dissolve(pirate3)
+  wait for npc dissolve(pirate1)
+  destroy npc(pirate1)
+  wait for npc dissolve(pirate2)
+  destroy npc(pirate2)
+  wait for npc dissolve(pirate3)
+  destroy npc(pirate3)
+  show text box(722)
+  set hero direction(0, right)
+  set hero direction(1, left)
+  wait for text box
 end
 
 #---------------------------------------------------------------------------
@@ -5953,6 +5968,20 @@ script, loop frame set, sl, first, last, begin
   if(fr < first) then(fr := first)
   if(fr > last) then(fr := first)
   set sprite set number(sl, fr)
+end
+
+script, npc dissolve, npc, begin
+  variable(sl, pic)
+  sl := get npc slice(npc)
+  pic := lookup slice(sl:walkabout sprite component, sl)
+  dissolve sprite(pic, dissolve:flicker, 18)
+end
+
+script, wait for npc dissolve, npc, begin
+  variable(sl, pic)
+  sl := get npc slice(npc)
+  pic := lookup slice(sl:walkabout sprite component, sl)
+  wait for dissolve(pic)
 end
 
 #---------------------------------------------------------------------------
