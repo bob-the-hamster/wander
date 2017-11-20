@@ -5932,7 +5932,7 @@ script, first boarding of the unfortunate turtle, begin
   wait for npc(pirate2)
   wait for npc(pirate3)
   fight formation(136)
-  camera follows hero(me)
+  focus camera(hero x(me), hero y(me), 4)
   npc dissolve(pirate1)
   wait(1)
   npc dissolve(pirate2)
@@ -5948,6 +5948,28 @@ script, first boarding of the unfortunate turtle, begin
   set hero direction(0, right)
   set hero direction(1, left)
   wait for text box
+  camera follows hero(me)
+  set tag(tag: beat 3 pirate battle, ON)
+end
+
+plotscript, bearbeak and tuxbeard come out, begin
+  suspend player
+  set tag(tag: bearbeak appears, ON)
+  variable(tuxbeard, bearbeak)
+  tuxbeard := NPC reference(2)
+  bearbeak := NPC reference(3)
+  set npc position(tuxbeard, 22, 25)
+  set npc position(bearbeak, 22, 25)
+  walk npc(tuxbeard, south, 1)
+  wait for npc(tuxbeard)
+
+  set npc obstructs(tuxbeard, false)
+  pathfind npc to(tuxbeard, 22, 29)
+  pathfind npc to(bearbeak, 21, 29)
+  wait for npc(bearbeak)
+  set npc obstructs(tuxbeard, true)
+
+  resume player
 end
 
 #---------------------------------------------------------------------------
