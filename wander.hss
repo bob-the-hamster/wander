@@ -5969,7 +5969,40 @@ plotscript, bearbeak and tuxbeard come out, begin
   wait for npc(bearbeak)
   set npc obstructs(tuxbeard, true)
 
+  while(not(tuxbeard and bearbeak block the way)) do(
+    wait for npc(tuxbeard)
+  )
   resume player
+end
+
+plotscript, unfortunate turtle each step, begin
+  if(check tag(tag:bearbeak appears) == ON && check tag(tag:beat bearbeak) == OFF) then(
+    tuxbeard and bearbeak block the way
+  )
+end
+
+script, tuxbeard and bearbeak block the way, begin
+  variable(tuxbeard, bearbeak, x, x1, x2)
+  tuxbeard := NPC reference(2)
+  bearbeak := NPC reference(3)
+  set npc speed(tuxbeard, 5)
+  set npc speed(bearbeak, 5)
+  x := hero x(me)
+  x1 := npc x(bearbeak)
+  x2 := npc x(tuxbeard)
+  if(x < x1) then(
+    walk npc(bearbeak, west, 1)
+    set npc direction(bearbeak, south)
+    walk npc(tuxbeard, west, 1)
+    set npc direction(tuxbeard, south)
+  )else if(x > x2) then(
+    walk npc(tuxbeard, east, 1)
+    set npc direction(tuxbeard, south)
+    walk npc(bearbeak, east, 1)
+    set npc direction(bearbeak, south)
+  )
+  # Return true if they are close enough to be blocking
+  exit returning(x > x1 -- 1 && x < x2 + 1)
 end
 
 #---------------------------------------------------------------------------
