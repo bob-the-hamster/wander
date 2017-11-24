@@ -6005,6 +6005,21 @@ script, tuxbeard and bearbeak block the way, begin
   exit returning(x > x1 -- 1 && x < x2 + 1)
 end
 
+plotscript, tuxbeard and bearbeak battle, begin
+  suspend player
+  variable(tuxbeard, bearbeak)
+  tuxbeard := NPC reference(2)
+  bearbeak := NPC reference(3)
+  show text box(724) # Bob
+  wait for text box
+
+  show text box(725) # Tuxbeard
+  jiggle npc(tuxbeard, 3)
+  wait for text box
+
+  resume player
+end
+
 #---------------------------------------------------------------------------
 
 script, loop frame, sl, first, last, begin
@@ -6037,6 +6052,23 @@ script, wait for npc dissolve, npc, begin
   sl := get npc slice(npc)
   pic := lookup slice(sl:walkabout sprite component, sl)
   wait for dissolve(pic)
+end
+
+
+script, jiggle npc, npc, count=1, begin
+  variable(i, x, y)
+  x := npc pixel x(npc)
+  y := npc pixel y(npc)
+  for(i, 1, count) do(
+    put npc(npc, x, y -- 2)
+    wait(1)
+    put npc(npc, x, y -- 4)
+    wait(1)
+    put npc(npc, x, y -- 2)
+    wait(1)
+    put npc(npc, x, y -- 0)
+    wait(1)
+  )
 end
 
 #---------------------------------------------------------------------------
