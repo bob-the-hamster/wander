@@ -84,3 +84,9 @@ Jabbercat (John Sebastian Willow)
 Jeremy Jacobs
 Mike Caron
 Shael Riley
+
+SOUND EFFECTS CREDITS
+
+sfxr/bfxr
+Foxley
+James Paige

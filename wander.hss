@@ -6016,8 +6016,33 @@ plotscript, tuxbeard and bearbeak battle, begin
   show text box(725) # Tuxbeard
   jiggle npc(tuxbeard, 3)
   wait for text box
+  set npc direction(tuxbeard, west)
+  show text box(726)
+  jiggle npc(tuxbeard, 3)
+  wait for text box
+  
+  show text box(727) # Bearbeak
+  jiggle npc(bearbeak, 3)
+  wait for text box
+
+  set npc direction(tuxbeard, south)
+  show text box(728)
+  jiggle npc(tuxbeard, 3)
+  wait for text box
+  
+  if(fight formation(137)) then(
+    set tag(tag:beat bearbeak, ON)
+  )
 
   resume player
+end
+
+plotscript, ship 2 sashimi, begin
+  get item(item:sashimi, 2)
+end
+
+plotscript, ship 2 life, begin
+  get item(item:life, 2)
 end
 
 #---------------------------------------------------------------------------
