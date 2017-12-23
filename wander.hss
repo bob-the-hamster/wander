@@ -4047,6 +4047,9 @@ plotscript, viking behind uvula, begin
   set hero position(rank in caterpillar(hero:Gisli), NPC X(ref), NPC Y(ref))
   set hero direction(rank in caterpillar(hero:Gisli), NPC direction(ref))
   set tag(tag:Gisli joined, ON) # makes the NPC vanish
+  # Put Gisli's helmet on
+  force equip(find hero(hero:Gisli), slot:head, item:viking)
+  set tag(tag:Gisli got helmet, true)
 
   variable(i)
   for(i, 0, 3) do(
@@ -4315,6 +4318,18 @@ plotscript, on load, begin
   # triggers the owl to appear on Troll Mountain
   if(check tag(tag:saw broaste ghost)) then(
     set tag(tag:saw broaste castle, ON)
+  )
+  
+  # Give Gisli his helmet in old saves
+  if(check tag(tag:Gisli joined) == true && check tag(tag:Gisli got helmet) == false) then(
+    get item(item:viking, 1)
+    set tag(tag:Gisli got helmet, true)
+    variable(gisli slot)
+    gisli slot := find hero(hero:Gisli)
+    if(check equipment(gisli slot, slot:head) == -1) then(
+      # No helmet equipped, go ahead and put it on
+      force equip(gisli slot, slot:head, item:viking)
+    )
   )
 end
 
