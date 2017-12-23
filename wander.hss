@@ -6060,6 +6060,51 @@ plotscript, ship 2 life, begin
   get item(item:life, 2)
 end
 
+plotscript, confront icefeather, begin
+  suspend player
+  variable(louis, icefeather)
+  louis := npc reference(7)
+  icefeather := npc reference(6)
+
+  focus camera(9, 10, 5)
+  pathfind npc to(louis, 10, 11)
+  wait for npc(louis)
+  set npc direction(louis, down)
+
+  show text box(742)
+  wait for text box
+  wait(3)
+  show text box(743)
+  jiggle npc(icefeather, 2)
+  set npc direction(louis, right)
+  wait(1)
+  set npc direction(louis, up)
+  wait for text box
+  walk hero(me, down, 1)
+  wait(3)
+  show text box(744)
+  set npc direction(louis, left)
+  jiggle npc(louis)
+  wait for text box
+  wait(3)
+  show text box(745)
+  wait(3)
+  set npc ignores walls(icefeather, true)
+  set npc speed(icefeather, 10)
+  walk npc(icefeather, up, 1)
+  wait for npc(icefeather)
+  jiggle npc(icefeather, 5)
+  wait for text box
+  
+  walk hero to y(me, 9)
+  focus camera(17, 9, 5)
+  wait for hero(me)
+  wait for camera
+  camera follows hero(me)
+
+  resume player
+end
+
 #---------------------------------------------------------------------------
 
 script, loop frame, sl, first, last, begin
