@@ -6062,6 +6062,11 @@ end
 
 plotscript, confront icefeather, begin
   suspend player
+
+  variable(bob, gisli)
+  bob := rank in caterpillar(hero:Bob the Hamster)
+  gisli := rank in caterpillar(hero:Gisli)
+
   variable(louis, icefeather)
   louis := npc reference(7)
   icefeather := npc reference(6)
@@ -6104,8 +6109,136 @@ plotscript, confront icefeather, begin
 
   fight formation(143)
   set tag(tag:Beat Icefeather, true)
+  wait(1)
+  
+  icefeather := npc reference(9)
+  show text box(746)
+  jiggle npc(2)
+  set hero direction(0, left)
+  set hero direction(1, left)
+  wait for text box
+  wait(3)
+  
+  suspend box advance
+  show text box(747)
+  jiggle hero(gisli, 1)
+  wait(15)
+  advance text box
+  show text box(748) # Not now, Gisli!
+  jiggle hero(bob, 1)
+  resume box advance
+  wait for text box
+  show text box(749)
+  wait for text box
+  wait(3)
+  show text box(750)
+  wait for text box
+  wait(3)
+  show text box(751)
+  wait for text box
+  wait(3)
+  show text box(752)
+  jiggle npc(2)
+  wait for text box
+  show text box(753)
+  wait for text box
+  
+  pathfind npc to(icefeather, 10, 5)
+  wait(12)
+  set hero direction(0, up)
+  set hero direction(1, up)
+  wait for npc(icefeather)
+  destroy npc(icefeather)
+  walk hero to y(me, 5)
+  wait for hero(me)
+  # goes through door to ship deck
+  wait(1)
+  icefeather := npc reference(12)
+  walk npc to y(icefeather, 30)
+  wait(5)
+  walk hero to y(me, 29)
+  wait for hero(me)
+  suspend caterpillar
+  walk hero(1, down, 1)
+  walk hero(1, left, 1)
+  wait for hero(1)
+  resume caterpillar
+  wait(3)
+  show text box(754) # Look Lively, Lads!
+  wait for text box
+
+  subscript, revive pirate, id, x, y, d, begin
+    variable(p)
+    p := create npc(id, x, y)
+    set npc direction(p, d)
+    npc dissolve(p, dissolve:random scatter, true)
+    set npc direction(create npc(17, x, y), up)
+    wait(1)
+    advance revive effects
+  end
+
+  revive pirate(13, 22, 26, down)  # Mr Louis
+  revive pirate(13, 18, 29, right) # Peg
+  revive pirate(13, 18, 30, right) # Hook
+  revive pirate(13, 18, 31, right) # Patch
+  revive pirate(14, 28, 32, down)  # Brickson
+  revive pirate(15, 26, 29, left)  # Tuxbeard
+  revive pirate(16, 27, 29, left)  # Bearbeak
+  while(npc copy count(17)) do(
+    advance revive effects
+    wait(1)
+  )
+  
+  wait for npc dissolve(16)
+  
+  show text box(756) # Yikes!
+  wait for text box
+  show text box(757) # Witchcraft!
+  jiggle hero(gisli, 5)
+  wait for text box
+  
+  wait(3)
+  set npc direction(icefeather, right)
+  wait(1)
+  set npc direction(icefeather, up)
+  
+  show text box(758)
+  wait for text box
+  show text box(759)
+  wait for text box
+
+  # Re-order Bob and Gisli to remove empty slots
+  swap by position(0, find hero(hero by rank(0)))  
+  swap by position(1, find hero(hero by rank(1)))  
+  # Add Icefeather
+  suspend caterpillar
+  add hero(hero:Icefeather)
+  set tag(tag:Icefeather joined, true)
+  icefeather := rank in caterpillar(hero:Icefeather)
+  set hero position(icefeather, 22, 30)
+  wait(1)
+  resume caterpillar
+  wait(3)  
+  # Bob: "What!?"
+  show text box(760)
+  wait for text box
+  
 
   resume player
+end
+
+script, advance revive effects, begin
+  variable(i, n, d)
+  for(i, npc copy count(17) -- 1, 0, -1) do(
+    n := npc reference(17, i)
+    d := npc direction(n)
+    d += 1
+    if(d > 3) then(
+      destroy npc(n)
+    )else(
+      set npc direction(n, d)
+    )
+  )
 end
 
 #---------------------------------------------------------------------------
@@ -6128,11 +6261,11 @@ script, loop frame set, sl, first, last, begin
   set sprite set number(sl, fr)
 end
 
-script, npc dissolve, npc, begin
+script, npc dissolve, npc, which=dissolve:flicker, backwards=false, begin
   variable(sl, pic)
   sl := get npc slice(npc)
   pic := lookup slice(sl:walkabout sprite component, sl)
-  dissolve sprite(pic, dissolve:flicker, 18)
+  dissolve sprite(pic, dissolve:flicker, 18, 0, backwards)
 end
 
 script, wait for npc dissolve, npc, begin
@@ -6155,6 +6288,22 @@ script, jiggle npc, npc, count=1, begin
     put npc(npc, x, y -- 2)
     wait(1)
     put npc(npc, x, y -- 0)
+    wait(1)
+  )
+end
+
+script, jiggle hero, rank, count=1, begin
+  variable(i, x, y)
+  x := hero pixel x(rank)
+  y := hero pixel y(rank)
+  for(i, 1, count) do(
+    put hero(rank, x, y -- 2)
+    wait(1)
+    put hero(rank, x, y -- 4)
+    wait(1)
+    put hero(rank, x, y -- 2)
+    wait(1)
+    put hero(rank, x, y -- 0)
     wait(1)
   )
 end
