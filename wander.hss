@@ -6102,6 +6102,9 @@ plotscript, confront icefeather, begin
   wait for camera
   camera follows hero(me)
 
+  fight formation(143)
+  set tag(tag:Beat Icefeather, true)
+
   resume player
 end
 
