@@ -6169,7 +6169,8 @@ plotscript, confront icefeather, begin
 
   subscript, revive pirate, id, x, y, d, begin
     variable(p)
-    p := create npc(id, x, y)
+    p := npc reference(id)
+    set npc position(p, x, y)
     set npc direction(p, d)
     npc dissolve(p, dissolve:random scatter, true)
     set npc direction(create npc(17, x, y), up)
@@ -6177,10 +6178,11 @@ plotscript, confront icefeather, begin
     advance revive effects
   end
 
+  set tag(tag:Pirates Revived, true)
   revive pirate(13, 22, 26, down)  # Mr Louis
-  revive pirate(13, 18, 29, right) # Peg
-  revive pirate(13, 18, 30, right) # Hook
-  revive pirate(13, 18, 31, right) # Patch
+  revive pirate(18, 18, 29, right) # Peg
+  revive pirate(19, 18, 30, right) # Hook
+  revive pirate(20, 18, 31, right) # Patch
   revive pirate(14, 28, 32, down)  # Brickson
   revive pirate(15, 26, 29, left)  # Tuxbeard
   revive pirate(16, 27, 29, left)  # Bearbeak
@@ -6222,6 +6224,8 @@ plotscript, confront icefeather, begin
   # Bob: "What!?"
   show text box(760)
   wait for text box
+  
+  pathfind npc to(13, 22, 24) # Mr Louis
   
 
   resume player
