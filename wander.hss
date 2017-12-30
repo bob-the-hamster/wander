@@ -6212,6 +6212,8 @@ plotscript, confront icefeather, begin
   # Re-order Bob and Gisli to remove empty slots
   swap by position(0, find hero(hero by rank(0)))  
   swap by position(1, find hero(hero by rank(1)))  
+  bob := rank in caterpillar(hero:Bob the Hamster)
+  gisli := rank in caterpillar(hero:Gisli)
   # Add Icefeather
   suspend caterpillar
   add hero(hero:Icefeather)
@@ -6225,8 +6227,60 @@ plotscript, confront icefeather, begin
   show text box(760)
   wait for text box
   
-  pathfind npc to(13, 22, 24) # Mr Louis
+  pathfind npc to(13, 24, 23) # Mr Louis moves to the helm
   
+  wait(3)
+  set hero direction(icefeather, up)
+  show text box(761) # What are your names?
+  jiggle hero(icefeather, 1)
+  wait for text box
+
+  wait(3)
+  show text box(762) # Bob
+  wait for text box
+
+  wait(3)
+  set hero direction(gisli, down)
+  show text box(763) # Gisli
+  jiggle hero(gisli, 1)
+  wait for text box
+
+  wait(3)
+  show text box(764) # Welcome aboard!
+  jiggle hero(icefeather, 1)
+  wait for text box
+
+  wait(3)
+  show text box(765) # Mersheep?
+  wait for text box
+
+  suspend box advance
+  show text box(766) # Gisli: Plunder!
+  jiggle hero(gisli, 1)
+  wait(15)
+  advance text box
+  show text box(748) # Not now, Gisli!
+  jiggle hero(bob, 1)
+  resume box advance
+  wait for text box
+  
+  wait(3)
+  show text box(767) # No gold?
+  jiggle hero(icefeather, 1)
+  wait for text box
+
+  wait(3)
+  show text box(768) # Maybe we will think of something
+  wait for text box
+  
+  wait(3)
+  show text box(769) # Icefeather: Show you around the ship
+  jiggle hero(icefeather, 1)
+  wait for text box
+  
+  wait for npc(13)
+  set npc direction(13, down)
+  set tag(tag: Louis at the Helm, true)
 
   resume player
 end
