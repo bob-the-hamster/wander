@@ -6228,6 +6228,7 @@ plotscript, confront icefeather, begin
   wait for text box
   
   pathfind npc to(13, 24, 23) # Mr Louis moves to the helm
+  pathfind npc to(14, 28, 33) # Brickson pathfinds to anchor chain
   
   wait(3)
   set hero direction(icefeather, up)
