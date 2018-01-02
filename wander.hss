@@ -6300,6 +6300,17 @@ script, advance revive effects, begin
   )
 end
 
+plotscript, icefeather learns hooks summon, begin
+  variable(icefeather)
+  icefeather := find hero(hero:icefeather)
+  if(icefeather >= 0 && icefeather <= 3) then(
+    if(teach spell(icefeather, atk:Hooks)) then(
+      show text box(775)
+      wait for text box
+    )
+  )
+end
+
 #---------------------------------------------------------------------------
 
 script, loop frame, sl, first, last, begin
