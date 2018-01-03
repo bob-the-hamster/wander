@@ -6180,8 +6180,8 @@ plotscript, confront icefeather, begin
 
   set tag(tag:Pirates Revived, true)
   revive pirate(13, 22, 26, down)  # Mr Louis
-  revive pirate(18, 18, 29, right) # Peg
-  revive pirate(19, 18, 30, right) # Hook
+  revive pirate(18, 18, 29, right) # Hooks
+  revive pirate(19, 18, 30, right) # Pegs
   revive pirate(20, 18, 31, right) # Patch
   revive pirate(14, 28, 32, down)  # Brickson
   revive pirate(15, 26, 29, left)  # Tuxbeard
@@ -6301,11 +6301,23 @@ script, advance revive effects, begin
 end
 
 plotscript, icefeather learns hooks summon, begin
+  icefeather learns summon(atk:Hooks, 775)
+end
+
+plotscript, icefeather learns pegs summon, begin
+  icefeather learns summon(atk:Pegs, 778)
+end
+
+plotscript, icefeather learns patch summon, begin
+  icefeather learns summon(atk:Patch, 781)
+end
+
+script, icefeather learns summon, atk, textbox, begin
   variable(icefeather)
   icefeather := find hero(hero:icefeather)
   if(icefeather >= 0 && icefeather <= 3) then(
-    if(teach spell(icefeather, atk:Hooks)) then(
-      show text box(775)
+    if(teach spell(icefeather, atk)) then(
+      show text box(textbox)
       wait for text box
     )
   )
