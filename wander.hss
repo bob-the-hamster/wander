@@ -1333,17 +1333,9 @@ end
 #---------------------------------------------------------------------------
 
 plotscript,World Map Autorun,begin
- if (check tag(tag:vehicle loc flag))
- then(
-  set tag(tag:vehicle loc flag,OFF)
-  #set NPC position(2,ship X,ship Y)
-  #set NPC position(3,baloon X,baloon Y)
- )else(
-  set tag(tag:vehicle loc flag,ON)
-  ship X:=NPC X(2)
-  ship Y:=NPC Y(2)
-  baloon X:=NPC X(3)
-  baloon Y:=NPC Y(3)
+ if (check tag(tag:ship initialization)) then(
+  # Ship has been initialized, put it in the remembered place
+  create npc(2, ship X, ship Y, left)
  )
  tweak bridges
 end
@@ -6321,6 +6313,36 @@ script, icefeather learns summon, atk, textbox, begin
       wait for text box
     )
   )
+end
+
+plotscript, talk to mr louis at the helm, begin
+  show text box(770)
+  wait for text box
+  if(check tag(tag:choice to set sail)) then(
+    set tag(tag:choice to set sail, false)
+    from the deck of the ship to the world map
+  )
+end
+
+script, from the deck of the ship to the world map, begin
+  if(check tag(tag:ship initialization) == false) then(
+    initialize ship
+  )
+  fade screen out(20, 20, 63)
+  wait(1)
+  teleport to map(map:World Map, ship x, ship y)
+  variable(save pass)
+  save pass := read pass block(ship x, ship y)
+  write pass block(ship x, ship y, vehicle B)
+  use npc(2)
+  write pass block(ship x, ship y, save pass)
+  fade screen in
+end
+
+script, initialize ship, begin
+  set tag(tag:ship initialization, true)
+  ship x := 32
+  ship y := 35
 end
 
 #---------------------------------------------------------------------------
