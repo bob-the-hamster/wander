@@ -6331,11 +6331,8 @@ script, from the deck of the ship to the world map, begin
   fade screen out(20, 20, 63)
   wait(1)
   teleport to map(map:World Map, ship x, ship y)
-  variable(save pass)
-  save pass := read pass block(ship x, ship y)
-  write pass block(ship x, ship y, vehicle B)
-  use npc(2)
-  write pass block(ship x, ship y, save pass)
+  force mount vehicle(2)
+  wait(1)
   fade screen in
 end
 
@@ -6343,6 +6340,22 @@ script, initialize ship, begin
   set tag(tag:ship initialization, true)
   ship x := 32
   ship y := 35
+end
+
+plotscript, ship menu script, begin
+  dismount vehicle
+  fade screen out(20, 20, 63)
+  wait(1)
+  teleport to map(map:Deck of the Unfortunate Turtle, 25, 23)
+  suspend caterpillar
+  variable(i)
+  for(i, 0, 3) do(
+    set hero position(i, 25 + i, 23)
+    set hero direction(i, down)
+  )
+  resume caterpillar
+  wait(1)
+  fade screen in
 end
 
 #---------------------------------------------------------------------------
