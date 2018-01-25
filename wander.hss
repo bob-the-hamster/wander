@@ -54,6 +54,7 @@ global variable(21,skill point cur)
 global variable(22,skill point max)
 global variable(23,breath memory)
 global variable(24, breath bonus)
+global variable(25, ship dir)
 
 # Used by TMC's parallax voodoo
 global variable(50, camera slice)
@@ -1335,7 +1336,7 @@ end
 plotscript,World Map Autorun,begin
  if (check tag(tag:ship initialization)) then(
   # Ship has been initialized, put it in the remembered place
-  create npc(2, ship X, ship Y, left)
+  create npc(2, ship X, ship Y, ship dir)
  )
  tweak bridges
 end
@@ -1343,8 +1344,9 @@ end
 #---------------------------------------------------------------------------
 
 plotscript,Dismount Ship,begin
-  ship X:=NPC X(2)
-  ship Y:=NPC Y(2)
+  ship X := NPC X(2)
+  ship Y := NPC Y(2)
+  ship dir := NPC direction(2)
   play song(song:overworld music)
 end
 
@@ -6332,6 +6334,7 @@ script, from the deck of the ship to the world map, begin
   wait(1)
   teleport to map(map:World Map, ship x, ship y)
   force mount vehicle(2)
+  set hero direction(me, ship dir)
   wait(1)
   fade screen in
 end
@@ -6340,6 +6343,7 @@ script, initialize ship, begin
   set tag(tag:ship initialization, true)
   ship x := 32
   ship y := 35
+  ship dir := right
 end
 
 plotscript, ship menu script, begin
