@@ -4175,7 +4175,7 @@ script, jorm vomits the ship, begin
   resume map music
   
   variable(ref)
-  ref := create NPC(6, 35, 36, up)
+  ref := create NPC(6, 48, 36, up)
 
   camera follows NPC(ref)
 
@@ -6347,6 +6347,7 @@ script, initialize ship, begin
 end
 
 plotscript, ship menu script, begin
+  suspend player
   dismount vehicle
   fade screen out(20, 20, 63)
   wait(1)
@@ -6360,6 +6361,64 @@ plotscript, ship menu script, begin
   resume caterpillar
   wait(1)
   fade screen in
+  resume player
+end
+
+plotscript, kelp reef on world map, begin
+  # Go to the deck of the ship
+  ship menu script
+  # Walk over to the anchor chain
+  suspend player
+  set hero speed(me, 5)
+  walk hero(me, down)
+  wait for hero(me)
+  walk hero(me, right, 2)
+  wait for hero(me)
+  walk hero(me, down, 9)
+  wait for hero(me)
+  set hero speed(me, 4)
+  # Move Brickson out of the way
+  variable(brickson)
+  brickson := npc reference(14)
+  set npc speed(brickson, 5)
+  walk npc(brickson, up, 1)
+  wait for npc(brickson)
+  set npc direction(brickson, left)
+  resume player
+end
+
+plotscript, down the chain to kelp reef, begin
+  suspend hero walls
+  suspend player
+  # Jump down the anchor chain
+  set hero speed(me, 10)
+  walk hero(me, right, 1)
+  walk hero(me, down, 1)
+  wait for hero(me)
+  walk hero(me, down, 1)
+  wait for hero(me)
+  # Switch to the Kelp Reef map
+  teleport to map(map:kelp reef, 57, 7)
+  suspend caterpillar
+  variable(i)
+  for (i, 1, 3) do(
+    # Update the caterpillar
+    set hero position(i, hero x(i), 7 -- i)
+  )
+  resume caterpillar
+  # Slide down the chain
+  walk hero(me, south, 12)
+  wait for hero(me)
+  # Dismount the chain
+  walk hero(me, left, 2)
+  walk hero(me, down, 2)
+  wait for hero(me)
+  set hero speed(me, 5)
+  walk hero(me, left, 3)
+  wait for hero(me)
+  set hero speed(me, 4)
+  resume hero walls
+  resume player
 end
 
 #---------------------------------------------------------------------------
