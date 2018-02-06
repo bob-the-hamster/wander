@@ -122,9 +122,6 @@ plotscript, introduction, begin
  # new-game fade-in cannot be supressed, so wipe out the palette
  tweak palette(-63,-63,-63) 
 
- # go to panning cutscene map
- teleport to map (map:Panning Cutscene Map,0,0)
-
  # start the intro music
  wait(1)
  play song (song:Title Theme)
@@ -132,84 +129,89 @@ plotscript, introduction, begin
  # wait for the musical flourish
  wait(22) 
  reset palette
-
+ 
+ # Prepare the slice handle
+ variable(sl)
+ 
  # Flanat Panorama
- load tileset (9)
- put camera (0,0)
+ sl := load backdrop sprite(31)
  show text box (382)
  wait(6)
  fade screen in
- pan camera (east,7,1)
- wait for camera
+ move slice by(sl, -140, 0, 140)
+ wait for slice(sl)
  fade screen out
  advance text box
+ free slice(sl)
 
  # Bob vs Various Foes
- load tileset (10)
- put camera (0,10*20)
+ sl := load backdrop sprite(32)
  show text box (383)
  wait(6)
  fade screen in
  wait(6)
- pan camera (east,9,2)
- wait for camera
+ move slice by(sl, -180, 0, 90)
+ wait for slice(sl)
  fade screen out
  advance text box
+ free slice(sl)
 
-# # James with Bubbles
-# load tileset (11)
-# put camera (1*20,20*20)
-# show text box (384)
-# wait(6)
-# fade screen in
-# pan camera (east,7,2)
-# wait for camera
-# fade screen out
-# advance text box
+ # James with Bubbles
+ sl := load backdrop sprite(33)
+ show text box (384)
+ wait(6)
+ fade screen in
+ move slice by(sl, -140, 0, 70)
+ wait for slice(sl)
+ fade screen out
+ advance text box
+ free slice(sl)
 
  # Penguin Pirate Ship
- load tileset (12)
- put camera (0,30*20)
+ sl := load backdrop sprite(34)
  show text box (385)
  wait(6)
  fade screen in
- pan camera (east,5,1)
- wait for camera
+ move slice by(sl, -100, 0, 100)
+ wait for slice(sl)
  fade screen out
  advance text box
+ free slice(sl)
 
  # Skeppio and Rathmara
- load tileset (13)
- put camera (25*20,7*20)
+ sl := load backdrop sprite(35)
+ set slice y(sl, -140)
  show text box (386)
  wait(6)
  fade screen in
- pan camera (north,7,1)
- wait for camera
+ move slice by(sl, 0, 140, 140)
+ wait for slice(sl)
  fade screen out
  advance text box
+ free slice(sl)
 
  # Hot Air Balloon
- load tileset (14)
- put camera (25*20,17*20)
+ sl := load backdrop sprite(36)
  show text box (387)
  wait(6)
  fade screen in
- pan camera (south,15,2)
- wait for camera
+ move slice by(sl, 0, -300, 150)
+ wait for slice(sl)
  fade screen out
  advance text box
+ free slice(sl)
 
  # Ramparts
- load tileset (15)
- put camera (6*20,42*20)
+ sl := load backdrop sprite(37)
+ set slice x(sl, -120)
  show text box (388)
  wait(6)
  fade screen in
- pan camera (west,6,1)
- wait for camera
+ move slice by(sl, 120, 0, 120)
+ wait for slice(sl)
  fade screen out
  advance text box
+ free slice(sl)
 
  # wait for music
  wait(20)
