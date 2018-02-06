@@ -156,16 +156,16 @@ plotscript, introduction, begin
  advance text box
  free slice(sl)
 
- # James with Bubbles
- sl := load backdrop sprite(33)
- show text box (384)
- wait(6)
- fade screen in
- move slice by(sl, -140, 0, 70)
- wait for slice(sl)
- fade screen out
- advance text box
- free slice(sl)
+# # James with Bubbles
+# sl := load backdrop sprite(33)
+# show text box (384)
+# wait(6)
+# fade screen in
+# move slice by(sl, -140, 0, 70)
+# wait for slice(sl)
+# fade screen out
+# advance text box
+# free slice(sl)
 
  # Penguin Pirate Ship
  sl := load backdrop sprite(34)
