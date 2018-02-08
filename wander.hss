@@ -6425,6 +6425,23 @@ end
 
 #---------------------------------------------------------------------------
 
+plotscript, Bontgommeri ruins each step, begin
+  variable(x, y)
+  x := hero x(me)
+  y := hero y(me)
+  if(x == 0 || x == map width -- 1 || y == 0 || y == map height -- 1) then(
+    # If you walk to the edge of the map, go to door 10 on the world map
+    variable(dx, dy)
+    dx := get door x(10, map:World Map)
+    dy := get door y(10, map:World Map)
+    fade screen out
+    teleport to map(map:World Map, dx, dy)
+    fade screen in
+  )
+end
+
+#---------------------------------------------------------------------------
+
 script, loop frame, sl, first, last, begin
   variable(fr)
   fr := get sprite frame(sl)
