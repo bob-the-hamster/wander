@@ -72,6 +72,7 @@ define constant(2, jorm viking ship timer)
 define constant(3, air timer)
 define constant(4, troll mountain parallax timer)
 define constant(5, splash animation timer)
+define constant(6, mer sculptor timer)
 
 define constant(0, str:golf swing)
 define constant(1, str:golf score)
@@ -4411,6 +4412,7 @@ plotscript, kelp reef each step, begin
     # water
     holding breath
   )
+  mer sculptor chips 
 end
 
 script, inside a bubble, begin
@@ -4678,6 +4680,62 @@ plotscript, goblins shark approach, begin
     )
     wait for text box
   )
+  resume player
+end
+
+script, mer sculptor chips, begin
+  if(current map <> map:Kelp Reef) then(exit script)
+  variable(sculptor, chips)
+  sculptor := NPC reference(18)
+  chips := NPC reference(19)
+  if(NPC direction(sculptor) == left) then(
+    # Currently working
+    loop npc frame(chips)
+  )else(
+    # currently talking
+    if(npc direction(chips) <> up) then(
+      loop npc frame(chips)
+    )
+  )
+  set timer(mer sculptor timer, 0, 1, @mer sculptor chips)
+end
+
+plotscript, sculptor tells about mer sheep, begin
+  variable(ref)
+  suspend player
+  ref := NPC reference(18)
+  set npc direction(ref, right)
+  show text box(799)
+  wait for text box
+  set npc direction(ref, left)
+  show text box(800)
+  wait for text box
+  set npc direction(ref, right)
+  show text box(801)
+  wait for text box
+  set npc direction(ref, left)
+  resume player
+end
+
+plotscript, sculptor tells about ocean, begin
+  variable(ref)
+  suspend player
+  ref := NPC reference(18)
+  set npc direction(ref, down)
+  show text box(803)
+  wait for text box
+  set npc direction(ref, left)
+  resume player
+end
+
+plotscript, sculptor tells about coffee table, begin
+  variable(ref)
+  suspend player
+  ref := NPC reference(18)
+  set npc direction(ref, down)
+  show text box(804)
+  wait for text box
+  set npc direction(ref, left)
   resume player
 end
 
@@ -6441,6 +6499,19 @@ plotscript, Bontgommeri ruins each step, begin
 end
 
 #---------------------------------------------------------------------------
+
+script, loop npc frame, npc, begin
+  variable(d, fr, num)
+  d := NPC direction(npc)
+  fr := NPC frame(npc)
+  num := d * 2 + fr
+  num += 1
+  if(num >= 8) then(num := 0)
+  d := num / 2
+  fr := num ,mod, 2
+  set npc direction(npc, d)
+  set npc frame(npc, fr)
+end
 
 script, loop frame, sl, first, last, begin
   variable(fr)
