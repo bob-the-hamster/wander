@@ -4402,6 +4402,9 @@ plotscript, kelp reef each step, begin
   if(check tag(tag:using sheep inn)) then(
     exit script
   )
+  if(check tag(tag:fail to take table)) then(
+    exit script
+  )
   variable(x, y)
   x := hero x(me)
   y := hero y(me)
@@ -4730,13 +4733,66 @@ end
 
 plotscript, sculptor tells about coffee table, begin
   variable(ref)
+  cancel air timer
   suspend player
   ref := NPC reference(18)
   set npc direction(ref, down)
   show text box(804)
   wait for text box
   set npc direction(ref, left)
+  
+  unsuccessful attempt to get table
+
+  start air timer(breath memory)
   resume player
+end
+
+script, unsuccessful attempt to get table, begin
+  set tag(tag:fail to take table, ON)
+  # move heroes
+  suspend caterpillar
+  suspend hero walls
+  walk hero to x(me, 38)
+  walk hero to y(me, 37)
+  walk hero to x(1, 37)
+  walk hero to y(1, 37)
+  walk hero to x(2, 36)
+  walk hero to y(2, 37)
+  walk hero to x(3, 35)
+  walk hero to y(3, 37)
+  wait for hero(me)
+  set hero direction(me, down)
+  set hero direction(1, right)
+  set hero direction(2, right)
+  set hero direction(3, right)
+  
+  # try to take it
+  wait(8)
+  jiggle hero(me, 15)
+  show text box(808)
+  wait for text box
+
+  # gisli tries to chop it
+  variable(gisli)
+  gisli := rank in caterpillar(hero:Gisli)
+  if(gisli >= 0) then(
+    show text box(809)
+    walk hero to x(gisli, 37)
+    walk hero to y(gisli, 38)
+    wait for hero(gisli)
+    set hero direction(gisli, right)
+    wait for text box
+    jiggle hero(gisli, 5)
+    flash screen(4)
+    jiggle hero(gisli, 1)
+    flash screen(1)
+    show text box(810)
+    wait for text box
+  )
+
+  resume hero walls
+  resume caterpillar
+  set tag(tag:fail to take table, OFF)
 end
 
 #---------------------------------------------------------------------------
