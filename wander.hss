@@ -4742,6 +4742,7 @@ plotscript, sculptor tells about coffee table, begin
   set npc direction(ref, left)
   
   unsuccessful attempt to get table
+  set tag(tag:know about table, ON)
 
   start air timer(breath memory)
   resume player
