@@ -6538,6 +6538,31 @@ plotscript, down the chain to kelp reef, begin
   resume player
 end
 
+plotscript, take the table saw, begin
+  suspend player
+  show text box(816)
+  wait for text box
+  variable(icefeather)
+  icefeather := rank in caterpillar(hero:icefeather)
+  if(icefeather >= 0) then(
+    show text box(817)
+    wait for text box
+    if(check tag(tag:Know about table)) then(
+      show text box(814)
+      wait for text box
+      show text box(820)
+      wait for text box
+      get item(item:TableSaw)
+    )
+  )else(
+    # Icefeather not in the party
+    show text box(818)
+    wait for text box
+  )
+  
+  resume player
+end
+
 #---------------------------------------------------------------------------
 
 plotscript, Bontgommeri ruins each step, begin
