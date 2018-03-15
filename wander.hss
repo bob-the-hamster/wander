@@ -4402,7 +4402,7 @@ plotscript, kelp reef each step, begin
   if(check tag(tag:using sheep inn)) then(
     exit script
   )
-  if(check tag(tag:fail to take table)) then(
+  if(check tag(tag:suspend air timer)) then(
     exit script
   )
   variable(x, y)
@@ -4741,7 +4741,11 @@ plotscript, sculptor tells about coffee table, begin
   wait for text box
   set npc direction(ref, left)
   
-  unsuccessful attempt to get table
+  if(check tag(tag:have tablesaw)) then(
+    successfully get the table
+  )else(
+    unsuccessful attempt to get table
+  )
   set tag(tag:know about table, ON)
 
   start air timer(breath memory)
@@ -4749,7 +4753,7 @@ plotscript, sculptor tells about coffee table, begin
 end
 
 script, unsuccessful attempt to get table, begin
-  set tag(tag:fail to take table, ON)
+  set tag(tag:suspend air timer, ON)
   # move heroes
   suspend caterpillar
   suspend hero walls
@@ -4783,9 +4787,12 @@ script, unsuccessful attempt to get table, begin
     wait for hero(gisli)
     set hero direction(gisli, right)
     wait for text box
+    play sound(sfx:slash8bit)
     jiggle hero(gisli, 5)
+    play sound(sfx:slash8bit)
     flash screen(4)
     jiggle hero(gisli, 1)
+    play sound(sfx:slash8bit)
     flash screen(1)
     show text box(810)
     wait for text box
@@ -4793,7 +4800,90 @@ script, unsuccessful attempt to get table, begin
 
   resume hero walls
   resume caterpillar
-  set tag(tag:fail to take table, OFF)
+  set tag(tag:suspend air timer, OFF)
+end
+
+script, successfully get the table, begin
+  set tag(tag:suspend air timer, ON)
+  # move heroes
+  suspend caterpillar
+  suspend hero walls
+  suspend obstruction
+  # Hero 0 and 1 do the sawing
+  walk hero to x(0, 37)
+  walk hero to y(0, 38)
+  walk hero to x(1, 39)
+  walk hero to y(1, 38)
+  # Hero 2 and 3 get out of the way
+  walk hero to y(2, 37)
+  walk hero to y(3, 37)
+  wait for hero(0)
+  wait for hero(1)
+  wait for hero(2)
+  wait for hero(3)
+  set hero direction(0, right)
+  set hero direction(1, left)
+  set hero direction(2, down)
+  set hero direction(3, down)
+  # Comment on what we are about to do
+  show text box(821)
+  wait for text box
+  # Create the saw npcs
+  create npc(23, 37, 38, right)
+  create npc(23, 38, 38, down)
+  create npc(23, 39, 38, left)
+  # Let the saw animation run for approx 3 seconds
+  variable(i)
+  for(i, 0, 18*3, 12) do(
+    play sound(sfx:woodsaw)
+    wait(12)
+  )
+  # Make the table pop up
+  variable(table)
+  table := npc reference(22)
+  for(i, 0, 20, 5) do(
+    set npc z(table, i)
+    wait(1)
+  )
+  for(i, 20, 0, -5) do(
+    set npc z(table, i)
+    wait(1)
+  )
+  # get the table
+  show text box(822)
+  wait(2)
+  set tag(tag:got the table, ON)
+  get item(item:Table)
+  # remove the saw
+  wait(2)
+  while(npc copy count(23)) do(
+    destroy npc(23)
+  )
+  wait for text box
+
+  set tag(tag:suspend air timer, OFF)
+  # walk a few steps away
+  walk hero to x(0, 35)
+  walk hero to y(0, 37)
+  walk hero to x(1, 36)
+  walk hero to y(1, 37)
+  walk hero to x(2, 37)
+  walk hero to y(2, 37)
+  walk hero to x(3, 38)
+  walk hero to y(3, 37)
+  wait for hero(0)
+  wait for hero(1)
+  wait for hero(2)
+  wait for hero(3)
+  set hero direction(0, left)
+  set hero direction(1, left)
+  set hero direction(2, left)
+  set hero direction(3, left)
+  
+  resume obstruction
+  resume hero walls
+  resume caterpillar
+  set tag(tag:suspend air timer, OFF)
 end
 
 #---------------------------------------------------------------------------
