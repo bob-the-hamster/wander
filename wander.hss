@@ -6085,6 +6085,13 @@ end
 
 script, board the unfortunate turtle from mersheep village, begin
   teleport to map(map:deck of the unfortunate turtle, 30, 34)
+  if(check tag(tag:icefeather joined)) then(
+    if(ship X == 27 && ship Y == 37) then(
+      # You are returning to the ship after re-visiting
+      # mer-sheep village so Brickson moves aside
+      walk npc(14, south, 1)
+    )
+  )
   suspend player
   wait(1)
   fade screen in
@@ -6103,6 +6110,10 @@ script, board the unfortunate turtle from mersheep village, begin
   wait for hero(me)
   if(check tag(tag:boarded pirate ship) == OFF) then(
     first boarding of the unfortunate turtle
+  )
+  if(check tag(tag:icefeather joined)) then(
+    walk hero(me, west, 2)
+    wait for hero(me)
   )
   resume hero walls
   resume player
