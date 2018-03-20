@@ -1,8 +1,10 @@
 
-suitmark
-cardnum
-tinysuit
+card:suit
+card:num
+card:tinysuit
 walkabout extra
 wings
 splash effect
+card:sprite
+card:back
 
