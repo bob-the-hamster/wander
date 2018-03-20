@@ -1,6 +1,6 @@
 #!/bin/sh
 
-WANDERDIR=~/src/ohr/games/wander/
+WANDERDIR=~/Dropbox/src/wander/
 OHRDIR=~/src/ohrrpgce/
 
 cd "${WANDERDIR}"
