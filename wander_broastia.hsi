@@ -1,0 +1,643 @@
+#---------------------------------------------------------------------------
+# Wandering Hamster - see wander.hss
+# Broaste Castle and environs (Before Misa's Takeover)
+#---------------------------------------------------------------------------
+
+
+plotscript,Broaste Castle Inn,begin
+  suspend player
+  walk hero to X (me,55)
+  wait for hero (me)
+  walk hero to Y (me,42)
+  wait for hero (me)
+  walk hero (me,left,2)
+  wait for hero (me)
+  walk hero (me,up,2)
+  wait for hero (me)
+  walk hero (me,right,4)
+  wait for hero (me)
+
+  play song (song:Sleeping Music)
+  tweak palette (-40, -40, -10)
+  fade screen in
+
+  variable (i, ticks, total)
+  for (i,0,18) do, begin
+    set hero direction (random(0,3),random(0,3))
+    wait (4)
+    total += 4
+    end
+
+  key wait (18 * 8 -- total)
+  reset palette
+  fade screen in
+  play song (song:Royal March)
+  wait (5)
+
+  for (i,0,3)
+  do,begin
+    set hero direction (i,south)
+    end
+
+  walk hero (me,right,1)
+  wait for hero (me)
+  walk hero (me,down,2)
+  wait for hero (me)
+  walk hero (me,left,3)
+  wait for hero (me)
+  walk hero (me,down,3)
+  wait for hero (me)
+  resume player
+end
+
+#---------------------------------------------------------------------------
+
+
+plotscript,Myrmidon Suit,begin
+  suspend player
+  increment(myrmidon text)
+  if (myrmidon text>>2)
+     then (myrmidon text:=0)
+  show text box (225+myrmidon text)
+  wait for text box
+  variable(m)
+  m := open menu(menu:Myrmidon Suit)
+  wait for menu(m)
+  resume player
+end
+
+plotscript, do myrmidon dismount, begin
+  wait(1)
+  dismount vehicle
+end
+
+#---------------------------------------------------------------------------
+
+plotscript,Mount Myrmidon,begin
+  myrmidon text := 0
+  if (check tag(tag:used myrmidon suit)==OFF) then(
+    show text box(249)
+    wait for text box
+    set tag(tag:used myrmidon suit,ON)
+  )
+  alter NPC (4,NPCstat:picture,36)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript,Dismount Myrmidon,begin
+  alter NPC (4,NPCstat:picture,19)
+  Myrmidon X:=NPC X(4)
+  Myrmidon Y:=NPC Y(4)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript,Broaste Castle Autorun,begin
+
+ if (check tag(tag:myrmidon suit))
+ then,begin
+  alter NPC (4,NPCstat:picture,36)
+ end
+
+ if (check tag(tag:myrmidon loc flag))
+ then,begin
+  set NPC position(4,myrmidon X,myrmidon Y)
+ end
+ else,begin
+  set tag(tag:myrmidon loc flag,ON)
+  myrmidon X:=NPC X(4)
+  myrmidon Y:=NPC Y(4)
+ end
+
+end
+
+#---------------------------------------------------------------------------
+
+plotscript,Broaste Castle Blocked Door,begin
+  variable (i)
+  suspend player
+  suspend NPCs
+  suspend obstruction
+  suspend random enemys
+  suspend caterpillar
+
+  if (check tag(tag:Myrmidon Suit))
+
+  then,begin
+    set tag (tag:myrm block guard,ON)
+    walk NPC (6,south,2)
+    wait for NPC (6)
+    walk hero (me,south,1)
+    set hero direction (me,north)
+    wait for hero (me)
+    show text box (232)
+    wait for text box
+    set NPC direction (6,west)
+    wait (2)
+    walk NPC (6,north,2)
+  end
+
+  else,begin
+    walk NPC (6,south,2)
+    wait for NPC (6)
+    for (i,0,3) do (
+      set hero speed (i,10)
+      walk hero (i,south,1)
+    )
+    walk hero (0,east,1)
+    walk hero (1,west,1)
+    walk hero (2,east,1)
+    walk hero (3,west,1)
+    for (i,0,3) do (
+      set hero direction (i,north)
+    )
+    walk NPC (6,south,2)
+    wait for NPC (6)
+    walk NPC (6,north,3)
+    wait for NPC (6)
+    set NPC direction (6,east)
+    wait (2)
+    set NPC direction (6,south)
+    show text box (231)
+    wait for text box
+    set NPC direction (6,west)
+    wait (2)
+    walk NPC (6,north,1)
+    for (i,0,3) do (set hero speed (i,4))
+  end
+
+  resume player
+  resume NPCs
+  resume obstruction
+  resume random enemys
+  resume caterpillar
+end
+
+#---------------------------------------------------------------------------
+
+plotscript,Attack Broaste Ghost,begin
+  if (check tag(tag:have teddy bear))
+  then (Attack Broaste Ghost with Teddy)
+  else (Attack Broaste Ghost sans Teddy)
+end
+
+#---------------------------------------------------------------------------
+
+script,Attack Broaste Ghost sans Teddy,begin
+  variable (i)
+    set tag (tag:Broaste Ghost Script,ON)
+    set tag (tag:Saw Broaste Ghost,ON)
+    suspend player
+    suspend NPCs
+    set NPC position (0,7,0)
+    stop song
+    show text box (220)
+    wait for text box
+    walk hero to X (me,7)
+    walk hero (me,north,1)
+    wait for hero (me)
+    walk hero (me,north,2)
+    wait for hero (me)
+    play song (song:Broaste's Madness)
+    pan camera (north,2,4)
+    wait for camera
+    fade screen out (0,0,20)
+    suspend NPC walls
+    set NPC speed (0,20)
+    walk NPC (0,south,2)
+    wait for NPC (0)
+    set NPC speed (0,5)
+    fade screen in
+    set NPC direction (0,north)
+    for (i,0,7)
+        do (set NPC frame (0,(i,mod,2)),wait (2))
+    set NPC speed (0,2)
+    walk NPC (0,south,1)
+    show text box (221)
+    wait (2)
+    if (check tag (tag:myrmidon suit))
+       then (
+         dismount vehicle
+         walk hero (1,south,1)
+         set hero direction (1,north)
+         set NPC speed (4,5)
+         walk NPC (4,west,2)
+         walk NPC (4,south,2)
+         spin NPC (4,1,8)
+         wait for NPC (4)
+         set NPC speed (4,0)
+         set NPC position (4,28,4)
+         Myrmidon X:=28
+         Myrmidon Y:=4
+       )
+    wait for text box
+    set NPC speed (0,10)
+    walk NPC (0,south,3)
+    walk NPC (0,west,3)
+    wait for NPC (0)
+    walk NPC (0,east,3)
+    wait for NPC (0)
+    set NPC direction (0,north)
+    set death script (@null death script)
+    fight formation (83)
+    camera follows hero (me)
+    Set NPC position (0,7,4)
+    set NPC direction (0,south)
+    wait (3)
+    show text box (223)
+    wait for text box
+    walk NPC (0,north,4)
+    set NPC direction (0,south)
+    show text box (224)
+    wait for text box
+    set hero speed (me,5)
+    walk hero (me,south,6)
+    wait for hero (me)
+    set hero speed (me,4)
+    walk hero (me,south,1)
+    wait for hero (me)
+    set death script (@die in battle)
+    resume NPC walls     
+    resume player
+    resume NPCs
+    set tag (tag:Broaste Ghost Script,OFF)
+end
+
+#---------------------------------------------------------------------------
+
+script,Attack Broaste Ghost with Teddy,begin
+  variable(remember weapon,Bob,Misa,Broaste,i,j)
+
+  Broaste:=NPC reference(0)
+
+  set tag (tag:Broaste Ghost Script,ON)
+  suspend player
+  suspend NPCs
+  suspend NPC walls
+  suspend obstruction
+
+  set NPC position  (Broaste,7,0)
+  set NPC direction (Broaste,south)
+  dismount vehicle
+
+  walk hero to X (me,7)
+  walk hero      (me,north,4)
+  wait for hero
+  suspend caterpillar
+  play song      (song:Broaste's Madness)
+
+  set NPC speed     (Broaste,5)
+  walk NPC          (Broaste,south,2)
+  pan camera        (north,1,2)
+  wait for NPC
+
+  show text box     (259)
+  set NPC speed     (Broaste,1)
+  walk NPC          (Broaste,south,1)
+  wait for text box
+  wait for NPC      (Broaste)
+
+  show text box     (260)
+  wait for text box
+
+  show text box     (261)
+  Set NPC speed     (Broaste,5)
+  walk NPC          (Broaste,north,1)
+  wait for NPC      (Broaste)
+  set NPC direction (Broaste,west)
+  wait for text box
+
+  show text box     (262)
+
+  for(i,0,8) do,begin
+    for(j,1,3,2) do,begin
+      set NPC direction (Broaste,j)
+      wait              (2)
+    end
+  end
+
+  wait for text box
+
+  set NPC speed (Broaste, 4)
+  walk NPC      (Broaste, south ,1)
+  walk NPC      (Broaste, east  ,1)
+  wait for NPC  (Broaste)
+  suspend box advance
+  show text Box (263)
+  walk NPC      (Broaste, south ,2)
+  walk NPC      (Broaste, west  ,2)
+  wait for NPC  (Broaste)
+  walk hero          (0,south,1)
+  set hero direction (0,north)
+  walk hero          (1,east,1)
+  set hero direction (1,north)
+  walk NPC      (Broaste, south ,1)
+  walk NPC      (Broaste, east  ,1)
+  wait for NPC  (Broaste)
+  wait for hero (0)
+  resume box advance
+
+  wait for text box
+
+  show text box (264)
+  wait for text box
+
+  Bob:=find hero(hero:Bob the Hamster)
+  remember weapon:=check equipment(Bob,slot:weapon)
+
+  if (remember weapon<>item:teddy) then,begin
+    show text box (266)
+    wait for text box
+  end
+
+  force equip    (Bob,slot:weapon,item:teddy)
+  set NPC position (Broaste,0,1)
+  fight formation(78)
+  unequip        (Bob,slot:weapon)
+  delete item    (item:teddy)
+
+  if (remember weapon<>item:teddy) then, begin
+    force equip    (Bob,slot:weapon,remember weapon)
+  end
+
+  play song (song:Triumphant Music)
+
+  # hack in case the myrmidon suit is already in a bad place
+  if(myrmidon x == 0 && myrmidon y == 0) then, begin
+    myrmidon y := 1
+    set NPC position(4, 0, 1)
+  end
+
+  Bob:=rank in caterpillar(hero:Bob the Hamster)
+  Misa:=rank in caterpillar(hero:Misa DuHamstre)
+
+  pan camera (north,1,2)
+
+  set hero speed (Misa,2)
+  walk hero to X (Misa,7)
+  walk hero      (Misa,north,1)
+  wait for hero  (Misa)
+
+  wait for camera
+  camera follows hero (Misa)
+
+  set hero speed (Misa,5)
+  walk hero      (Misa,north,3)
+  wait for hero  (Misa)
+
+  show text box (267)
+
+  set hero direction (Misa,west)
+  wait               (1)
+  set hero direction (Misa,south)
+
+  wait for text box 
+
+  show text box  (268)
+
+  focus camera(hero X(Misa),hero Y(Misa),10)
+
+  wait for camera
+
+  set hero speed (Misa, 10)
+  suspend hero walls
+
+  for(i,0,6) do,begin
+    walk hero          (Misa,north,1)
+    set hero direction (Misa,south)
+    wait for hero      (Misa)
+    walk hero          (Misa,south,1)
+    wait for hero      (Misa)
+    wait               (2)
+  end
+  
+  resume hero walls  
+
+  wait for text box
+
+  show text box (269)
+  set hero speed (Bob,2)
+  walk hero (Bob, north,2)
+  wait for text box
+  wait for hero (Bob)
+
+  wait (8)
+
+  show text box (271)
+  for (i,0,1) do,begin
+    set hero direction (Misa,east)
+    wait (2)
+    set hero direction (Misa,south)
+    wait (2)
+    set hero direction (Misa,west)
+    wait (2)
+    set hero direction (Misa,south)
+    wait (2)
+  end
+  wait for text box
+
+  set hero speed (Misa,4)
+  walk hero      (Misa,south,1)
+  wait for hero  (Misa)
+  set hero direction (Misa,west)
+  wait (1)
+  set hero direction (Misa,north)
+
+  show text box (274)
+  wait for text box
+
+  show text box (275)
+
+  wait for camera
+  wait for text box
+
+  set hero speed (Bob,4)
+  walk hero (Bob, south, 3)
+  wait for hero (Bob)
+
+  play song (song:Sleeping Music)
+
+  fade screen out
+  wait(1)
+
+  set hero position (Bob,57,40)
+  set hero direction (Bob,west)
+
+  swap out hero (hero:Misa DuHamstre)
+  lock hero     (hero:Misa DuHamstre)
+  set tag       (tag:Misa took Castle,ON)
+  Misa Saying := 0
+
+  set tag (tag:Beat Broaste Ghost,ON)
+
+  camera follows hero (me)
+  resume caterpillar
+
+  reset palette
+  tweak palette (-40, -40, -10)
+  fade screen in
+
+  key wait seconds (9)
+
+  reset palette
+  fade screen in
+  play song (song:Royal March)
+
+  resume player
+  resume NPCs
+  resume NPC walls
+  resume obstruction
+  set tag (tag:Broaste Ghost Script,OFF)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript,scared by myrmidon,begin
+  suspend player
+  walk hero (me,north,3)
+  wait for hero(me)
+  show text box(247)
+  wait for text box
+  set hero speed(me,5)
+  walk hero (me,south,4)
+  wait for hero(me)
+  set hero speed (me,4)
+  walk hero (me,south,1)
+  wait for hero(me)
+  suspend caterpillar
+  walk hero(1,south,1)
+  wait for hero(1)
+  walk hero(1,west,1)
+  set hero direction(me,west)
+  wait for hero(1)
+  set hero direction(1,south)
+  wait(1)
+  set hero direction(1,east)
+  wait(5)
+  set hero direction(0,north)
+  set hero direction(1,north)
+  wait(5)
+  set hero direction(0,west)
+  set hero direction(1,east)
+  wait(2)
+  show text box(248)
+  wait for text box
+  resume caterpillar
+  walk hero(me,north,1)
+  wait for hero(me)
+  resume player
+end
+
+#---------------------------------------------------------------------------
+
+plotscript,castle break wall,begin
+  write map block(70,26,57)
+  write pass block(70,26,west wall+east wall)
+  set NPC position(17,69,26)
+  set tag(tag:broke castle wall,ON)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript,Fight Arch Guardians,begin
+  variable(guard1,guard2,suit,loop)
+  guard1:=NPC reference(24)
+  guard2:=NPC reference(25)
+  suit:=NPC reference(4)
+
+  suspend player
+  suspend NPCs
+  suspend random enemys
+  suspend obstruction
+  suspend caterpillar
+
+  walk hero(me,north,1)
+  wait for hero(me)
+
+  show text box (278)
+  play song (song:castle battle)
+
+  set NPC position(guard1,93,12)
+  set NPC position(guard2,93,11)
+  walk NPC (guard1,south,5)
+  walk NPC (guard2,south,6)
+  wait for NPC (guard1)
+  walk NPC (guard1,south,1)
+  walk NPC (guard1,east,1)
+  wait for NPC (guard1)
+  set NPC direction (guard1,south)
+  walk NPC (guard2,south,1)
+  walk NPC (guard2,west,1)
+  wait for NPC (guard2)
+  set NPC direction (guard2,south)
+
+  wait for text box
+
+  walk hero(me,north,1)
+  wait for hero(me)
+  
+  set NPC speed(guard1,10)
+  set NPC speed(guard2,10)
+  walk NPC (guard1,south,1)
+  walk NPC (guard2,south,1)
+  walk NPC (guard1,west,1)
+  walk NPC (guard2,east,1)
+  wait for NPC (guard1)
+
+  set NPC speed (guard1,4)
+  set NPC speed (guard2,4)
+  walk NPC (guard1,north,1)
+  walk NPC (guard2,north,1)
+  walk NPC (guard1,east,1)
+  walk NPC (guard2,west,1)
+  set NPC direction (guard1,south)
+  set NPC direction (guard2,south)
+
+  dismount vehicle
+  if (hero Y(0)==hero Y(1)) then,begin
+    walk hero(1,south,1)
+    set hero direction (1,north)
+  end
+
+  set NPC speed (suit,10)
+  walk NPC (suit,south,3)
+
+  for(loop,0,5) do,begin
+    set NPC direction (suit,(loop,mod,4))
+    wait(1)
+  end
+
+  set NPC position (suit,0,0)
+  Myrmidon X:=0
+  Myrmidon Y:=1
+
+  fight formation (84)
+
+  set tag(tag:beat arch guardians,ON)
+
+  resume player
+  resume NPCs
+  resume random enemys
+  resume obstruction
+  resume caterpillar
+
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, broaste courtyard inn focus, begin
+  suspend player
+  show text box(631)
+  wait for text box
+  focus camera(21, 7, 5)
+  show text box(633)
+  wait for text box
+  wait for camera
+  focus camera(hero X(me), hero Y(me) 20)
+  wait for camera
+  camera follows hero(me)
+  resume player
+end
+
+#---------------------------------------------------------------------------

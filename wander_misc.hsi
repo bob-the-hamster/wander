@@ -1,0 +1,360 @@
+#---------------------------------------------------------------------------
+# Wandering Hamster - see wander.hss
+# Miscellaneous non-location-specific stuff
+# See also wander_util.hsi for more generic stuff
+#---------------------------------------------------------------------------
+
+plotscript,die in battle,begin
+ suspend player
+ cancel air timer # It is okay to call this even on non-underwater maps
+ play song (song:Game Over)
+ show backdrop (19)
+ wait for key (anykey)
+ fade screen out (20,0,0)
+ game over
+end
+
+#---------------------------------------------------------------------------
+
+script,null death script,begin
+  variable (i)
+  for (i,0,3)
+      do (set hero stat (i,stat:hp,1))
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, on load, begin
+  variable(i)
+  for(i, 0, 3) do(
+    if(hero by slot(i) >= 0) then(
+      update level up learning(i, false)
+    )
+  )
+  if(not(check tag(tag:init battle wait))) then(
+    set tag(tag:init battle wait, true)
+    set tag(tag:battle wait, true)
+  )
+  update battle pause on menus
+  
+  if(current map == map:jormungandling's belly) then(
+    jorm belly on load
+  )
+  
+  if(current map == map:Kelp Reef || current map == map:Mersheep Village Interior) then(
+    kelp reef on load
+  )
+
+  # Rename James to Misa in old save slots
+  variable(misa)
+  misa := find hero(hero:misa duhamstre)
+  if(misa >= 0) then(
+    get hero name(0, misa)
+    if(string compare(0, $1="James")) then(
+      set hero name($0="Misa Duhamstre", misa)
+    )
+  )
+  
+  # A quick fix for save-games that have never run the script that
+  # triggers the owl to appear on Troll Mountain
+  if(check tag(tag:saw broaste ghost)) then(
+    set tag(tag:saw broaste castle, ON)
+  )
+  
+  # Give Gisli his helmet in old saves
+  if(check tag(tag:Gisli joined) == true && check tag(tag:Gisli got helmet) == false) then(
+    get item(item:viking, 1)
+    set tag(tag:Gisli got helmet, true)
+    variable(gisli slot)
+    gisli slot := find hero(hero:Gisli)
+    if(check equipment(gisli slot, slot:head) == -1) then(
+      # No helmet equipped, go ahead and put it on
+      force equip(gisli slot, slot:head, item:viking)
+    )
+  )
+end
+
+script, jorm belly onload, begin
+  variable(i)
+  if(read zone(2, hero X(0), hero Y(0))) then(
+    # Currently standing on the golf course
+    for(i, 0, 3) do(
+      if(hero by rank(i) >= 0) then(
+        set hero position(i, 47, 22 -- i)
+        set hero direction(i, south)
+      )
+    )
+    reset golf game
+  )
+end
+
+#---------------------------------------------------------------------------
+
+plotscript,Panic and Run Around,begin
+ suspend player
+
+ reset palette
+ greyscale palette
+ tweak palette(15,-10,-10)
+ fade screen in
+
+ set hero direction (me,west)
+ walk hero (me,north,1)
+ walk hero (me,west,1)
+ wait for hero
+ set hero direction (me,north)
+ walk hero (me,north,1)
+ wait for hero
+ walk hero (me,north,1)
+ walk hero (me,east,1)
+ wait for hero
+ set hero direction (me,east)
+ walk hero (me,east,1)
+ wait for hero
+ walk hero (me,south,1)
+ walk hero (me,east,1)
+ wait for hero
+ set hero direction (me,south)
+ walk hero (me,south,1)
+ wait for hero
+ walk hero (me,south,1)
+ walk hero (me,west,1)
+ wait for hero
+ set hero direction (me,west)
+ walk hero (me,west,1)
+ wait for hero
+
+ reset palette
+ fade screen in
+
+get hero name(str:temp, find hero(hero by rank(0)))
+show string(str:temp)
+wait(20)
+show no value
+
+ resume player
+end
+
+#---------------------------------------------------------------------------
+
+plotscript,fade and rest,begin
+  suspend player
+  variable(remember song)
+  remember song := current song
+  play song(song:Sleeping Music)
+  tweak palette (-40, -40, -10)
+  fade screen in
+  key wait seconds (11)
+  reset palette
+  fade screen in
+  if(remember song == 0)
+    then(stop song)
+    else(play song(remember song))
+  wait (5)
+  resume player
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, fruit basket, begin
+  get item(item:grapes, 3)
+  get item(item:apple, 5)
+  get item(item:rutabaga, 3)
+  get item(item:carrot, 10)
+  get item(item:life, 1)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, wrapped equip menu, begin
+  if(room in active party == 3) then(
+    # only one hero
+    equip menu
+    update hero sprites
+    exit script
+  )
+  
+  # more than one hero, pick one
+  variable(who)
+  who := pick hero
+  if(who >= 0) then(
+    equip menu(who)
+    update hero sprites
+  )
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, update hero sprites, begin
+  variable(hero)
+  hero := find hero(hero:Bob the Hamster)
+  if(hero >= 0) then(
+    if(check tag(tag:Holding breath)) then(
+      set hero picture(hero, 70, outside battle)
+      set hero picture(hero, 11, inside battle)
+    )else(
+      reset hero pics(hero)
+    )
+  )
+  hero := find hero(hero:Gisli)
+  if(hero >= 0) then(
+    if(check tag(tag:Holding breath)) then(
+      set hero picture(hero, 71, outside battle)
+      set hero picture(hero, 12, inside battle)
+    )else(
+      reset hero pics(hero)
+    )
+  )
+  hero := find hero(hero:Misa DuHamstre)
+  if(hero >= 0) then(
+    if(check tag(tag:Misa is wearing Ribn)) then(
+      reset hero pics(hero)
+    )else(
+      set hero picture(hero, 57, outside battle)
+      set hero picture(hero, 9, inside battle)
+    )
+  )
+  
+end
+
+script, reset hero pics, who, begin
+  reset hero picture(who, outside battle)
+  reset hero picture(who, inside battle)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, spell tester, begin
+  variable(menu, mi, i, h, j)
+  if(keyval(key:ctrl) >> 0 && keyval(key:T) >> 1) then(
+    menu := create menu
+    set menu text align(menu, align:left)
+    for(i, 1, read general(34) + 1) do(
+      mi := add menu item(menu)
+      read attack name(0, i)
+      for(h, 0, 3) do(
+        if(knows spell(h, i)) then(
+          $str:temp + " "
+          get hero name(1, h)
+          str:temp $+ 1
+        )
+        for(j, 0, spells learned(h, get count) -- 1) do(
+          if(i == spells learned(h, j)) then(
+            $str:temp + "(+)"
+          )
+        )
+      )
+      set menu item caption(mi, 0)
+    )
+    wait for menu(menu)
+  )
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, tenpepper, begin
+  # Not intended for real gameplay, this debugging item changes the hero's walking speed.
+  set hero speed(0, 10)
+end
+
+plotscript, fourpepper, begin
+  # Not intended for real gameplay, this debugging item changes the hero's walking speed.
+  set hero speed(0, 4)
+end
+
+#---------------------------------------------------------------------------
+
+script, update battle pause on menus, begin
+  set active battle pause on all menus(check tag(tag:battle wait))
+end
+
+plotscript, update battle pause on menus with info, begin
+  update battle pause on menus
+  set menu bit(top menu, menubit:no controls, true)
+  if(check tag(tag:battle wait)) then(
+    show text box(591)
+  )else(
+    show text box(592)
+  )
+  wait for text box
+  set menu bit(top menu, menubit:no controls, false)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, skill point bean 1, begin
+  skill point bean(0, item:BlueBean)
+end
+
+plotscript, skill point bean 2, begin
+  skill point bean(1, item:RedBean)
+end
+
+plotscript, skill point bean 3, begin
+  skill point bean(2, item:TealBean)
+end
+
+plotscript, skill point bean 4, begin
+  skill point bean(3, item:TanBean)
+end
+
+plotscript, skill point bean 5, begin
+  skill point bean(4, item:PinkBean)
+end
+
+plotscript, skill point bean 6, begin
+  skill point bean(5, item:PuceBean)
+end
+
+plotscript, skill point bean 7, begin
+  skill point bean(6, item:GrayBean)
+end
+
+plotscript, skill point bean 8, begin
+  skill point bean(7, item:GoldBean)
+end
+
+script, skill point bean, lev, item, begin
+  # Set globals for display in text boxes
+  skill point level display := lev + 1
+  get item name(str:intobox, item)
+  # Check if Bob is really in the active party
+  variable(who)
+  who := find hero(hero:Bob the Hamster)
+  if (who == -1 || who > 3) then(
+    # Bob is not in the active party
+    show text box(657)
+    exit script
+  )
+  # Check to see if Bob can use this Skill Point level at all yet
+  variable(max)
+  max := get level mp(who, lev, maximum stat)
+  if(max <= 0) then(
+    show text box(677)
+    exit script
+  )
+  while(true) do(
+    # Loop while we want to keep eating beans
+    variable(cur)
+    cur := get level mp(who, lev, current stat)
+    if(cur >= max) then(
+      # This level of skill points is already full
+      show text box(658)
+      exit script
+    )
+    # Remove the item, and restore the skill point
+    delete item(item)
+    set level mp(who, lev, cur + 1)
+    show text box(659)
+    wait for text box
+    # Set globals for display in the next text box
+    skill point bean count := inventory(item)
+    skill point cur := get level mp(who, lev, current stat)
+    skill point max := max
+    show text box(668)
+    wait for text box
+    if(check tag(tag:eat another bean) == OFF) then(exit script)
+  )
+end
+
+#---------------------------------------------------------------------------

@@ -1,0 +1,226 @@
+#---------------------------------------------------------------------------
+# Wandering Hamster - see wander.hss
+# Introduction
+#---------------------------------------------------------------------------
+
+plotscript, introduction, begin
+
+ suspend npcs
+ suspend player
+ suspend box advance
+
+ lock hero (hero:Bob the Hamster)
+
+ variable(x,y)
+ x:=hero X(leader)
+ y:=hero Y(leader)
+
+ # new-game fade-in cannot be supressed, so wipe out the palette
+ tweak palette(-63,-63,-63) 
+
+ # start the intro music
+ wait(1)
+ play song (song:Title Theme)
+
+ # wait for the musical flourish
+ wait(22) 
+ reset palette
+ 
+ # Prepare the slice handle
+ variable(sl)
+ 
+ # Flanat Panorama
+ sl := load backdrop sprite(31)
+ show text box (382)
+ wait(6)
+ fade screen in
+ move slice by(sl, -140, 0, 140)
+ wait for slice(sl)
+ fade screen out
+ advance text box
+ free slice(sl)
+
+ # Bob vs Various Foes
+ sl := load backdrop sprite(32)
+ show text box (383)
+ wait(6)
+ fade screen in
+ wait(6)
+ move slice by(sl, -180, 0, 90)
+ wait for slice(sl)
+ fade screen out
+ advance text box
+ free slice(sl)
+
+# # James with Bubbles
+# sl := load backdrop sprite(33)
+# show text box (384)
+# wait(6)
+# fade screen in
+# move slice by(sl, -140, 0, 70)
+# wait for slice(sl)
+# fade screen out
+# advance text box
+# free slice(sl)
+
+ # Penguin Pirate Ship
+ sl := load backdrop sprite(34)
+ show text box (385)
+ wait(6)
+ fade screen in
+ move slice by(sl, -100, 0, 100)
+ wait for slice(sl)
+ fade screen out
+ advance text box
+ free slice(sl)
+
+ # Skeppio and Rathmara
+ sl := load backdrop sprite(35)
+ set slice y(sl, -140)
+ show text box (386)
+ wait(6)
+ fade screen in
+ move slice by(sl, 0, 140, 140)
+ wait for slice(sl)
+ fade screen out
+ advance text box
+ free slice(sl)
+
+ # Hot Air Balloon
+ sl := load backdrop sprite(36)
+ show text box (387)
+ wait(6)
+ fade screen in
+ move slice by(sl, 0, -300, 150)
+ wait for slice(sl)
+ fade screen out
+ advance text box
+ free slice(sl)
+
+ # Ramparts
+ sl := load backdrop sprite(37)
+ set slice x(sl, -120)
+ show text box (388)
+ wait(6)
+ fade screen in
+ move slice by(sl, 120, 0, 120)
+ wait for slice(sl)
+ fade screen out
+ advance text box
+ free slice(sl)
+
+ # wait for music
+ wait(20)
+
+ # darken screen
+ tweak palette(-60,-60,-60)
+ # lighten text color
+ tweak palette(60,60,60,15,15)
+
+ teleport to map(map:Flanat Castle Area,0,0)
+ put camera(17*20,72*20)
+ play song (Song:Broaste's Madness)
+
+ # create Broaste and troops 
+
+ # Broaste
+ write global(array+0,create NPC(14,24,67,north))
+ # Myrmadons
+ write global(array+1,create NPC(16,23,67,north))
+ write global(array+2,create NPC(16,24,66,north))
+ write global(array+3,create NPC(16,25,67,north))
+ # Troops
+ variable(loop)
+ for(loop,0,2) do(write global(array+4+loop,create NPC(15,23,64+loop,north)))
+ for(loop,0,2) do(write global(array+7+loop,create NPC(15,24,63+loop,north)))
+ for(loop,0,2) do(write global(array+10+loop,create NPC(15,25,64+loop,north)))
+
+ # make them march slowly
+ alter NPC(14,NPCstat:movespeed,1)
+ alter NPC(15,NPCstat:movespeed,1)
+ alter NPC(16,NPCstat:movespeed,1)
+
+ # slowly pan up
+ pan camera (north,4,1)
+ wait(1)
+
+ # gradual fade in
+ for(loop,-31,0) do(
+   reset palette
+   tweak palette(loop*2,loop*2,loop*2)
+   update palette
+   wait(2)
+ )
+
+ pan camera (north,16,2)
+ wait(1)
+
+ # prevent NPCs from bumping each other
+ suspend obstruction
+
+ # Move entire army north
+ for(loop,0,12) do(
+   walk NPC (read global(array+loop),north,10)
+ )
+
+ wait for camera
+ pan camera (north,4,2)
+
+ # gradual fade out
+ for(loop,0,-31,-1) do(
+   reset palette
+   tweak palette(loop*2,loop*2,loop*2)
+   update palette
+   wait(2)
+ )
+
+ fade screen out
+ reset palette
+
+ # Broast confronts Hasim
+ show text box (157)
+ wait (1)
+ fade screen in
+ wait for key (use key)
+ fade screen out (0,0,0)
+ advance text box
+ show text box (158)
+ wait (1)
+ fade screen in
+ wait for key (use key)
+ fade screen out (0,0,0)
+ advance text box
+ show text box (159)
+ wait (1)
+ fade screen in
+ wait for key (use key)
+ fade screen out (0,0,0)
+ advance text box
+
+ # Cut to Bob
+ show text box (160)
+ wait (1)
+ play song (song:overworld music)
+ fade screen in
+ wait for key (use key)
+ show text box (161)
+ wait for key (use key)
+ fade screen out (63,63,63)
+ advance text box
+ wait (1)
+
+ camera follows hero
+ teleport to map (5,x,y)
+
+ fade screen in
+
+ resume npcs
+ resume player
+ resume box advance
+ resume obstruction
+
+ set tag(tag:intro finished, ON)
+
+end
+
+#---------------------------------------------------------------------------

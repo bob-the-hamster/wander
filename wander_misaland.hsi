@@ -1,0 +1,188 @@
+#---------------------------------------------------------------------------
+# Wandering Hamster - see wander.hss
+# Misa's Castle (After beating Broaste Ghost)
+#---------------------------------------------------------------------------
+
+plotscript,Cyclic Misa Saying,begin
+  show text box(283+Misa Saying)
+  wait for text Box
+  increment(Misa Saying,1)
+  if (Misa Saying >> 3 || Misa Saying << 0) then(Misa Saying:=0)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript,Cats Enlist Bob,begin
+  variable(Bob,skeppio,rathmara,guard)
+  Bob:=me
+  skeppio:=NPC reference(27)
+  rathmara:=NPC reference(28)
+  guard:=NPC reference(22)
+
+  suspend player
+  suspend NPCs
+  suspend obstruction
+
+  suspend NPC walls
+
+  stop song
+
+  set NPC speed(guard,5)
+  walk NPC to X(guard,5)
+  walk NPC to Y(guard,5)
+
+  pan camera(south,1,4)  
+
+  wait for camera
+
+  play song(song: Ruin Exploration)
+
+  set NPC position(skeppio,hero X(me),14)
+  set NPC position(rathmara,hero X(me),15)
+
+  walk NPC (skeppio,north,4)
+  walk NPC (rathmara,north,4)
+
+  wait for NPC (skeppio)
+
+  resume NPC walls
+
+  show text box(287) # stand aside
+
+  camera follows NPC(skeppio)
+
+  set hero speed(Bob,10)
+  walk hero to X(Bob,9)
+  set hero direction(Bob,west)
+
+  walk NPC(skeppio,north,1)
+  walk NPC(rathmara,north,1)
+  walk NPC(guard,north,1)
+  wait for NPC(skeppio)
+  set NPC direction(guard,south)
+
+  walk NPC(skeppio,north,3)
+  walk NPC(rathmara,north,3)
+
+  wait for NPC(skeppio)
+
+  set hero speed(Bob,4)
+
+  pan camera (north,2,4)
+
+  walk NPC to X(skeppio,6)
+  walk NPC to X(rathmara,7)
+  walk NPC (rathmara,north,1)
+  wait for NPC(skeppio)
+  set NPC direction (skeppio,north)
+  wait for NPC(rathmara)
+  set NPC direction (rathmara,north)
+
+  wait for text Box
+
+  show text box(288) #Misa says Broaste is gone
+
+  walk hero(Bob,north,5)
+  wait for hero (Bob)
+  set hero direction (Bob,west)
+  wait (2)
+  set hero direction (Bob,south)
+
+  wait for text box
+
+  wait (5)
+  set NPC direction(skeppio,east)
+  set NPC direction(rathmara,west)
+  wait (3)
+  set NPC direction(skeppio,north)
+  set NPC direction(rathmara,north)
+  wait (3)
+  set NPC direction(skeppio,east)
+  set NPC direction(rathmara,west)
+
+  show text box(289) #whisper
+  wait for text box
+
+  set NPC direction(skeppio,north)
+  set NPC direction(rathmara,north)
+  wait (5)
+
+  show text box(290) #cats introduce themselves
+  wait for text box
+
+  show text box(291) #Misa has no army
+  wait for text box
+  
+  walk NPC (rathmara,east,1)
+  walk NPC (rathmara,north,1)
+  wait for NPC(rathmara)
+
+  show text box(292) #Rathmara asks Bob for help
+
+  set hero speed(Bob,10)
+  walk hero (Bob, north,1)
+  walk hero (Bob, west,1)
+  set hero direction(Bob,south)
+  wait for hero(Bob)
+  walk hero (Bob,south,1)
+  wait for hero(Bob)
+  set hero speed(Bob,4)
+
+  wait for text box
+  
+  show text box(293)# prompt for pay
+  wait for text box
+
+  if (check tag(tag: asked for 300)) then,begin
+
+    show text box(294)# offers 300
+    wait for text box
+
+    show text box(295)# prompt for more pay
+    wait for text box
+
+    get money (300)
+
+    if (check tag(tag: asked for 500)) then,begin
+      
+      show text box(296)# offers 500
+      wait(3)
+      set NPC direction(rathmara,east)
+      wait(3)
+      set NPC direction(rathmara,north)
+      wait for text box
+
+      get money (200)
+      
+    end
+    
+  end
+
+  show text box(297) # accept
+  wait for text box
+
+  fade screen out(0,0,0)
+
+  camera follows hero(me)
+
+  add hero(hero:skeppio)
+  add hero(hero:rathmara)
+
+  set tag(tag:Joined Cat's Quest,ON)
+
+  teleport to map(map:Broaste's Courtyard,16,13)
+
+  walk hero(me,south,2)
+
+  fade screen in
+
+  show text box(298)
+
+  wait for text box
+
+  resume player
+  resume NPCs
+  resume obstruction
+end
+
+#---------------------------------------------------------------------------

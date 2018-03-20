@@ -1,0 +1,351 @@
+#---------------------------------------------------------------------------
+# Wandering Hamster - see wander.hss
+# Mini-Golf Mini-Game
+#---------------------------------------------------------------------------
+
+plotscript, golf game start tile, arg, ref, begin
+  destroy NPC(ref)
+  reset golf game
+end
+
+script, reset golf game, begin
+ hit golf ball too hard := false
+ golf round := 0
+ golf hits := 0
+ golf total := 0
+ set tag(tag:can open a golf door, ON)
+end
+
+plotscript, open a golf door, arg, ref, begin
+  if(check tag(tag:can open a golf door)) then, begin
+    destroy NPC(ref)
+    set tag(tag:can open a golf door, OFF)
+    golf total += golf hits
+    golf hits := 0
+    increment(golf round)
+    if(golf round <= 9) then(
+      show text box(402) # golf round number
+    )else(
+      show final golf score
+    )
+  end, else, begin
+    show text box(403) # must finish round
+  end
+end
+
+script, show final golf score, begin
+   variable(reward box)
+   reward box := 438 # no reward
+   golf score hide
+   while(1) do(
+     if(golf total <= 8) then(
+       $str:golf score="cheatastic!"
+       break
+     )
+     if(golf total == 9) then(
+       # all holes-in-one
+       $str:golf score="PERFECT!"
+       reward box := 439 # golf club
+       break
+     )
+     if(golf total <= 14) then(
+       # at least 4 holes-in-one
+       $str:golf score="fantastic!"
+       reward box := 440 # fruit basket
+       break
+     )
+     if(golf total <= 16) then(
+       # at least 2 holes-in-one
+       $str:golf score="excellent!"
+       reward box := 441 # $500
+       break
+     )
+     if(golf total <= 18) then(
+       # maybe all birdies
+       $str:golf score="great!"
+       reward box := 442 # mage jar
+       break
+     )
+     if(golf total <= 22) then(
+       $str:golf score="above par"
+       reward box := 443 # socks
+       break
+     )
+     if(golf total <= 27) then(
+       # average 3 hits per hole
+       $str:golf score="par for the course"
+       reward box := 444 # $10
+       break
+     )
+     if(golf total <= 30) then(
+       $str:golf score="little below par"
+       break
+     )
+     if(golf total <= 33) then(
+       $str:golf score="not too good"
+       break
+     )
+     if(golf total <= 36) then(
+       # average 4 hits per hole
+       $str:golf score="needs work"
+       break
+     )
+     if(golf total <= 45) then(
+       # average 5 hits per hole
+       $str:golf score="poor"
+       break
+     )
+     if(golf total >= 63) then(
+       # average 7 hits per hole
+       $str:golf score="astonishingly bad"
+       reward box := 445 # chai tea
+       break
+     )
+     if(golf total <= 117) then(
+       # average 13 hits per hole
+       $str:golf score="INSANELY bad"
+       reward box := 446 # fight snake spleen again
+       break
+     )
+     # between 46 and 62
+     $str:golf score="terrible"
+     break
+   )
+   show text box(437)
+   wait for text box
+   show text box(reward box)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, whack the golf ball, arg=0, ref=0, begin
+  variable(x, y, d, club, charge, force, moved)
+  suspend player
+  x := NPC X(ref)
+  y := NPC Y(ref)
+  d := rotate(hero direction(me), counterclockwise)
+  charge := 0
+  force := 0
+  moved := false
+  hit golf ball too hard := false
+  
+  # Animate Bob
+  if (check tag(tag: Bob is leader) == ON) then, begin
+    $str:golf swing="Swing *"
+    show string at (str:golf swing, 0, 190)
+    club := create NPC(9)
+    set hero picture(me, 0)
+    set NPC position(club, hero X(me), hero Y(me))
+    set NPC direction(club, hero direction(me))
+    set NPC frame(club, 0)
+    advance NPC by pixels(club, 15)
+    while(holding action key) do, begin
+      charge += 1
+      if ((charge, mod, 3) == 0) then, begin
+       if(force << 32) then, begin
+        force += 1
+        append ascii(str:golf swing, 42)
+       end
+      end
+      wait(1)
+    end
+    hide string(str:golf swing) # Hide display of force
+    advance NPC by pixels(club, -15)
+    spin golf club(club)
+    destroy NPC(club)
+    jormungand each step (hero X(me), hero Y(me))
+  end
+  
+  moved := move golf ball(ref, d, force)
+  focus camera(hero X(0), hero Y(0), 10)
+  wait for camera
+  camera follows hero(0)
+
+  if(force>>0 && not(moved)) then, begin
+    # No movement!
+    fix stuck golf ball(ref)
+  end
+
+  if(hit golf ball too hard) then, begin
+    show text box(399)
+    wait for text box
+  end
+
+  resume player
+end
+
+script, golf score hide, begin
+  hide string(str:golf score) # Hide display of hits
+  stop timer(golf score timer)
+end
+
+script, move golf ball, ref, d, force, begin
+  variable(x,y)
+  variable(moved)
+  variable(first bounce)
+  moved := false
+  first bounce := true
+  if(force >> 0) then, begin
+    play sound(sfx:lilhit)
+    increment(golf hits)
+    $str:golf score="Hits: "
+    append number(str:golf score, golf hits)
+    show string at(str:golf score, 0, 0)
+  end
+  while(force >> 0) do, begin
+    x := NPC x(ref)
+    y := NPC y(ref)
+    set NPC speed(ref, 10)
+    if(force << 2) then(set NPC speed(ref, 5))
+    
+    d := check golf ball bounces(ref, d, force)
+    if(d==-1) then(exit returning(true))
+    if(hit golf ball too hard && force>>2) then(force:=2)
+    walk NPC(ref, d, 1)
+    wait for golf ball(ref)
+    
+    #Bounce agains normal obstruction walls
+    if(NPC x(ref)==x && NPC y(ref)==y) then, begin
+      d := rotate(d, clockwise, 2)
+      if(first bounce) then(first bounce:=false, increment(force))
+      play sound(sfx:lilhit)
+    end, else, begin
+      moved := true
+    end
+
+    decrement(force)
+  end
+  # Score should vanish after 6 seconds
+  set timer(golf score timer, 6, 16, @golf score hide)
+  # re-run collision check, in case the ball landed on the hole
+  if(check golf ball bounces(ref, d, force) == -1)
+    then(exit returning(true))
+  exit returning(moved)
+end
+
+script, wait for golf ball, ref, begin
+  while(NPC is walking(ref)) do(
+    update golf camera(ref)
+    wait(1)
+  )
+end
+
+script, update golf camera, ref, begin
+  variable(ax, ay, bx, by, cx, cy, w, h)
+  ax := hero pixel x(0)
+  ay := hero pixel y(0)
+  bx := NPC pixel x(ref)
+  by := NPC pixel y(ref)
+  w := slice width(sprite layer) / 2 -- 10
+  h := slice height(sprite layer) / 2 -- 10
+  cx := (ax + bx) / 2
+  cy := (ay + by) / 2
+  while(bx <= cx -- w) do(cx -= 1)
+  while(bx >= cx + w) do(cx += 1)
+  while(by <= cy -- h) do(cy -= 1)
+  while(by >= cy + h) do(cy += 1)
+  put camera(cx -- w, cy -- h)
+end
+
+script, check golf ball bounces, ref, d, force, begin
+  variable(x, y, bounce)
+  variable(tile, ahead, floor)
+  x := NPC x(ref)
+  y := NPC y(ref)
+  bounce := -1
+  tile := read map block(x, y, 1) # golf course edges are always in layer 1
+  floor := read map block(x, y, 0) # the hole is always in layer 0
+  if(d==up) then(y-=1)
+  if(d==down) then(y+=1)
+  if(d==left) then(x-=1)
+  if(d==right) then(x+=1)
+  ahead := read map block(x, y, 1) # golf course edges are always in layer 1
+  if(floor==64 && force<<3) then, begin
+    force := 0
+    set tag(tag:can open a golf door, ON)
+    destroy NPC(ref)
+    golf score hide
+    show text box(406) # Hole in X
+    wait(1)
+    if (golf hits == 1) then(change box face(8))
+    if (golf hits >> 5) then(change box face(4))
+    wait for text box
+    exit returning(-1) # signal abort
+  end
+  if(tile==49) then(bounce:=down)
+  if(tile==50) then(bounce:=right)
+  if(tile==51) then(bounce:=left)
+  if(tile==52) then(bounce:=up)
+  if(tile==65 && d==up)    then(bounce:=right)
+  if(tile==65 && d==left)  then(bounce:=down)
+  if(tile==66 && d==up)    then(bounce:=left)
+  if(tile==66 && d==right) then(bounce:=down)
+  if(tile==67 && d==down)  then(bounce:=right)
+  if(tile==67 && d==left)  then(bounce:=up)
+  if(tile==68 && d==down)  then(bounce:=left)
+  if(tile==68 && d==right) then(bounce:=up)
+  if(ahead==97 && d==up)    then(bounce:=down)
+  if(ahead==98 && d==right) then(bounce:=left)
+  if(ahead==99 && d==down)  then(bounce:=up)
+  if(ahead==100 && d==left) then(bounce:=right)
+  if(bounce>=0) then, begin
+    # a bounce occured
+    if(force<<30) then, begin
+      exit returning(bounce)
+    end, else, begin
+      hit golf ball too hard := true
+    end
+  end
+  exit returning(d)
+end
+
+script, fix stuck golf ball, ref, begin
+  wait(8)
+  show text box (397) # Oops! stuck
+  wait for text box
+  wait(1)
+  set hero direction(me, rotate(hero direction(me), counterclockwise))
+  wait(5)
+  set hero direction(me, rotate(hero direction(me), clockwise))
+  wait(3)
+  set hero direction(me, rotate(hero direction(me), clockwise))
+  wait(5)
+  set hero direction(me, rotate(hero direction(me), counterclockwise))
+  wait(2)
+  suspend obstruction
+  set hero speed(me, 5)
+  set NPC speed(ref, 5)
+  walk hero(me, hero direction(me), 1)
+  wait for hero(me)
+  walk hero(me, rotate(hero direction(me), clockwise, 2), 1)
+  walk NPC(ref, hero direction(me), 1)
+  set hero direction(me, rotate(hero direction(me), clockwise, 2))
+  wait for hero(me)
+  set hero speed(me, 4)
+  resume obstruction
+  wait(15)
+  show text box (398) # Hope that wasn't cheating
+  increment(golf hits)
+  $str:golf score="Hits: "
+  append number(str:golf score, golf hits)
+  wait for text box
+end
+
+script, spin golf club, club=0, begin
+  variable(i)
+  playsound(3)
+  for(i, 0, 4) do, begin
+    set NPC direction(club, rotate(NPC direction(club), counterclockwise))
+    advance NPC by pixels(club, 15)
+    set NPC frame(club, 0)
+    wait(1)
+    advance NPC by pixels(club, -5)
+    advance NPC by pixels(club, 15, -1)
+    set NPC frame(club, 1)
+    wait(1)
+    advance NPC by pixels(club, -15, -1)
+    advance NPC by pixels(club, -10)
+  end
+end
+
+#---------------------------------------------------------------------------

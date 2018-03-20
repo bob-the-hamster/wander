@@ -1,0 +1,55 @@
+#---------------------------------------------------------------------------
+# Wandering Hamster - see wander.hss
+# World Map
+#---------------------------------------------------------------------------
+
+plotscript,World Map Autorun,begin
+ if (check tag(tag:ship initialization)) then(
+  # Ship has been initialized, put it in the remembered place
+  create npc(2, ship X, ship Y, ship dir)
+ )
+ tweak bridges
+end
+
+#---------------------------------------------------------------------------
+
+plotscript,World Map Afterbattle,begin
+  if (check tag(tag:Riding the Ship)) then,begin
+    play song(song:vehicle riding)
+  end
+  tweak bridges
+end
+
+#---------------------------------------------------------------------------
+
+plotscript,Dismount Ship,begin
+  ship X := NPC X(2)
+  ship Y := NPC Y(2)
+  ship dir := NPC direction(2)
+  play song(song:overworld music)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript,Mount Ship,begin
+  play song(song:vehicle riding)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript,Dismount Baloon,begin
+  baloon X:=NPC X(3)
+  baloon Y:=NPC Y(3)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, tweak bridges, flag=0, begin
+  if (flag==1) then (under bridge:=true)
+  if (flag==2) then (under bridge:=false)
+  if (under bridge)
+  then(write pass block (144,7,northwall+southwall+overhead tile) )
+  else(write pass block (144,7,eastwall+westwall) )
+end
+
+#---------------------------------------------------------------------------

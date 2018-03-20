@@ -1,0 +1,704 @@
+#---------------------------------------------------------------------------
+# Wandering Hamster - see wander.hss
+# Kelp Reef and Mer-Sheep Village
+#---------------------------------------------------------------------------
+
+script, kelp reef on load, begin
+  variable(x, y)
+  x := hero x(me)
+  y := hero y(me)
+  if(not(read zone(1, x, y))) then(
+    # water
+    start air timer(large(5, breath memory))
+    set tag(tag: need air timer, OFF)
+    set tag(tag:holding breath, ON)
+    set tag(tag:need air, ON)
+    update hero sprites
+  )
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, kelp reef each step, begin
+  if(check tag(tag:using sheep inn)) then(
+    exit script
+  )
+  if(check tag(tag:suspend air timer)) then(
+    exit script
+  )
+  variable(x, y)
+  x := hero x(me)
+  y := hero y(me)
+  if(read zone(1, x, y)) then(
+    # bubble
+    inside a bubble
+  )else(
+    # water
+    holding breath
+  )
+  mer sculptor chips 
+end
+
+#---------------------------------------------------------------------------
+
+script, inside a bubble, begin
+  cancel air timer
+  if(check tag(tag:need air)) then(
+    if(not(hero will move)) then(
+      gather party to leader
+    )
+    set tag(tag:need air, OFF)
+  )
+end
+
+#---------------------------------------------------------------------------
+
+script, holding breath, begin
+  if(check tag(tag:need air timer)) then(
+    start air timer(10 + breath bonus)
+    set tag(tag: need air timer, OFF)
+  )
+  set tag(tag:holding breath, ON)
+  set tag(tag:need air, ON)
+  update hero sprites
+  if(read timer(air timer) > 0) then(
+    breath memory := read timer(air timer)
+  )
+end
+
+#---------------------------------------------------------------------------
+
+script, start air timer, secs, begin
+  variable(flags)
+  flags := timer flag:battle, or, timer flag:critical
+  set timer(air timer, secs, 18, @air timer depleted, str:breath, flags)
+  $str:breath caption="Breath:"
+  show string at(str:breath caption, 0, 190)
+  show string at(str:breath, 56, 190)
+  breath memory := secs
+end
+
+#---------------------------------------------------------------------------
+
+script, cancel air timer, begin
+  hide string(str:breath caption)
+  hide string(str:breath)
+  stop timer(air timer)
+  set tag(tag:holding breath, OFF)
+  set tag(tag:need air timer, ON)
+  update hero sprites
+end
+
+#---------------------------------------------------------------------------
+
+script, air timer depleted, begin
+  if(current map <> map:Kelp reef && current map <> map:Mersheep Village Interior) then(
+    # Wrong map, just quit
+    cancel air timer
+    exit script
+  )
+  suspend player
+  while(current text box >= 0) do(advance text box)
+  flash screen(4)
+  wait(1)
+  fade screen out(20, 20, 63)
+  wait(1)
+  fade screen out(0, 0, 30)
+  wait(1)
+  fade screen out(15, 15, 15)
+  wait(1)
+  fade screen out(0, 0, 50)
+  wait(1)
+  fade screen out(0, 0, 0)
+  wait(1)
+  wait for hero(me)
+  teleport to map(map:Kelp Reef, 20, 27)
+  cancel air timer
+  wait(1)
+  fade screen in
+  resume player
+  if(not(check tag(tag:first breath bonus))) then(
+    variable(n)
+    n := NPC reference(3)
+    walk NPC to Y(n, 29)
+    wait for NPC(n)
+    walk NPC to X(n, 20)
+    wait for NPC(n)
+    walk NPC to Y(n, 28)
+    wait for NPC(n)
+    first breath bonus
+    walk NPC(n, south, 1)
+    wait for NPC(n)
+    set NPC direction(n, right)
+  )
+ 
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, first breath bonus, begin
+  suspend player
+  show text box(689)
+  wait for text box
+  apply breath bonus(5)
+  show text box(690)
+  wait for text box
+  resume player
+  set tag(tag:first breath bonus, ON)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, jelly breath bonus, begin
+  suspend player
+  show text box(692)
+  wait for text box
+  show text box(693)
+  wait for text box
+  apply breath bonus(5)
+  delete item(item:PnkJelly)
+  while(inventory(item:PnkJelly)) do(
+    show text box(694)
+    wait for text box
+    show text box(693)
+    wait for text box
+    apply breath bonus(5)
+    delete item(item:PnkJelly)
+  )
+  resume player
+end
+
+#---------------------------------------------------------------------------
+
+script, apply breath bonus, amount, begin
+  breath bonus += amount
+  variable(secs)
+  secs := read timer(air timer)
+  if(secs > 0) then(
+    start air timer(secs + amount)
+  )
+  animate breath bonus
+end
+
+#---------------------------------------------------------------------------
+
+script, animate breath bonus, begin
+  play sound(sfx:bub multi)
+  variable(sl)
+  sl := load attack sprite(90)
+  reparent to hero(sl, 0)
+  center slice(sl)
+  variable(set, fr)
+  for(set, 0, 4) do(
+    set sprite set number(sl, 90 + set)
+    for(fr, 0, 2) do(
+      set sprite frame(sl, fr)
+      wait(1)
+    )
+  )
+  free slice(sl)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, sheep inn script, begin
+  cancel air timer
+  set tag(tag:using sheep inn, ON)
+  walk hero to X(me, 13)
+  wait for hero(me)
+  walk hero to Y(me, 25)
+
+  suspend caterpillar
+  walk hero to Y(me, 24)
+  if(hero by rank(1) >= 0) then(
+    walk hero to X(1, 15)
+    walk hero to Y(1, 25)
+  )
+  if(hero by rank(2) >= 0) then(
+    walk hero to X(2, 16)
+    walk hero to Y(2, 27)
+  )
+  if(hero by rank(3) >= 0) then(
+    walk hero to X(3, 14)
+    walk hero to Y(3, 28)
+  )
+  wait for hero(0)
+  set hero direction(0, south)
+  wait for hero(1)
+  set hero direction(1, west)
+  wait for hero(2)
+  wait for hero(3)
+
+  set tag(tag:holding breath, OFF)
+  update hero sprites
+
+  play song (song:Sleeping Music)
+  tweak palette(-40, -40, -10)
+  fade screen in
+  key wait seconds (11)
+  reset palette
+  fade screen in
+  play song (song:Currents Over Kelp Reef)
+  wait (5)
+  
+  resume caterpillar
+  walk hero(me, south, 2)
+  wait for hero(me)
+  set tag(tag:using sheep inn, OFF)
+  set tag(tag:need air timer, ON)
+  walk hero(me, south, 1)
+  wait for hero(me)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, pink jelly 1, begin
+  pink jelly battle(tag:pink jelly 1)
+end
+
+plotscript, pink jelly 2, begin
+  pink jelly battle(tag:pink jelly 2)
+end
+
+plotscript, pink jelly 3, begin
+  pink jelly battle(tag:pink jelly 3)
+end
+
+plotscript, pink jelly 4, begin
+  pink jelly battle(tag:pink jelly 4)
+end
+
+plotscript, pink jelly 5, begin
+  pink jelly battle(tag:pink jelly 5)
+end
+
+plotscript, pink jelly 6, begin
+  pink jelly battle(tag:pink jelly 6)
+end
+
+script, pink jelly battle, tag, begin
+  if(fight formation(131)) then(
+    set tag(tag, ON)
+  )
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, goblins shark approach, begin
+  suspend player
+  variable(n)
+  n := create NPC(11, 12, 41, right)
+  variable(spr)
+  spr := load small enemy sprite(43)
+  reparent to npc(spr, n)
+  center slice(spr)
+  set NPC ignores walls(n, true)
+  set NPC obstructs(n, false)
+  walk npc(n, right, 8)
+  variable(tog)
+  while(npc is walking(n)) do(
+    tog := tog ,xor, 1
+    set sprite set number(spr, 43+tog)
+    wait(2)
+  )
+  if(fight formation(134)) then(
+    set tag(tag:beat goblin shark, ON)
+    set tag(tag:pink jelly cluster, ON)
+  )
+  if(slice is valid(spr)) then(
+    free slice(spr)
+  )
+  delete npc(n)
+  if(hero x(me) == 20 && hero y(me) == 27) then(
+    # This only happens if the timer runs out in the middle of the goblin shark battle
+    if(10 + breath bonus >= 35) then(
+      show text box(714)
+    )else(
+      show text box(715)
+    )
+    wait for text box
+  )
+  resume player
+end
+
+#---------------------------------------------------------------------------
+
+script, mer sculptor chips, begin
+  if(current map <> map:Kelp Reef) then(exit script)
+  variable(sculptor, chips)
+  sculptor := NPC reference(18)
+  chips := NPC reference(19)
+  if(NPC direction(sculptor) == left) then(
+    # Currently working
+    loop npc frame(chips)
+  )else(
+    # currently talking
+    if(npc direction(chips) <> up) then(
+      loop npc frame(chips)
+    )
+  )
+  set timer(mer sculptor timer, 0, 1, @mer sculptor chips)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, sculptor tells about mer sheep, begin
+  variable(ref)
+  suspend player
+  ref := NPC reference(18)
+  set npc direction(ref, right)
+  show text box(799)
+  wait for text box
+  set npc direction(ref, left)
+  show text box(800)
+  wait for text box
+  set npc direction(ref, right)
+  show text box(801)
+  wait for text box
+  set npc direction(ref, left)
+  resume player
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, sculptor tells about ocean, begin
+  variable(ref)
+  suspend player
+  ref := NPC reference(18)
+  set npc direction(ref, down)
+  show text box(803)
+  wait for text box
+  set npc direction(ref, left)
+  resume player
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, sculptor tells about coffee table, begin
+  variable(ref)
+  cancel air timer
+  suspend player
+  ref := NPC reference(18)
+  set npc direction(ref, down)
+  show text box(804)
+  wait for text box
+  set npc direction(ref, left)
+  
+  if(check tag(tag:have tablesaw)) then(
+    successfully get the table
+  )else(
+    unsuccessful attempt to get table
+  )
+  set tag(tag:know about table, ON)
+
+  start air timer(breath memory)
+  resume player
+end
+
+#---------------------------------------------------------------------------
+
+script, unsuccessful attempt to get table, begin
+  set tag(tag:suspend air timer, ON)
+  # move heroes
+  suspend caterpillar
+  suspend hero walls
+  walk hero to x(me, 38)
+  walk hero to y(me, 37)
+  walk hero to x(1, 37)
+  walk hero to y(1, 37)
+  walk hero to x(2, 36)
+  walk hero to y(2, 37)
+  walk hero to x(3, 35)
+  walk hero to y(3, 37)
+  wait for hero(me)
+  set hero direction(me, down)
+  set hero direction(1, right)
+  set hero direction(2, right)
+  set hero direction(3, right)
+  
+  # try to take it
+  wait(8)
+  jiggle hero(me, 15)
+  show text box(808)
+  wait for text box
+
+  # gisli tries to chop it
+  variable(gisli)
+  gisli := rank in caterpillar(hero:Gisli)
+  if(gisli >= 0) then(
+    show text box(809)
+    walk hero to x(gisli, 37)
+    walk hero to y(gisli, 38)
+    wait for hero(gisli)
+    set hero direction(gisli, right)
+    wait for text box
+    play sound(sfx:slash8bit)
+    jiggle hero(gisli, 5)
+    play sound(sfx:slash8bit)
+    flash screen(4)
+    jiggle hero(gisli, 1)
+    play sound(sfx:slash8bit)
+    flash screen(1)
+    show text box(810)
+    wait for text box
+  )
+
+  resume hero walls
+  resume caterpillar
+  set tag(tag:suspend air timer, OFF)
+end
+
+#---------------------------------------------------------------------------
+
+script, successfully get the table, begin
+  set tag(tag:suspend air timer, ON)
+  # move heroes
+  suspend caterpillar
+  suspend hero walls
+  suspend obstruction
+  # Hero 0 and 1 do the sawing
+  walk hero to x(0, 37)
+  walk hero to y(0, 38)
+  walk hero to x(1, 39)
+  walk hero to y(1, 38)
+  # Hero 2 and 3 get out of the way
+  walk hero to y(2, 37)
+  walk hero to y(3, 37)
+  wait for hero(0)
+  wait for hero(1)
+  wait for hero(2)
+  wait for hero(3)
+  set hero direction(0, right)
+  set hero direction(1, left)
+  set hero direction(2, down)
+  set hero direction(3, down)
+  # Comment on what we are about to do
+  show text box(821)
+  wait for text box
+  # Create the saw npcs
+  create npc(23, 37, 38, right)
+  create npc(23, 38, 38, down)
+  create npc(23, 39, 38, left)
+  # Let the saw animation run for approx 3 seconds
+  variable(i)
+  for(i, 0, 18*3, 12) do(
+    play sound(sfx:woodsaw)
+    wait(12)
+  )
+  # Make the table pop up
+  variable(table)
+  table := npc reference(22)
+  for(i, 0, 20, 5) do(
+    set npc z(table, i)
+    wait(1)
+  )
+  for(i, 20, 0, -5) do(
+    set npc z(table, i)
+    wait(1)
+  )
+  # get the table
+  show text box(822)
+  wait(2)
+  set tag(tag:got the table, ON)
+  get item(item:Table)
+  # remove the saw
+  wait(2)
+  while(npc copy count(23)) do(
+    destroy npc(23)
+  )
+  wait for text box
+
+  set tag(tag:suspend air timer, OFF)
+  # walk a few steps away
+  walk hero to x(0, 35)
+  walk hero to y(0, 37)
+  walk hero to x(1, 36)
+  walk hero to y(1, 37)
+  walk hero to x(2, 37)
+  walk hero to y(2, 37)
+  walk hero to x(3, 38)
+  walk hero to y(3, 37)
+  wait for hero(0)
+  wait for hero(1)
+  wait for hero(2)
+  wait for hero(3)
+  set hero direction(0, left)
+  set hero direction(1, left)
+  set hero direction(2, left)
+  set hero direction(3, left)
+  
+  resume obstruction
+  resume hero walls
+  resume caterpillar
+  set tag(tag:suspend air timer, OFF)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, fight louis and brickson, begin
+  if(fight formation(135)) then(
+    cancel air timer
+    suspend caterpillar
+    suspend player
+    # Put Louis on the anchor chain 
+    set npc position(14, 57, 19)
+    # Make Brickson sideways
+    alter npc(15, NPCStat:picture, 84)
+    set npc ignores walls(15, true)
+    # Make Bob and Gisli back up to the air bubble
+    walk hero to x(0, 51)
+    set hero direction(0, right)
+    walk hero to x(1, 50)
+    set hero direction(1, right)
+    # Make Brickson slide backwards
+    walk npc(15, right, 1)
+    set npc direction(15, left)
+    wait for npc(15)
+    # Then brickson falls
+    set npc speed(15, 1)
+    walk npc(15, down, 40)
+    # Let hero movement finish if it has not already
+    wait for hero(1)
+    # make Brickson spin a little
+    brickson spin(4)
+    # Mr Louis reacts
+    set npc direction(14, south)
+    show text box(711)
+    brickson spin(4)
+    wait for text box
+    show text box(712)
+    resume caterpillar
+    brickson spin(4)
+    wait for text box
+    # Mr Louis runs away
+    walk npc to y(14, 0)
+    brickson spin(20)
+    # Done
+    resume player
+    resume caterpillar
+    set tag(tag:Beat Brickson, ON)
+  )
+end
+
+script, brickson spin, n=1, begin
+  variable(i)
+  for(i, 1, n) do(
+    wait(3)
+    variable(d)
+    d := (npc direction(15) + 1) ,mod, 4
+    set npc direction(15, d)
+  )
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, climb out of mersheep village, begin
+  suspend player
+  cancel air timer
+  set hero speed(me, 5)
+  suspend hero walls
+  walk hero to x(me, 57)
+  walk hero to y(me, 20)
+  wait for hero(me)
+  pan camera(up, 4, 2)
+  walk hero(me, north, 8)
+  wait for hero(me)
+  fade screen out
+  wait(1)
+  set hero speed(me, 4)
+  camera follows hero(me)
+  resume hero walls
+  resume player
+  cancel air timer
+  board the unfortunate turtle from mersheep village
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, kelp reef on world map, begin
+  # Go to the deck of the ship
+  ship menu script
+  # Walk over to the anchor chain
+  suspend player
+  set hero speed(me, 5)
+  walk hero(me, down)
+  wait for hero(me)
+  walk hero(me, right, 2)
+  wait for hero(me)
+  walk hero(me, down, 9)
+  wait for hero(me)
+  set hero speed(me, 4)
+  # Move Brickson out of the way
+  variable(brickson)
+  brickson := npc reference(14)
+  set npc speed(brickson, 5)
+  walk npc(brickson, up, 1)
+  wait for npc(brickson)
+  set npc direction(brickson, left)
+  resume player
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, down the chain to kelp reef, begin
+  suspend hero walls
+  suspend player
+  # Jump down the anchor chain
+  set hero speed(me, 10)
+  walk hero(me, right, 1)
+  walk hero(me, down, 1)
+  wait for hero(me)
+  walk hero(me, down, 1)
+  wait for hero(me)
+  # Switch to the Kelp Reef map
+  teleport to map(map:kelp reef, 57, 7)
+  suspend caterpillar
+  variable(i)
+  for (i, 1, 3) do(
+    # Update the caterpillar
+    set hero position(i, hero x(i), 7 -- i)
+  )
+  resume caterpillar
+  # Slide down the chain
+  walk hero(me, south, 12)
+  wait for hero(me)
+  # Dismount the chain
+  walk hero(me, left, 2)
+  walk hero(me, down, 2)
+  wait for hero(me)
+  set hero speed(me, 5)
+  walk hero(me, left, 3)
+  wait for hero(me)
+  set hero speed(me, 4)
+  resume hero walls
+  resume player
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, take the table saw, begin
+  suspend player
+  show text box(816)
+  wait for text box
+  variable(icefeather)
+  icefeather := rank in caterpillar(hero:icefeather)
+  if(icefeather >= 0) then(
+    show text box(817)
+    wait for text box
+    if(check tag(tag:Know about table)) then(
+      show text box(814)
+      wait for text box
+      show text box(820)
+      wait for text box
+      get item(item:TableSaw)
+    )
+  )else(
+    # Icefeather not in the party
+    show text box(818)
+    wait for text box
+  )
+  
+  resume player
+end
+
+#---------------------------------------------------------------------------

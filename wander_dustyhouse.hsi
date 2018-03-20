@@ -1,0 +1,138 @@
+#---------------------------------------------------------------------------
+# Wandering Hamster - see wander.hss
+# Dusty's House
+#---------------------------------------------------------------------------
+
+plotscript,Dusty Leaves,begin
+  if(check tag(tag:dusty left angry)) then(
+    exit script
+  )
+  
+  suspend player
+  suspend obstruction
+  suspend caterpillar
+
+  show text box(135)
+  wait for text box
+  set tag(tag:took Dusty Home,ON)
+
+  variable(dusty)
+  dusty:=rank in caterpillar(hero:dusty)
+
+  walk hero to Y (dusty,11)
+  wait for hero  (dusty)
+  walk hero to X (dusty,12)
+  wait for hero  (dusty)
+  walk hero to Y (dusty,10)
+  wait for hero  (dusty)
+
+  swap out hero (hero:dusty)
+  lock hero(hero:dusty)
+
+  resume caterpillar
+  resume obstruction
+  resume player
+end
+
+#---------------------------------------------------------------------------
+
+plotscript,Dusty Leaves Angry,begin
+  suspend player
+  suspend obstruction
+  suspend caterpillar
+
+  variable(dusty)
+  dusty:=rank in caterpillar(hero:dusty)
+
+
+  walk NPC to X (dusty,14)
+  wait for hero  (dusty)
+  walk hero to Y (dusty,14)
+  wait for hero  (dusty)
+  walk hero to X (dusty,12)
+  wait for hero  (dusty)
+
+  set hero direction(rank in caterpillar(hero:Bob the Hamster),west)
+  set hero direction(rank in caterpillar(hero:Misa DuHamstre),west)
+
+  show text box(182)
+  wait for text box
+
+  set tag(tag:Dusty left Angry,ON)
+  swap out hero (hero:dusty)
+  lock hero(hero:dusty)
+
+  resume caterpillar
+  resume obstruction
+  resume player
+end
+
+#---------------------------------------------------------------------------
+
+plotscript,Dustys Equipment,begin
+  suspend NPCs
+  variable(Dusty,slot,box)
+  dusty:=find hero(hero:Dusty)
+  box:=139
+  for(slot,2,5) do,begin
+    if (check equipment(dusty,slot)>=0)
+    then,begin
+      unequip(Dusty,slot)
+      box:=258
+    end
+  end
+  show text box(box)
+  wait for text box
+  resume NPCs
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, dusty says this is my house, begin
+  if(check tag(tag:dusty left angry)) then(
+    exit script
+  )
+  suspend player
+  show text box(138)
+  wait for text box
+  resume player
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, stress cat battle, begin
+  if(check tag(tag:got dusty) == false || check tag(tag:took dusty home) == false) then(
+    # Never got Dusty, or failed to take him home; cannot battle stress cat.
+    show text box(620)
+    wait for text box
+    exit script
+  )
+  if(check tag(tag:battled stress cat) == true) then(
+    show text box(619)
+    wait for text box
+    fight formation(114)
+    exit script
+  )
+  # First stress cat battle, can get Whisker item
+  show text box(141)
+  wait for text box
+  if(fight formation(67)) then(
+    # If you ran away, don't count this battle
+    set tag(tag:battled stress cat, true)
+  )
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, stress cat couch action, begin
+  if(check tag(tag:got dusty) == false) then(
+    show text box(618)
+  )else if(check tag(tag:took dusty home) == false) then(
+    show text box(618)
+  )else(
+    show text box(140)
+  )
+end
+
+
+#---------------------------------------------------------------------------

@@ -1,0 +1,55 @@
+#---------------------------------------------------------------------------
+# Wandering Hamster - see wander.hss
+# Globals and Constants
+#---------------------------------------------------------------------------
+
+global variable(1,shell game variable)
+global variable(2,ship X)
+global variable(3,ship Y)
+global variable(4,baloon X)
+global variable(5,baloon Y)
+global variable(6,myrmidon X)
+global variable(7,myrmidon Y)
+global variable(8,myrmidon text)
+global variable(9,under bridge)
+global variable(10,Misa Saying)
+global variable(11,hit golf ball too hard)
+global variable(12,golf round)
+global variable(13,golf hits)
+global variable(14,golf total)
+global variable(15,ship effect)
+global variable(16,need air)
+global variable(17,friar harvey ID)
+global variable(18,friar cart ID)
+global variable(19,skill point level display)
+global variable(20,skill point bean count)
+global variable(21,skill point cur)
+global variable(22,skill point max)
+global variable(23,breath memory)
+global variable(24, breath bonus)
+global variable(25, ship dir)
+
+# Used by TMC's parallax voodoo
+global variable(50, camera slice)
+global variable(51, parallax camera follows hero)
+global variable(52, next camera pixel x)
+global variable(53, next camera pixel y)
+
+# variables after 100 used for temporary fake-array
+global variable(100,array)
+
+#---------------------------------------------------------------------------
+
+define constant(1, golf score timer)
+define constant(2, jorm viking ship timer)
+define constant(3, air timer)
+define constant(4, troll mountain parallax timer)
+define constant(5, splash animation timer)
+define constant(6, mer sculptor timer)
+
+define constant(0, str:golf swing)
+define constant(1, str:golf score)
+define constant(2, str:breath caption)
+define constant(3, str:breath)
+define constant(10, str:temp)
+define constant(11, str:intobox)

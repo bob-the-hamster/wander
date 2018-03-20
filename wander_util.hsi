@@ -1,0 +1,294 @@
+#---------------------------------------------------------------------------
+# Wandering Hamster - see wander.hss
+# Utility scripts - Everything here is generic and not wandering-hamster-specific
+# See also wander_misc.hsi
+#---------------------------------------------------------------------------
+
+script, large, n1, n2, begin
+  if(n1 > n2) then(exit returning(n1)) else(exit returning(n2))
+end
+
+script, small, n1, n2, begin
+  if(n1 < n2) then(exit returning(n1)) else(exit returning(n2))
+end
+
+#---------------------------------------------------------------------------
+
+script, key wait, ticks, begin
+  # Returns true if the wait was canceled by a keypress.
+  show virtual gamepad
+  return(false)
+  variable(i)
+  for(i, 1, ticks) do, begin
+    wait(1)
+    if(key is pressed(key:ENTER)) then(return(true), break)
+    if(key is pressed(key:SPACE)) then(return(true), break)
+    if(key is pressed(key:CTRL)) then(return(true), break)
+    if(key is pressed(key:ALT)) then(return(true), break)
+    if(key is pressed(key:ESC)) then(return(true), break)
+    if(key is pressed(joy:button 1)) then(return(true), break)
+    if(key is pressed(joy:button 2)) then(return(true), break)
+  end
+  auto virtual gamepad
+end
+
+script, key wait seconds, seconds, begin
+  # Returns true if the wait was canceled by a keypress.
+  exit returning(key wait(18 * seconds))
+end
+
+#---------------------------------------------------------------------------
+
+script,Spin NPC,who,speed=2,turns=1,begin
+  variable(i)
+  for (i,1,turns) do,begin
+    set NPC direction (who,(i,mod,4))
+    wait (speed)
+  end
+end
+
+#---------------------------------------------------------------------------
+
+script, holding action key, begin
+  return (keyispressed(key:ENTER)
+       || keyispressed(key:SPACE)
+       || keyispressed(key:CTRL)
+       || keyispressed(joy:button 1))
+end
+
+#---------------------------------------------------------------------------
+
+script, advance NPC by pixels, ref=0, pix=1, angle=0, begin
+  variable(d, x, y)
+  d := NPC direction(ref)
+  if(angle) then(d := rotate(d, clockwise, angle))
+  x := NPC pixel X(ref)
+  y := NPC pixel Y(ref)
+  switch(d) do(
+    case(north) do(put npc(ref, x, y -- pix))
+    case(south) do(put npc(ref, x, y + pix))
+    case(west)  do(put npc(ref, x -- pix, y))
+    case(east)  do(put npc(ref, x + pix, y))
+  )
+end
+
+#---------------------------------------------------------------------------
+
+define constant (1, clockwise)
+define constant (-1, counterclockwise)
+
+script, rotate, dir=0, which way=1, quarters=1, begin
+  dir += quarters * which way
+  while (dir >> 3) do(dir -= 4)
+  while (dir << 0) do(dir += 4)
+  exit returning(dir)
+end
+
+#---------------------------------------------------------------------------
+
+script, quake camera, ticks, distance=4, begin
+  variable(i, oldx, oldy)
+  oldx := camera pixel x
+  oldy := camera pixel y
+  for(i, 1, ticks) do(
+    put camera(oldx + random(distance * -1, distance), oldy + random(distance * -1, distance))
+    wait(1)
+  )
+end
+
+#---------------------------------------------------------------------------
+
+script, quake camera until text box, distance=4, begin
+  wait(1)
+  variable(i, oldx, oldy)
+  oldx := camera pixel x
+  oldy := camera pixel y
+  while(current text box >= 0) do(
+    put camera(oldx + random(distance * -1, distance), oldy + random(distance * -1, distance))
+    wait(1)
+  )
+end
+
+#---------------------------------------------------------------------------
+
+script, walk npc and hero, npc, npc dir, hero, hero dir, steps, begin
+  # This script assumes that the hero and the NPC have the same walking speed
+  walk NPC(npc, npc dir, steps)
+  walk hero(hero, hero dir, steps)
+  wait for NPC(npc)
+  wait for hero(hero)
+end
+
+#---------------------------------------------------------------------------
+
+script, change box face, portrait id, begin
+  variable(sl)
+  sl := lookup slice(sl:textbox portrait)
+  replace portrait sprite(sl, portrait id)
+end
+
+#---------------------------------------------------------------------------
+
+script, flash screen, flash color, begin
+  variable(sl)
+  sl := create rect(0, 0, -1)
+  fill parent(sl, true)
+  set rect border(sl, border:none)
+  set rect bg col(sl, flash color)
+  wait(1)
+  free slice(sl)
+end
+
+#---------------------------------------------------------------------------
+
+script, walk hero towards hero, who, to whom, begin
+  variable(x1, x2, y1, y2)
+  wait for heroes
+  x1 := hero x(who)
+  y1 := hero y(who)
+  x2 := hero x(to whom)
+  y2 := hero y(to whom)
+  if(x1 << x2) then(walk hero(who, right))
+  if(x1 >> x2) then(walk hero(who, left))
+  if(y1 << y2) then(walk hero(who, down))
+  if(y1 >> y2) then(walk hero(who, up))
+end
+
+#---------------------------------------------------------------------------
+
+script, gather party to leader, begin
+  variable(i, speed)
+  suspend player
+  suspend hero walls
+  suspend obstruction
+  suspend caterpillar
+  speed := get hero speed(0)
+  while(not(party is gathered)) do(
+    for(i, 1, 3) do(
+      if(hero by rank(i) >= 0) then(
+        set hero speed(i, 5)
+        walk hero towards hero(i, i -- 1)
+      )
+    )
+    wait for heroes
+    for(i, 1, 3) do(
+      if(hero by rank(i) >= 0) then(
+        set hero speed(i, speed)
+      )
+    )
+  )
+  resume player
+  resume hero walls
+  resume obstruction
+  resume caterpillar
+end
+
+#---------------------------------------------------------------------------
+
+script, party is gathered, begin
+  variable(i)
+  for(i, 1, 3) do(
+    if(hero by rank(i) >= 0) then(
+      if(hero x(i) <> hero x(0) || hero y(i) <> hero y(0)) then(
+        exit returning(false)
+      )
+    )
+  )
+  exit returning(true)
+end
+
+#---------------------------------------------------------------------------
+
+script, wait for heroes, begin
+  variable(i)
+  for(i, 0, 3) do(
+    if(hero by rank(i) >= 0) then(
+      wait for hero(i)
+    )
+  )
+end
+
+#---------------------------------------------------------------------------
+
+script, loop npc frame, npc, begin
+  variable(d, fr, num)
+  d := NPC direction(npc)
+  fr := NPC frame(npc)
+  num := d * 2 + fr
+  num += 1
+  if(num >= 8) then(num := 0)
+  d := num / 2
+  fr := num ,mod, 2
+  set npc direction(npc, d)
+  set npc frame(npc, fr)
+end
+
+script, loop frame, sl, first, last, begin
+  variable(fr)
+  fr := get sprite frame(sl)
+  fr += 1
+  if(fr < first) then(fr := first)
+  if(fr > last) then(fr := first)
+  set sprite frame(sl, fr)
+end
+
+script, loop frame set, sl, first, last, begin
+  variable(fr)
+  fr := get sprite set number(sl)
+  fr += 1
+  if(fr < first) then(fr := first)
+  if(fr > last) then(fr := first)
+  set sprite set number(sl, fr)
+end
+
+#---------------------------------------------------------------------------
+
+script, npc dissolve, npc, which=dissolve:flicker, backwards=false, begin
+  variable(sl, pic)
+  sl := get npc slice(npc)
+  pic := lookup slice(sl:walkabout sprite component, sl)
+  dissolve sprite(pic, dissolve:flicker, 18, 0, backwards)
+end
+
+script, wait for npc dissolve, npc, begin
+  variable(sl, pic)
+  sl := get npc slice(npc)
+  pic := lookup slice(sl:walkabout sprite component, sl)
+  wait for dissolve(pic)
+end
+
+#---------------------------------------------------------------------------
+
+script, jiggle npc, npc, count=1, begin
+  variable(i, x, y)
+  x := npc pixel x(npc)
+  y := npc pixel y(npc)
+  for(i, 1, count) do(
+    put npc(npc, x, y -- 2)
+    wait(1)
+    put npc(npc, x, y -- 4)
+    wait(1)
+    put npc(npc, x, y -- 2)
+    wait(1)
+    put npc(npc, x, y -- 0)
+    wait(1)
+  )
+end
+
+script, jiggle hero, rank, count=1, begin
+  variable(i, x, y)
+  x := hero pixel x(rank)
+  y := hero pixel y(rank)
+  for(i, 1, count) do(
+    put hero(rank, x, y -- 2)
+    wait(1)
+    put hero(rank, x, y -- 4)
+    wait(1)
+    put hero(rank, x, y -- 2)
+    wait(1)
+    put hero(rank, x, y -- 0)
+    wait(1)
+  )
+end
+
+#---------------------------------------------------------------------------

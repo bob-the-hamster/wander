@@ -1,0 +1,264 @@
+#---------------------------------------------------------------------------
+# Wandering Hamster - see wander.hss
+# Flanat Castle
+#---------------------------------------------------------------------------
+
+plotscript, Broaste Lackeys Block Castle,begin
+ suspend player
+ suspend obstruction
+ pan camera (north,3,4)
+ walk NPC (0,south,1)
+ wait for NPC (0)
+ walk NPC (0,south,1)
+ walk NPC (6,south,1)
+ wait for NPC (0)
+ walk NPC (0,south,1)
+ walk NPC (6,south,1)
+ walk NPC (7,south,1)
+ wait for NPC (0)
+ walk NPC (6,west,1)
+ walk NPC (7,south,1)
+ wait for NPC (6)
+ walk NPC (7,east,1)
+ wait for NPC (7)
+ wait (5)
+ pan camera (south,3,4)
+ wait for camera
+ camera follows hero (me)
+ show text box (5)
+ wait for text box
+ resume obstruction
+ resume player
+ end
+
+#---------------------------------------------------------------------------
+
+plotscript, fight broaste lackeys blocking castle, begin
+ suspend player
+ suspend obstruction
+ if(fight formation(4)) then, begin
+   # won
+   show text box(12)
+   variable(loop, dir)
+   dir := south
+   for(loop, 0, 24) do, begin
+     dir := dir+1, mod, 4
+     set NPC direction(0, dir)
+     set NPC direction(6, dir)
+     set NPC direction(7, dir)
+     wait(1)
+   end
+   destroy NPC(0)
+   destroy NPC(6)
+   destroy NPC(7)
+   set tag(6, ON)
+   wait for text box
+ end, else, begin
+   # ran away
+   set hero speed(0, 10)
+   walk hero(0, south, 4)
+   wait for hero(0)
+   set hero speed(0, 4)
+   walk hero(0, south, 1)
+   wait for hero(0)
+   set hero direction(0,west)
+   suspend caterpillar
+   walk hero(1, south, 1)
+   walk hero(1, west, 1)
+   wait(2)
+   set hero direction(0, north)
+   wait for hero(1)
+   set hero direction(1, east)
+   wait(2)
+   set hero direction(1, north)
+   resume caterpillar
+ end
+ resume obstruction
+ resume player
+end
+
+#---------------------------------------------------------------------------
+
+plotscript,Flanat Castle Area Autorun,begin
+  if (check tag(tag:intro finished)) then(
+    if (check tag(tag:spoke to guards)) then,begin
+      set NPC position (0,24,55)
+      set NPC position (6,23,54)
+      set NPC position (7,25,54)
+      set NPC direction (6,west)
+      set NPC direction (7,east)
+    end
+    if(check tag(tag:saw plotrock mover)==OFF,and,hero Y(me)>>40) then,begin
+      # the reason we check the hero's Y value is so that this
+      # script will only be triggered if we enter the map from the normal
+      # entrance in the south, and not via the warp-outhouse in the north
+      Plot Boulder Mover
+    end
+    if(check tag(tag: flanat rope ladder)) then, begin
+      lower flanat castle rope ladder(true)
+    end
+  end
+end
+
+#---------------------------------------------------------------------------
+
+#NPC 16 is Lord Hasim
+#NPC 29 is Lord Broaste
+
+plotscript, Broaste Returns, begin
+ suspend player
+ suspend NPCs
+ suspend random enemys
+ show text box (83)
+ wait for text box
+ set NPC direction (16,south)
+ walk hero (me,north,3)
+ wait for hero (me)
+ show text box (62)
+ wait for text box
+ wait (20)
+ play song (Song:Broaste's Madness)
+ set hero direction (me,south)
+ wait (8)
+ set hero direction (1,south)
+ wait (8)
+ set hero direction (2,south)
+ wait (8)
+ set tag(tag:Broaste is Back, ON)
+ show text box (64)
+ wait for text box
+ walk hero (me, south, 3)
+ wait for hero (me)
+ show text box (199)
+ wait for text box
+ focus camera (NPC x(29), NPC y(29), 5)
+ wait for camera
+ camera follows NPC (29)
+ walk NPC (29,north,3)
+ wait for NPC (29)
+ show text box (65)
+ wait for text box
+ add hero (hero:Lord Hasim)
+ set tag(tag:Beat Broaste 2, ON)
+ set tag(tag:Broaste is Back, OFF)
+ fight formation (41)
+ camera follows hero (me)
+ play song (song:Triumphant Music)
+ show text box (91)
+ wait for text box
+ walk hero (me,south,3) 
+ wait for hero (me)
+ delete hero (hero:Lord Hasim)
+ use door (97)
+ resume player
+ resume NPCs
+ resume random enemys
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, lower flanat castle rope ladder, no delay=0, begin
+  variable(i, ref, x, y, count)
+  set tag(tag: flanat rope ladder, ON)
+  count := NPC copy count(17)
+  if(count >> 1) then(exit script)
+  set tag(tag: flanat rope lock, ON)
+  for(i, 17, 18)
+    do(alter NPC(i, NPCstat:move type, NPCmovetype:walk in place))
+  set NPC speed(17, 4)
+  ref := NPC reference(17)
+  x := NPC X(ref)
+  y := NPC Y(ref)
+  for(i, 0, 2) do, begin
+    if(no delay) then, begin
+      create NPC(17, x, y + 1 + i)
+    end, else, begin
+      walk NPC(ref, south, 3--i)
+      ref := create NPC(17, x, y)
+      wait(5)
+    end
+  end
+  for(i, 17, 18)
+    do(alter NPC(i, NPCstat:move type, NPCmovetype:stand still))
+  if(not(no delay)) then, begin
+    wait(5)
+  end
+  set tag(tag: flanat rope lock, OFF)
+end
+
+plotscript, climb flanat castle rope ladder, begin
+  if(check tag(tag:flanat rope lock)==ON) then(exit script)
+  variable(d)
+  suspend player
+  suspend random enemies
+  suspend hero walls
+  suspend obstruction
+  d := hero direction(me)
+  walk hero(me, d, 1)
+  set hero direction(me, north)
+  wait for hero(me)
+  set hero speed(me, 2)
+  walk hero(me, d, 3)
+  set hero direction(me, north)
+  wait for hero(me)
+  set hero speed(me, 4)
+  walk hero(me, d, 1)
+  wait for hero(me)
+  resume player
+  resume random enemies
+  resume hero walls
+  resume obstruction
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, visited hasim castle, begin
+  set tag(tag:visited hasim castle, ON)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript,Rolf Inn,begin
+  variable(i)
+
+  suspend player
+  suspend random enemies
+  suspend hero walls
+
+  walk hero to X(me, 66)
+  wait for hero(me)
+  walk hero to Y(me, 33)
+  wait for hero(me)
+  walk hero to X(me, 68)
+  wait for hero(me)
+  
+  for (i,0,3) do(
+    set hero direction (i,south)
+  )
+
+  play song (song:Sleeping Music)
+  tweak palette (-40, -40, -10)
+  fade screen in
+
+  key wait (18 * 8)
+  reset palette
+  fade screen in
+  play song (song:Castle Theme)
+  wait (5)
+
+  for (i,0,2) do(
+    set hero direction (i,east)
+  )
+  set hero direction(3, north)
+
+  walk hero (me,south,2)
+  wait for hero (me)
+  walk hero (me,west,1)
+  wait for hero (me)
+
+  resume player
+  resume random enemies
+  resume hero walls
+end
+
+#---------------------------------------------------------------------------

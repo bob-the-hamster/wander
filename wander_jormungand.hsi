@@ -1,0 +1,678 @@
+#---------------------------------------------------------------------------
+# Wandering Hamster - see wander.hss
+# Belly of the Jormungandling (see also wander_minigolf.hsi)
+#---------------------------------------------------------------------------
+
+plotscript, jormungandling belly autorun, begin
+  ship in jorm belly
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, jormungand each step, x, y, begin
+  if (current map <> map:Jormungandling's Belly) then (exit script)
+  if (check tag(tag: Bob is leader) == OFF) then (exit script)
+  variable (block, bob)
+  block := read map block(x,y)
+  bob := find hero(hero:Bob the Hamster)
+  set hero picture(bob, 0, outside battle)
+  if(block == 48 || block == 64) then, begin
+    bob := rank in caterpillar(hero:Bob the Hamster)
+    set hero picture (bob, 59, outside battle)
+  end
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, fight snake spleen, begin
+  fight formation(95)
+  set tag(tag:beat snake spleen1, ON)
+  variable(ref)
+  ref := NPC reference(14)
+  set NPC position(ref, 50, 18)
+  wait(10)
+  show text box(404)
+  wait for text box
+  set NPC speed(ref, 5)
+  walk NPC(ref, left, 2)
+  wait for NPC(ref)
+  walk NPC(ref, down, 1)
+  wait for NPC(ref)
+  walk NPC(ref, left, 1)
+  wait for NPC(ref)
+  walk NPC(ref, down, 1)
+  wait for NPC(ref)
+  walk NPC(ref, left, 1)
+  wait for NPC(ref)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, snake backtrack, begin
+  suspend player
+  suspend NPCs
+  suspend random enemies
+  
+  variable(duck, cell)
+  
+  duck := NPC reference(18)
+  cell := NPC reference(19)
+  
+  walk NPC(duck, right, 1)
+  wait for NPC(duck)
+  set NPC direction(duck, left)
+  suspend hero walls
+  suspend NPC walls
+  suspend obstruction
+  walk hero(me, north, 2)
+  wait for hero(me)
+  
+  write map block(25, 52, 34, 3)
+  walk hero(me, south, 1)
+  walk NPC(cell, south, 1)
+  wait for hero(me)
+  wait for NPC(me)
+  fade screen out
+  wait(1)
+  
+  write map block(25, 52, 0, 3)
+  walk NPC (duck, left, 1)
+  set NPC direction(duck, south)
+  
+  write map block(92, 19, 10, 3)
+  write map block(92, 20, 1, 3)
+  set hero position(me, 92, 20)
+  set NPC position(cell, 92, 20)
+  
+  wait(8)
+  fade screen in
+  
+  variable(other cell)
+
+  other cell := NPC at spot(93, 16)
+  if(other cell <> 0) then(
+    walk NPC(other cell, north, 1)
+  )
+
+  other cell := NPC at spot(93, 17)
+  if(other cell <> 0) then(
+    walk NPC(other cell, south, 1)
+  )
+  
+  walk hero (me, north, 4)
+  walk NPC (cell, north, 4)
+  wait for hero(me)
+  wait for NPC(cell)
+
+  write map block(92, 19, 0, 3)
+  write map block(92, 20, 0, 3)
+
+  walk hero (me, right, 2)
+  walk NPC (cell, right, 1)
+
+  wait for hero(me)
+  set hero direction(me, south)
+  wait(2)
+  set hero direction(me, west)
+  wait(1)  
+  
+  wait for NPC(cell)
+  write map block(93, 17, 160, 3) 
+  walk NPC(cell, south, 1)
+  wait for NPC(cell)
+  set NPC position(cell, 25, 51)
+  wait(1)
+  write map block(93, 17, 0, 3) 
+
+  reset golf game
+  reset map state
+  other cell := NPC at spot(94, 18)
+  set NPC position(other cell, 94, 23)
+
+  resume hero walls
+  resume NPC walls
+  resume obstruction
+  
+  resume player
+  resume NPCs
+  resume random enemies
+  set tag(tag:used snake backtrack, true)
+end
+
+plotscript, snake backbacktrack, begin
+  suspend player
+  suspend NPCs
+  suspend random enemies
+  
+  variable(duck, cell)
+  
+  duck := NPC reference(27) #technically a pidgeon! ;)
+  cell := NPC reference(28)
+  
+  if(hero X(me) == NPC X(duck)) then(
+    walk hero(me, west, 1)
+    wait for hero(me)
+  )
+  
+  set NPC speed(duck, 4)
+  walk NPC(duck, north, 1)
+  wait for NPC(duck)
+  set NPC direction(duck, left)
+  suspend hero walls
+  suspend NPC walls
+  suspend obstruction
+  walk hero to X(me, 99)
+  wait for hero(me)
+  walk hero to Y(me, 22)
+  wait for hero(me)
+  walk hero(me, east, 2)
+  wait for hero(me)
+  
+  # Sink under the snake juice
+  write map block(101, 22, 10, 3)
+  walk hero(me, south, 1)
+  walk NPC(cell, south, 1)
+  wait for hero(me)
+  wait for NPC(me)
+  fade screen out
+  wait(1)
+  
+  write map block(101, 22, 0, 3)
+  walk NPC (duck, south, 1)
+  set NPC direction(duck, west)
+  
+  write map block(19, 51, 34, 3)
+  set hero position(me, 19, 51)
+  set NPC position(cell, 19, 51)
+  
+  wait(8)
+  fade screen in
+  
+  walk hero (me, north, 1)
+  walk NPC (cell, north, 1)
+  wait for hero(me)
+  wait for NPC(cell)
+
+  write map block(19, 51, 0, 3)
+
+  walk hero (me, south, 1)
+  wait for hero(me)
+  
+  walk hero (me, west, 1)
+  set hero direction(me, east)
+  wait for hero(me)
+
+  write map block(19, 51, 34, 3) 
+  walk NPC(cell, south, 1)
+  wait for NPC(cell)
+  set NPC position(cell, 101, 22)
+  wait(1)
+  write map block(19, 51, 0, 3) 
+
+  reset golf game
+  reset map state
+
+  resume hero walls
+  resume NPC walls
+  resume obstruction
+  
+  resume player
+  resume NPCs
+  resume random enemies
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, quack inn, begin
+  suspend player
+  suspend obstruction
+  
+  variable(remember song)
+  remember song := current song
+  play song(song:Sleeping Music)
+  
+  walk hero to x(me, 99)
+  walk hero to y(me, 9)
+  wait for hero(me)
+
+  variable(innkeeper, save x, save y)
+  innkeeper := NPC reference(10)
+  save x := NPC x(innkeeper)
+  save y := NPC y(innkeeper)
+  
+  tweak palette (-50, -50, -30)
+  fade screen in
+  reset map state
+  
+  set NPC position(innkeeper, save x, save y)
+  
+  key wait seconds (11)
+  reset palette
+  fade screen in
+  if(remember song == 0)
+    then(stop song)
+    else(play song(remember song))
+  wait (5)
+  
+  resume obstruction
+  resume player
+  
+end
+
+#---------------------------------------------------------------------------
+
+script, ship in jorm belly, begin
+  variable(sl)
+  sl := load large enemy sprite(16)
+  set parent(sl, lookup slice(sl:map layer 1))
+  set horiz anchor(sl, edge:center)
+  set vert anchor(sl, edge:bottom)
+  set slice x(sl, 16 * 20)
+  set slice y(sl, 23 * 20)
+  ship effect := sl
+  set timer(jorm viking ship timer, 0, 1, @ship in jorm belly moves left)
+  viking ship splash animation
+end
+
+script, ship in jorm belly moves, x dest, next script, begin
+  variable(sl)
+  if(current map <> map:Jormungandling's Belly) then(
+    cleanup jorm belly ship
+    exit script
+  )
+  if(ship effect) then(
+    sl := ship effect
+    move slice to(sl, x dest, slice y(sl), 10)
+    set timer(jorm viking ship timer, 0, 10, next script)
+  )
+end
+
+script, ship in jorm belly moves left, begin
+  ship in jorm belly moves(310, @ship in jorm belly moves right)
+end
+
+script, ship in jorm belly moves right, begin
+  ship in jorm belly moves(320, @ship in jorm belly moves left)
+end
+
+script, cleanup jorm belly ship, begin
+  if(slice is valid(ship effect)) then(
+    free slice(ship effect)
+    ship effect := 0
+  )
+  stop timer(jorm viking ship timer)
+  stop timer(splash animation timer)
+end
+
+script, viking ship splash animation, begin
+  if(ship effect && slice is valid(ship effect)) then(
+    variable(splash)
+    splash := lookup slice(sli:splash effect, ship effect)
+    if(not(splash)) then(
+      splash := load large enemy sprite(26)
+      set parent(splash, ship effect)
+      set slice lookup(splash, sli:splash effect)
+      set slice y(splash, 5)
+    )
+    loop frame set(splash, 26, 27)
+    set timer(splash animation timer, 0, 3, @viking ship splash animation)
+  )
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, admire viking wreck, begin
+  suspend player
+  pan camera(west, 5, 4)
+  wait(8)
+  show text box(459)
+  wait for text box
+  wait for camera
+  pan camera(east, 5, 5)
+  wait for camera
+  camera follows hero
+  resume player
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, viking behind uvula, begin
+  variable(ref)
+  variable(saved song)
+  saved song := current song
+  suspend player
+  suspend random enemies
+  
+  show text box(461) # what is that?
+  wait for text box
+
+  ref := NPC reference(20) # Gisli
+
+  set hero speed(me, 5)
+  set NPC speed(ref, 5)
+  
+  suspend box advance
+
+  play song(song: evil plip's dirge)
+  show text box(462) # GRRAAA!
+  walk NPC(ref, south, 1)
+  walk hero(me, south, 2)
+  set hero direction(me, north)
+  wait for hero(me)
+  
+  wait(18)
+  advance text box
+
+  walk npc and hero(ref, south, me, south, 1)
+  walk npc and hero(ref, south, me, west, 1)
+  walk npc and hero(ref, south, me, south, 1)
+  walk npc and hero(ref, south, me, west, 1)
+  walk npc and hero(ref, south, me, south, 1)
+  
+  show text box(463) # Oh gosh Oh Gosh!
+  
+  walk npc and hero(ref, west, me, south, 1)
+  walk npc and hero(ref, south, me, south, 1)
+  walk npc and hero(ref, west, me, south, 1)
+  walk npc and hero(ref, south, me, south, 3)
+
+  walk npc and hero(ref, south, me, east, 1)
+  walk npc and hero(ref, south, me, south, 1)
+
+  advance text box
+
+  walk npc and hero(ref, south, me, east, 2)
+
+  walk npc and hero(ref, east, me, east, 1)
+  walk npc and hero(ref, south, me, east, 1)
+  walk npc and hero(ref, east, me, east, 1)
+
+  walk npc and hero(ref, east, me, south, 2)
+
+  show text box(462) # Graaa!
+  
+  walk npc and hero(ref, east, me, east, 2)
+  walk npc and hero(ref, south, me, east, 1)
+  walk npc and hero(ref, east, me, east, 1)
+
+  advance text box
+  
+  walk npc and hero(ref, south, me, south, 1)
+  walk npc and hero(ref, east, me, east, 3)
+  walk npc and hero(ref, south, me, south, 1)
+  walk npc and hero(ref, east, me, east, 3)
+
+  # Bob stops to glance back
+  walk NPC(ref, south, 1)
+  wait(1)
+  set hero direction(me, south)
+  wait(1)
+  set hero direction(me, west)
+  wait for NPC(ref)
+
+  show text box(464) # Help Help Help!
+  
+  walk npc and hero(ref, east, me, east, 1)
+  walk npc and hero(ref, east, me, north, 1)
+  walk npc and hero(ref, east, me, east, 1)
+  walk npc and hero(ref, east, me, north, 1)
+  walk npc and hero(ref, north, me, north, 1)
+  walk npc and hero(ref, east, me, east, 2)
+  walk npc and hero(ref, north, me, east, 1)
+  
+  advance text box
+
+  walk npc and hero(ref, north, me, north, 1)
+
+  show text box(462) # Graa!
+  
+  walk npc and hero(ref, east, me, east, 2)
+  walk npc and hero(ref, north, me, east, 1)
+  walk npc and hero(ref, east, me, east, 2)
+  
+  advance text box
+
+  walk npc and hero(ref, east, me, east, 3)
+  
+  # Bob trips
+  set hero picture(leader, 48)
+  set hero speed(me, 4)
+  walk hero(me, east, 1)
+  walk NPC (ref, east, 3)
+  wait for hero(me)
+  set hero direction(me, north)
+  set hero frame(me, 1)
+  set hero picture(leader, 48) # Why do I have to do this twice?
+  wait(2)
+  set hero direction(me, east)
+  wait for NPC(ref)
+  
+  # Hesitate before battle
+  wait(10)
+  
+  resume box advance
+  
+  fight formation(102)
+  wait(1)
+  set hero picture(leader, 0)
+  
+  set hero speed(me, 4)
+  set NPC speed(ref, 4)
+
+  alter NPC(ref, NPCstat:picture, 5)
+  set hero direction(me, west)
+  
+  walk NPC(ref, west, 1)
+  set NPC direction(ref, east)
+  
+  # Gislit takes one step back 
+  walk NPC(ref, west, 2)
+  wait for NPC(ref)
+  
+  # after battle conversation
+  show text box(465) # introduce Gisli
+  wait for text box
+
+  play song (song:Gisli Theme)
+  show text box(472) # Gisli starts his Tale
+  wait for text box
+  
+  walk NPC (ref, west, 8)
+  wait(5)
+  show text box(474) # Curious...
+  walk hero(me, west, 10)
+  wait for hero(me)
+  wait for text box
+  
+  show text box(475)
+  wait for text box
+  set NPC direction(ref, east)
+  show text box(477)
+  wait for text box
+
+  set NPC direction(ref, west)
+  show text box(485)
+  wait for text box
+ 
+  play song(saved song)
+  wait(18 * 6)
+  
+  show text box(496) # Is that the end?
+  wait for text  box
+  wait(18)
+  
+  walk NPC (ref, east, 1)
+  wait for NPC(ref)
+  
+  show text box(497) # The rest of the story has not yet unfolded
+  wait for text box
+  
+  wait(18)
+
+  show text box(498) # Going now...
+  wait for text box
+
+  swap by position(0, find hero(hero:Bob the Hamster)) # force Bob into slot 0
+  add hero(hero:Gisli)
+  set hero position(rank in caterpillar(hero:Gisli), NPC X(ref), NPC Y(ref))
+  set hero direction(rank in caterpillar(hero:Gisli), NPC direction(ref))
+  set tag(tag:Gisli joined, ON) # makes the NPC vanish
+  # Put Gisli's helmet on
+  force equip(find hero(hero:Gisli), slot:head, item:viking)
+  set tag(tag:Gisli got helmet, true)
+
+  variable(i)
+  for(i, 0, 3) do(
+    walk hero(me, south, 1)
+    wait for hero(me)
+    walk hero(me, west, 1)
+    wait for hero(me)
+  )
+  walk hero(me, west, 3)
+  wait for hero(me)
+
+  wait(14)
+  set hero direction(me, right)
+  show text box(499)
+  wait for text box
+  
+  resume player
+  resume random enemies
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, uvula battle, begin
+  suspend player
+  
+  variable(ref)
+  ref := NPC reference(21)
+
+  play song(song: evil plip's dirge)  
+  show text box(519)
+  wait for text box
+
+  pan camera(north, 1, 1)
+
+  variable(i, delay)
+  for(delay, 3, 1, -1) do(
+    for(i, 0, 3 * delay) do(
+      set NPC direction(ref, east)
+      wait(delay)
+      set NPC direction(ref, west)
+      wait(delay)
+    )
+  )
+  
+  fight formation(103)
+  play song(song: evil plip's dirge)  
+
+  set NPC direction(ref, south)
+  quake camera(34, 1)
+
+  set tag(tag:Beat Uvula, ON)
+  
+  quake camera(16)
+  show text box(522)
+  quake camera until text box
+    
+  jorm vomits the ship
+  
+  resume player
+end
+
+#---------------------------------------------------------------------------
+
+script, jorm vomits the ship, begin
+  fade screen out(63, 0, 0)
+  wait(1)
+  fade screen out(50, 50, 63)
+  wait(1)
+  teleport to map(map:Where Jorm vomits the ship, 0, 0)
+
+  play song (song: Gisli Theme)
+
+  put camera(20 * 84, 0)
+  pan camera(west, 80)
+
+  wait(1)
+
+  fade screen in
+  
+  wait(18 * 6)
+  
+  variable(sl, jorm, ship)
+  
+  sl := create container(80, 80)
+  set slice x(sl, 320)
+  set slice y(sl, 60)
+  
+  ship := load large enemy sprite(16)
+  horiz flip sprite(ship)
+  set parent(ship, sl)
+  set slice x(ship, 80)
+  
+  jorm := load large enemy sprite(3)
+  horiz flip sprite(jorm)
+  set parent(jorm, sl)
+  
+  variable(i)
+  
+  for(i, 1, 20) do(
+    set slice x(sl, slice x(sl) -- 4)
+    wait(1)
+  )
+  
+  set slice x(ship, 0)
+  
+  for(i, 1, 20) do(
+    set slice x(sl, slice x(sl) -- 4)
+    set slice x(jorm, slice x(jorm) + 8)
+    wait(1)
+  )
+
+  wait(18 * 5)
+
+  fade screen out(45, 45, 63)
+  wait(1)
+  free slice(sl)
+  suspend map music
+  teleport to map(map: World Map, 0, 0)
+  resume map music
+  
+  variable(ref)
+  ref := create NPC(6, 48, 36, up)
+
+  camera follows NPC(ref)
+
+  wait(1)
+  fade screen in
+  walk NPC(ref, west, 20)
+
+  set NPC direction(ref, up)
+  wait(50)
+  set NPC direction(ref, right)
+  wait(50)
+  set NPC direction(ref, down)
+  wait(50)
+  set NPC direction(ref, left)
+  wait(50)
+  pan camera(west, 5, 2)
+  destroy NPC(ref)
+  wait for camera
+
+  fade screen out
+  wait(1)
+  teleport to map(map:Kelp Reef, 30, 6)
+  camera follows hero(me)
+  wait(1)
+  fade screen in
+  walk hero(me, south, 1)
+  wait for hero(me)
+  
+  show text box(381)
+  wait for text box
+  
+end
+
+#---------------------------------------------------------------------------

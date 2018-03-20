@@ -1,0 +1,212 @@
+#---------------------------------------------------------------------------
+# Wandering Hamster - see wander.hss
+# Shell Mini-Game
+#---------------------------------------------------------------------------
+
+# this script and the next one work together to make a simple mini-game
+# where you pay 10$ and then try to guess which of five clam shells
+# contains the 50$ pearl. It is dependent on NPCs already placed on the map
+
+plotscript, shell game, begin
+  # this variable is a loop counter
+  if (checktag(tag:playing shell game))
+  then,begin
+    # already playing
+    show text box (213)
+  end
+  else,begin
+    # want to play?
+    show text box (209)
+    wait for text box
+    if (checktag(tag:shell game choice)) then,begin
+      if (pay money (10))
+      then,begin
+
+        variable (i,j) # loop counters
+
+        suspend player
+        suspend obstruction
+        suspend NPC walls
+
+        # reset shells just in case
+        for (i,0,4) do(
+          set NPC direction(NPC reference(1,i),north)
+        )
+
+        # create a temporary pearl NPC
+        variable(pearl)
+        pearl:=create NPC(2,8,5)
+
+        # make sure the speed is right
+        set NPC speed(pearl,10)
+
+        # make all heros watch the pearl
+        for (i,0,3) do(
+          set hero direction(i,north)
+        )
+
+        # move the pearl over the shells
+        walk NPC(pearl,north,3)
+        walk NPC(pearl,west,3)
+        wait for NPC(pearl)
+
+        # open all the shells
+        for (j,0,3) do,begin
+          for (i,0,4) do(
+            set NPC direction (NPC reference(1,i),j)
+          )
+          wait (2)
+        )
+
+        # randomize which direction you go first
+        variable(X1, X2)
+        if(random(false,true))
+          then(X1:=1,X2:=9)
+          else(X1:=9,X2:=1)
+
+        # make the pearl dance back and forth
+        walk NPC to X(pearl,X1)
+        wait for NPC(pearl)
+        walk NPC to X(pearl,X2)
+        wait for NPC(pearl)
+
+        # double speed!
+        set NPC speed(pearl,20)
+
+        # make the pearl dance back and forth more
+        for (i,0,random(0,1)) do(
+          walk NPC to X(pearl,X1)
+          wait for NPC(pearl)
+          walk NPC to X(pearl,X2)
+          wait for NPC(pearl)
+        )
+
+        # quad speed! (does this work?)
+        set NPC speed(pearl,40)
+
+        # dance once more
+        walk NPC to X(pearl,X1)
+        wait for NPC(pearl)
+        walk NPC to X(pearl,X2)
+        wait for NPC(pearl)
+
+        # pick a random shell
+        shell game variable:=random(1,5)
+
+        # get a reference to the chosen shell
+        variable(chosen shell)
+        chosen shell:=NPC reference(1,shell game variable--1)
+
+        # choose an X position near the shell
+        variable(near shell)
+        near shell:=NPC X(chosen shell)+(random(-1,1)*2)
+        if (near shell>>9) then(near shell:=9)
+        if (near shell<<1) then(near shell:=1)
+
+        # move the pearl near the chosen shell
+        walk NPC to X(pearl,near shell)
+        wait for NPC(pearl)
+
+        # make pearl dissapear
+        destroy NPC(pearl)
+
+        # snap shells shut
+        for (j,3,0,-1) do,begin
+          for (i,0,4) do(
+            set NPC direction (NPC reference(1,i),j)
+          )
+          wait (1)
+        )
+
+        set tag (tag:playing shell game,on)
+        resume player
+        resume obstruction
+        resume NPC walls
+      end
+      else,begin
+        # sorry not enough money
+        show text box (208)
+      end
+    end
+  end
+end
+
+# NPCs automatically pass a reference to themselves as the second
+# script argument 
+plotscript, pick a shell, arg, my shell, begin
+ variable (i)
+ if (check tag(tag:playing shell game))
+ then(
+
+   variable (pearl)
+
+   suspend player
+   suspend obstruction
+   suspend NPC walls
+
+   for (i,0,3) do,begin
+     set NPC direction (my shell,i)
+     wait (2)
+   end
+
+   variable (correct shell)
+   correct shell:=NPC reference(1,shell game variable--1)
+
+   if (my shell == correct shell)
+   then,begin
+     # congratulations!
+     show text box (210)
+     pearl:=create NPC(2,NPC X(my shell),NPC Y(my shell))
+   end
+   else,begin
+     # sorry, you guessed wrong
+     show text box (211)
+     for (i,0,3) do,begin
+       set NPC direction (correct shell,i)
+       wait (1)
+     end
+     pearl:=create NPC(2,NPC X(correct shell),NPC Y(correct shell))
+   end
+
+   set NPC speed (pearl,4)
+
+   walk NPC(pearl,north,1)
+   wait for NPC(pearl)
+
+   set NPC speed (pearl,10)
+
+   if (my shell == correct shell) then(
+     walk NPC(pearl,south,2)
+   )else(
+     for (i,3,0,-1) do,begin
+       set NPC direction (correct shell,i)
+       wait (1)
+     end
+     walk NPC to X(pearl,8)
+     walk NPC to Y(pearl,5)
+   )
+
+   wait for NPC(pearl)
+
+   destroy NPC (pearl)
+
+   wait for text box
+
+   for (i,3,0,-1) do,begin
+     set NPC direction (my shell,i)
+     wait (2)
+   end
+
+   resume player
+   resume obstruction
+   resume NPC walls
+
+   set tag (tag:playing shell game,off)
+   shell game variable:=zero
+
+ end
+ else,begin
+   # pay before you play!
+   show text box (212)
+ end
+end

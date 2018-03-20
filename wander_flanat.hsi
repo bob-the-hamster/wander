@@ -1,0 +1,898 @@
+#---------------------------------------------------------------------------
+# Wandering Hamster - see wander.hss
+# Flanat Village and surroundings
+# includes non-castle-related stuff on the Flanat Castle Exterior map
+#---------------------------------------------------------------------------
+
+plotscript, Show Misa House, begin
+ suspend player
+ focus camera (41,23,5)
+ wait (20)
+ show text box (206)
+ wait for camera
+ wait for text box
+ focus camera (hero X(me), hero Y(me) -- 3, 10)
+ wait for camera
+ camera follows hero (me)
+ resume player
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, Misa Castle Hint, begin
+  suspend player
+  suspend NPCs
+  variable(bobx, boby, bobd)
+  variable(misa, misax, misay, misad)
+  bobx := hero x(me)
+  boby := hero y(me)
+  bobd := hero direction(me)
+  misa := NPC Reference(0)
+  misax := NPC x(misa)
+  misay := NPC y(misa)
+  misad := NPC direction(misa)
+  
+  teleport to map(0, 41, 21)
+  
+  show text box(548)
+  wait for text box
+
+  suspend box advance
+  show text box(549)
+
+  focus camera(32, 21, 10)
+  wait for camera
+  focus camera(6, 5, 10)
+  wait for camera
+
+  resume box advance
+  wait for text box
+  
+  camera follows hero(me)
+  teleport to map(2, bobx, boby)
+  set hero direction(me, bobd)
+
+  suspend NPCs
+  misa := NPC Reference(0)
+  set NPC position(misa, misax, misay)
+  set NPC direction(misa, misad)
+
+  if(check tag(tag:plot boulders gone) == OFF) then(
+    set tag(tag:saw plot boulders, ON)
+  )
+  show text box(408)
+  wait for text box
+  
+  resume NPCs
+  resume player
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, Sleep at the Inn, begin
+ suspend player
+ focus camera (hero x(me) + 1, hero y(me) -- 2,2)
+ walk hero (me,east,2)
+ wait for hero (me)
+ walk hero (me,north,2)
+ wait for hero (me)
+ walk hero (me,west,3)
+ wait for hero (me)
+ suspend obstruction
+ suspend caterpillar
+ walk hero (me,north,1)
+ walk hero (1,west,1)
+ walk hero (2,north,1)
+ walk hero (3,west,1)
+ wait for hero (me)
+ walk hero (me,west,1)
+ walk hero (1,north,1)
+ walk hero (2,east,1)
+ walk hero (3,north,1)
+ wait for hero (me)
+ set hero direction (me,south)
+ walk hero (1,east,1)
+ set hero direction (2,south)
+ set hero direction (3,west)
+ wait for hero (1)
+ set hero direction (1,south)
+
+ if (room in active party == 0)
+ then,begin
+  set hero direction (3,west)
+  wait (8)
+  set hero direction (3,east)
+  wait (8)
+  set hero direction (3,west)
+  wait (8)
+  set hero direction (3,east)
+  wait (12)
+  set hero speed (2,10)
+  walk hero (2,east,2)
+  set hero direction (2,north)
+  wait for hero (2)
+  set hero speed (2,4)
+  walk hero (3,east,1)
+  wait for hero (3)
+  set hero direction (3,south)
+  wait (15)
+  set hero direction (2,west)
+ end
+
+ play song (song:Sleeping Music)
+ tweak palette(-40, -40, -10)
+ fade screen in
+ wait (18 * 3) # 3 seconds
+ if (room in active party == 0)
+ then,begin
+  set hero speed (2,20)
+  set hero speed (3,20)
+  walk hero (3,east,1)
+  wait for hero (3)
+  walk hero (2,west,2)
+  wait for hero (2)
+  set hero direction (2,south)
+  set hero direction (3,north)
+  set hero speed (2,4)
+  set hero speed (3,4)
+  wait (1)
+ end
+ key wait seconds(8)
+ reset palette
+ fade screen in
+ play song (song:Soldier's Chorus)
+ wait (5)
+
+ focus camera (hero x(me), hero y(me),10)
+ wait for camera
+ camera follows hero (me)
+ walk hero (me,east,1)
+ wait for hero (me)
+ walk hero (me,south,1)
+ walk hero (1,west,1)
+ walk hero (2,west,1)
+ wait for hero (me)
+ walk hero (me,east,1)
+ walk hero (1,south,1)
+ set hero direction (2,south)
+ wait for hero (me)
+ walk hero (me,east,2)
+ walk hero (1,east,2)
+ wait for hero (me)
+ walk hero (me,south,1)
+ walk hero (1,east,1)
+ walk hero (2,south,1)
+ wait for hero (me)
+ walk hero (me,south,2)
+ walk hero (1,south,2)
+ walk hero (2,east,1)
+ wait for hero (2)
+ walk hero (2,south,1)
+
+ if (room in active party == 0)
+ then,begin
+  set hero direction (3,south)
+  wait (5)
+  set hero direction (3,west)
+  wait (5)
+  set hero direction (3,north)
+  wait (5)
+  set hero direction (3,east)
+  wait (5)
+  set hero direction (3,south)
+  wait (5)
+  set hero speed (3,10)
+  walk hero (3,south,1)
+  wait for hero (3)
+  walk hero (3,west,1)
+  wait for hero (3)
+  set hero speed (3,4)
+ end
+
+ resume caterpillar
+ resume obstruction
+ resume player
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, Hide and Seek, begin
+ variable (i)
+ # Want to play hide and Seek?
+ show text box (201)
+ wait for text box
+ if (check tag(tag:hide n seek)) then, begin
+  show text box (204)
+  wait for text box
+  alter NPC (14,NPCstat:Script,none)
+  set tag (tag:hide n seek, OFF)
+  for (i,30,0,-1) do,begin
+   # make sure you didnt go thru a door
+   if (current map == 0)
+   then, begin
+    wait (9)
+    show value (i)
+   end
+   else, begin
+    show no value
+   end
+  end #for
+  show no value
+  # make sure you didnt go thru a door
+  if (current map == 0)
+  then, begin
+   # ready or not, here I come!
+   show text box (202)
+   wait for text box
+   alter NPC (14,NPCstat:MoveType,NPCmovetype:ChaseYou)
+   alter NPC (14,NPCstat:Script,@Reset Hide and Seek)
+   alter NPC (14,NPCstat:activation,NPCactivation:touch)
+  end #then
+ end #then
+end #script
+
+script,Reset Hide and Seek, begin
+ alter NPC (14,NPCstat:MoveType,NPCmovetype:standstill)
+ alter NPC (14,NPCstat:Script,@Hide and Seek)
+ alter NPC (14,NPCstat:activation,NPCactivation:use)
+ show text box (203)
+end
+
+#---------------------------------------------------------------------------
+
+script, Plot Boulder Mover, begin
+  
+  variable(Mover,Rock)
+
+  Mover:=NPC reference(13)
+  Rock:=NPC at spot(38,91)
+
+  set NPC position(Mover,42,95)
+  set NPC position(Rock,41,95)
+  set NPC direction(Mover,west)
+  set NPC direction(Rock,west)
+  set NPC speed    (Rock,2)
+
+  suspend player
+  suspend obstruction
+
+  walk hero        (me,west,1)
+
+  set NPC speed    (Mover,5)
+  walk NPC         (Mover,south,1)
+  wait for NPC     (Mover)
+  walk NPC         (Mover,west,1)
+  wait for NPC     (Mover)
+  set NPC speed    (Mover,2)
+  walk NPC         (Mover,north,1)
+  wait             (1)
+  walk NPC         (Rock,north,1)
+  wait for NPC     (Rock)
+  set NPC speed    (Mover,5)
+  walk NPC         (Mover,east,1)
+  wait for NPC     (Mover)
+  walk NPC         (Mover,north,1)
+  wait for NPC     (Mover)
+  set NPC speed    (Mover,2)
+  walk NPC         (Mover,west,2)
+  wait             (1)
+  walk NPC         (Rock,west,2)
+  wait for NPC     (Rock)
+  set NPC speed    (Mover,5)
+  walk NPC         (Mover,south,1)
+  wait for NPC     (Mover)
+  walk NPC         (Mover,west,1)
+  wait for NPC     (Mover)
+  set NPC speed    (Mover,2)
+  walk NPC         (Mover,north,3)
+  wait             (1)
+  walk NPC         (Rock,north,3)
+  wait for NPC     (Rock)
+  set NPC speed    (Mover,5)
+  walk NPC         (Mover,east,1)
+  wait for NPC     (Mover)
+  walk NPC         (Mover,north,1)
+  wait for NPC     (Mover)
+  set NPC speed    (Mover,2)
+  walk NPC         (Mover,west,1)
+  wait             (1)
+  walk NPC         (Rock,west,1)
+  wait for NPC     (Rock)
+  set NPC direction(Mover,south)
+
+
+  resume player
+  resume obstruction
+
+  set tag(tag:saw plotrock mover,ON)
+
+end
+
+#---------------------------------------------------------------------------
+
+plotscript,Cactus sighting in Flanat,begin
+  variable(mus)
+  mus := current song
+  play song(song:Cactus Theme)
+
+  variable (cactus)
+  cactus:=NPC reference(10)
+
+  set NPC position (cactus,19,26)
+  walk NPC (cactus,east,3)
+  wait for NPC (cactus)
+  walk NPC (cactus,west,4)
+  wait for NPC (cactus)
+  set NPC speed (cactus,10)
+  walk NPC to X (cactus,10)
+  wait for NPC (cactus)
+  walk NPC to Y (cactus,21)
+  wait for NPC (cactus)
+  walk NPC to X (cactus,0)
+  wait for NPC (cactus)
+  set NPC position (cactus,0,0)
+  set tag (tag:flanat cactus,ON)
+  
+  play song(mus)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, steal Grueber's lunch, begin
+  suspend player
+  if (check tag(tag:stole lunch))
+  then(
+    show text box (237)
+    wait for text box
+  )
+  else(
+    if (check tag (tag:steal lunch))
+    else(
+      show text box (235)
+      wait for text box
+    )
+    if (check tag (tag:steal lunch))
+    then(
+      set hero direction (me,east)
+      wait (2)
+      set hero direction (me,south)
+      wait (2)
+      set hero direction (me,west)
+      wait (3)
+      set hero direction (me,south)
+      wait (2)
+      set hero direction (me,east)
+      wait (2)
+      set hero direction (me,north)
+      wait (1)
+      if (((NPC Y(8)>>75) and (NPC direction(8)<>north)) or ((NPC X(8)>>14)and(NPC direction(8)<>west)))
+      then(
+        suspend caterpillar
+        suspend hero walls
+        suspend obstruction
+        set hero speed (me,5)
+        walk hero (me,north,1)
+        wait for hero (me)
+        walk hero (me,south,1)
+        set hero direction(me,north)
+        wait for hero (me)
+        set hero speed (me,4)
+        resume obstruction
+        resume hero walls
+        resume caterpillar
+        show text box (239)
+        get item(item:carrot,3)
+        wait for text box
+        set tag(tag:stole lunch,ON)
+      )
+      else(
+        show text box (238)
+        wait for text box
+        set tag(tag:steal lunch,OFF)
+      )
+    )
+    else(
+      show text box (236)
+      wait for text box
+    )
+  )
+  resume player
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, pick and eat a carrot, arg, ref, begin
+  show text box(197)
+  wait for text box
+  if(use item(item:carrot)) then(
+    destroy NPC(ref)
+  )
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, notice flanat weapon shop, begin
+  suspend player
+  set hero direction(me, north)
+  wait(3)
+  show text box(593)
+  wait for text box
+  resume player
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, cart from monastery to flanat, begin
+  friar harvey ID := 20
+  friar cart ID := 21
+  
+  if(not(pay money(5))) then(
+    show text box(604)
+    wait for text box
+    exit script
+  )
+  suspend player
+  suspend random enemies
+  
+  set friar cart obstruction(false)
+  
+  # Get the party in position
+  walk hero to Y(me, 66)
+  wait for hero(me)
+  walk hero to X(me, 17)
+  wait for hero(me)
+  walk hero to X(me, 13 + room in active party)
+  wait for hero(me)
+  walk hero to X(me, 16)
+  wait for hero(me)
+  suspend caterpillar
+  
+  mount friar cart
+  
+  variable(friar)
+  friar := NPC reference(friar harvey ID)
+  focus camera(NPC X(friar), NPC Y(friar), 10)
+  wait for camera
+  camera follows NPC(friar)
+  
+  walk friar cart(east, 1)
+  walk friar cart(south, 5)
+  walk friar cart(west, 3)
+  walk friar cart(south, 1)
+  walk friar cart(west, 3)
+  walk friar cart(south, 1)
+  walk friar cart(west, 1)
+  walk friar cart(south, 8)
+  walk friar cart(east, 1)
+  walk friar cart(south, 1)
+  walk friar cart(east, 1)
+  walk friar cart(south, 6)
+  walk friar cart(east, 2)
+  walk friar cart(south, 6)
+  walk friar cart(east, 16)
+  walk friar cart(north, 1)
+  walk friar cart(east, 8)
+  walk friar cart(south, 2)
+  walk friar cart(east, 2)
+  walk friar cart(south, 1)
+  suspend NPC walls # last step has a wall
+  walk friar cart(east, 6)
+  resume NPC walls
+  
+  # Move to Flanat Map
+  fade screen out
+  wait(1)
+  teleport to map(0, 5, 6)
+  friar harvey ID := 24
+  friar cart ID := 25
+  quick mount friar cart
+  put friar cart(4, 5)
+  suspend NPCs
+  set friar cart obstruction(false)
+  # Update camera following
+  friar := NPC reference(friar harvey ID)
+  camera follows NPC(friar)
+  wait(1)
+  fade screen in
+
+  suspend NPC walls # last cart starts in a wall
+  walk friar cart(east, 2)
+  
+  variable(jake)
+  jake := NPC reference(6)
+  walk NPC(jake, north, 1)
+  set NPC direction(jake, west)
+  resume NPC walls
+
+  walk friar cart(east, 2)
+  walk friar cart(south, 1)
+  set NPC direction(jake, south)
+  walk friar cart(east, 4)
+  set NPC direction(jake, east)
+  walk friar cart(east, 2)
+  walk friar cart(south, 4)
+  walk friar cart(east, 6)
+  walk friar cart(south, 6)
+  walk friar cart(west, 1)
+  walk friar cart(south, 1)
+  walk friar cart(east, 4)
+  set NPC direction(friar, west)
+  set NPC direction(NPC reference(friar cart ID, 3), east)
+  set NPC direction(jake, south)
+
+  variable(cart)
+  cart := NPC reference(friar cart ID, 0)
+  focus camera(NPC X(cart), NPC Y(cart), 10)
+  wait for camera
+
+  dismount friar cart
+  
+  set friar cart obstruction(true)
+  
+  resume player
+  resume random enemies
+  resume caterpillar
+  resume NPCs
+end
+
+plotscript, cart from flanat to monastery, begin
+  friar harvey ID := 24
+  friar cart ID := 25
+  
+  if(not(pay money(5))) then(
+    show text box(604)
+    wait for text box
+    exit script
+  )
+  suspend player
+  suspend random enemies
+  suspend NPCs
+  suspend obstruction
+  
+  set friar cart obstruction(false)
+  
+  # Get the party in position
+  if(hero Y(me) <= 16) then(
+    walk hero to X(me, 24)
+    wait for hero(me)
+  )
+  if(hero X(me) >= 24) then(
+    walk hero to Y(me, 18)
+    wait for hero(me)
+  )
+  walk hero to X(me, 19 + room in active party)
+  wait for hero(me)
+  walk hero to X(me, 22)
+  wait for hero(me)
+  suspend caterpillar
+  
+  mount friar cart
+  
+  variable(friar)
+  friar := NPC reference(friar harvey ID)
+  focus camera(NPC X(friar), NPC Y(friar), 10)
+  wait for camera
+  camera follows NPC(friar)
+
+  variable(jake)
+  jake := NPC reference(6)
+  set NPC speed(jake, 10)
+  walk NPC(jake, north, 8)
+  set NPC direction(jake, south)
+  
+  walk friar cart(north, 7)
+  walk friar cart(west, 9)
+  walk friar cart(north, 4)
+  walk friar cart(west, 6)
+  walk friar cart(north, 1)
+  suspend NPC walls # last step has a wall
+  walk friar cart(west, 8)
+  resume NPC walls
+  
+  # Move to Flanat Castle Area Map
+  fade screen out
+  wait(1)
+  teleport to map(1, 43, 94)
+  friar harvey ID := 20
+  friar cart ID := 21
+  quick mount friar cart
+  put friar cart(43, 95, -1)
+  suspend NPCs
+  set friar cart obstruction(false)
+  # Update camera following
+  friar := NPC reference(friar harvey ID)
+  camera follows NPC(friar)
+  wait(1)
+  fade screen in
+
+  suspend NPC walls # last cart starts in a wall
+  walk friar cart(west, 2)
+  resume NPC walls
+  
+  walk friar cart(north, 1)
+  walk friar cart(west, 2)
+  walk friar cart(north, 2)
+  walk friar cart(west, 8)
+  walk friar cart(south, 1)
+  walk friar cart(west, 16)
+  walk friar cart(north, 12)
+  walk friar cart(west, 3)
+  walk friar cart(north, 1)
+  walk friar cart(west, 1)
+  walk friar cart(north, 8)
+  walk friar cart(east, 1)
+  walk friar cart(north, 1)
+  walk friar cart(east, 3)
+  walk friar cart(north, 1)
+  walk friar cart(east, 3)
+  walk friar cart(north, 3)
+  walk friar cart(west, 5)
+  walk friar cart(north, 2)
+  walk friar cart(east, 4)
+  set NPC direction(NPC reference(friar cart ID, 3), east)
+
+  variable(cart)
+  cart := NPC reference(friar cart ID, 0)
+  focus camera(NPC X(cart), NPC Y(cart), 10)
+  wait for camera
+
+  dismount friar cart
+  
+  set friar cart obstruction(true)
+  
+  resume player
+  resume random enemies
+  resume caterpillar
+  resume NPCs
+  resume obstruction
+end
+
+script, walk friar cart, dir, dist, begin
+  variable(friar, cart, iter, cart num, dest NPC, last dir, rider)
+  friar := NPC reference(friar harvey ID)
+  set NPC speed(friar, 10)
+  set NPC speed(NPC reference(friar cart ID), 10)
+  for(iter, 1, dist) do(
+    walk NPC(friar, dir, 1)
+    last dir := dir
+    for(cart num, 0, 3) do(
+      cart := NPC reference(friar cart ID, cart num)
+      if(cart num == 0)
+        then(dest NPC := friar)
+        else(dest NPC := NPC reference(friar cart ID, cart num -- 1))
+      walk NPC to X(cart, NPC X(dest NPC))
+      walk NPC to Y(cart, NPC Y(dest NPC))
+      rider := lookup slice(sli:walkabout extra, get NPC slice(cart))
+      if(rider) then(
+        set sprite frame(rider, last dir * 2)
+      )
+      last dir := NPC direction(cart)
+    )
+    wait for NPC(friar)
+  )
+end
+
+script, put friar cart, dest x, dest y, offset=1, begin
+  variable(friar, cart, i)
+  friar := NPC reference(friar harvey ID)
+  set NPC position(friar, dest x, dest y)
+  set NPC direction(friar, south)
+  for(i, 0, 3) do(
+    cart := NPC reference(friar cart ID, i)
+    set NPC position(cart, dest x -- offset -- (i * offset), dest y)
+    set NPC direction(cart, east)
+  )
+end
+
+script, set friar cart obstruction, val, begin
+  variable(friar, cart, i)
+  friar := NPC reference(friar harvey ID)
+  set NPC obstructs(friar, val)
+  for(i, 0, 3) do(
+    cart := NPC reference(friar cart ID, i)
+    set NPC obstructs(cart, val)
+  )
+end
+
+script, mount friar cart, begin
+  quick mount friar cart
+  # Animate the mounting
+  variable(cart, who, hero pic, cart pic, sl)
+  for(who, 0, 3) do(
+    if(hero by rank(who) >= 0) then(
+      cart := NPC reference(friar cart ID, who)
+      sl := lookup slice(sli:walkabout extra, get NPC slice(cart))
+      set slice y(sl, 20)
+      move slice by(sl, 0, -28, 4)
+    )
+  )
+  wait(4)
+end
+
+script, quick mount friar cart, begin
+  # Mount the carts with no animation
+  variable(cart, who, hero pic, cart pic, sl)
+  for(who, 0, 3) do(
+    if(hero by rank(who) >= 0) then(
+      cart := NPC reference(friar cart ID, who)
+      hero pic := lookup slice(sl:walkabout sprite component, get hero slice(who))
+      cart pic := lookup slice(sl:walkabout sprite component, get npc slice(cart))
+      sl := clone sprite(hero pic)
+      set slice lookup(sl, sli:walkabout extra)
+      set parent(sl, cart pic)
+      set slice y(sl, -8)
+      set slice visible(hero pic, false)
+    )
+  )
+end
+
+script, dismount friar cart, begin
+  # Dismount the carts
+  variable(cart, who, sl, hero pic)
+  for(who, 0, 3) do(
+    if(hero by rank(who) >= 0) then(
+      cart := NPC reference(friar cart ID, who)
+      sl := lookup slice(sli:walkabout extra, get npc slice(cart))
+      free slice(sl)
+      set hero position(who, NPC X(cart), NPC Y(cart))
+      hero pic := lookup slice(sl:walkabout sprite component, get hero slice(who))
+      set slice visible(hero pic, true)
+      walk hero(who, south, 1)
+    )
+  )
+  camera follows hero(me)
+  wait for hero(me)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript,Monastery Inn,begin
+  suspend player
+  suspend NPCs
+  suspend hero walls
+  suspend obstruction
+  focus camera(32, 19, 1)
+  
+  suspend caterpillar
+
+  walk hero to X(0, 29)
+  walk hero to X(1, 31)
+  walk hero to X(2, 33)
+  walk hero to X(3, 35)
+  walk NPC to X(3, 32)
+  
+  variable(who, ready)
+  while(true) do(
+    ready := true
+    for(who, 0, 3) do(
+      if(hero by rank(who) >= 0) then(
+        if(hero is walking(who)) then(
+          ready := false
+        )else(
+          walk hero to Y(who, 18)
+        )
+      )
+    )
+    if(NPC is walking(3)) then(
+      ready := false
+    )else(
+      walk NPC to Y(3, 22)
+    )
+    if(ready) then(break)
+    wait(1)
+  )
+  
+  for (who,0,3) do(
+    walk hero(who, east, 1)
+  )
+  
+
+  for (who,0,3) do(
+    wait for hero(who)
+    set hero direction(who, south)
+  )
+
+  play song (song:Sleeping Music)
+  tweak palette (-40, -40, -10)
+  fade screen in
+
+  key wait (18 * 8)
+  reset palette
+  fade screen in
+  play song (song:Church Hymn)
+  wait (5)
+
+  walk NPC to Y(3, 20)
+
+  for (who,0,3) do(
+    walk hero(who, west, 1)
+  )
+  wait for hero(me)
+
+  for (who,0,3) do(
+    walk hero(who, south, 1)
+  )
+  wait for hero(me)
+
+  walk NPC to X(3, 30)
+    
+  for (who,0,3) do(
+    walk hero to X(who, 32 + who)
+  )
+  for (who,0,3) do(
+    wait for hero(who)
+  )
+
+  set hero direction(0, south)
+  for (who,1,3) do(
+    set hero direction(who, west)
+  )
+  resume caterpillar
+  
+  focus camera(hero X(me), hero Y(me), 4)
+  wait for camera
+  camera follows hero(me)
+
+  resume player
+  resume NPCs
+  resume hero walls
+  resume obstruction
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, use the outhouse, begin
+  suspend player
+  suspend caterpillar
+  show text box(617)
+  set hero direction(0, south)
+  
+  wait(5)
+  
+  variable(who)
+  for(who, 1, 3) do(
+    walk hero to X(who, hero X(0))
+  )
+
+  variable(ready)
+  while(true) do(
+    ready := true
+    for(who, 1, 3) do(
+      if(hero by rank(who) >= 0) then(
+        if(hero is walking(who)) then(
+          ready := false
+        )else(
+          walk hero to Y(who, hero Y(0) + 3)
+        )
+      )
+    )
+    if(ready) then(break)
+    wait(1)
+  )
+
+  for(who, 1, 3) do(
+    wait for hero(who)
+  )
+  
+  wait for text box
+  
+  fade screen out
+  wait(5)
+  fade screen in
+  wait(1)
+  
+  walk hero(1, north, 1)
+  walk hero(0, south, 1)
+  
+  wait for hero(1)
+  wait for hero(0)
+  set hero direction(0, west)
+  
+  resume caterpillar
+  resume player
+  
+end
+
+#---------------------------------------------------------------------------
+
+

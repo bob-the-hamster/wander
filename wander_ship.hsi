@@ -1,0 +1,492 @@
+#---------------------------------------------------------------------------
+# Wandering Hamster - see wander.hss
+# The Unfortunate Turtle (Ship)
+#---------------------------------------------------------------------------
+
+script, board the unfortunate turtle from mersheep village, begin
+  teleport to map(map:deck of the unfortunate turtle, 30, 34)
+  suspend player
+  wait(1)
+  fade screen in
+  suspend hero walls
+  set hero speed(me, 10)
+  walk hero(me, north, 1)
+  wait for hero(me)
+  walk hero(me, north, 1)
+  walk hero(me, west, 1)
+  wait for hero(me)
+  walk hero(me, south, 1)
+  walk hero(me, west, 1)
+  wait for hero(me)
+  set hero speed(me, 4)
+  walk hero(me, west, 1)
+  wait for hero(me)
+  if(check tag(tag:boarded pirate ship) == OFF) then(
+    first boarding of the unfortunate turtle
+  )
+  resume hero walls
+  resume player
+end
+
+script, first boarding of the unfortunate turtle, begin
+  walk hero(me, left, 2)
+  set tag(tag:boarded pirate ship, ON)
+  pan camera(left, 3, 4)
+  wait for camera
+  variable(louis)
+  louis := npc reference(0)
+  set npc direction(louis, right)
+  wait(2)
+  show text box(717)
+  set npc speed(louis, 10)
+  walk npc(louis, up, 1)
+  set npc direction(louis, right)
+  wait for npc(louis)
+  walk npc(louis, down, 1)
+  set npc direction(louis, right)
+  wait for npc(louis)
+  wait for text box
+  pan camera(up, 6, 2)
+  pathfind npc to(louis, 18, 20)
+  wait(10)
+  set hero direction(0, up)
+  wait(1)
+  set hero direction(1, up)
+  show text box(718)
+  wait(20)
+  advance text box
+  variable(pirate1, pirate2, pirate3)
+  pirate1 := npc reference(1,0)
+  pirate2 := npc reference(1,1)
+  pirate3 := npc reference(1,2)
+  pathfind npc to(pirate1, 24, 33)
+  pathfind npc to(pirate2, 25, 32)
+  pathfind npc to(pirate3, 26, 32)
+  wait(20)
+  pan camera(down, 3, 2)
+  wait for npc(pirate1)
+  wait for npc(pirate2)
+  wait for npc(pirate3)
+  fight formation(136)
+  focus camera(hero x(me), hero y(me), 4)
+  npc dissolve(pirate1)
+  wait(1)
+  npc dissolve(pirate2)
+  wait(1)
+  npc dissolve(pirate3)
+  wait for npc dissolve(pirate1)
+  destroy npc(pirate1)
+  wait for npc dissolve(pirate2)
+  destroy npc(pirate2)
+  wait for npc dissolve(pirate3)
+  destroy npc(pirate3)
+  show text box(722)
+  set hero direction(0, right)
+  set hero direction(1, left)
+  wait for text box
+  camera follows hero(me)
+  set tag(tag: beat 3 pirate battle, ON)
+end
+
+plotscript, bearbeak and tuxbeard come out, begin
+  suspend player
+  set tag(tag: bearbeak appears, ON)
+  variable(tuxbeard, bearbeak)
+  tuxbeard := NPC reference(2)
+  bearbeak := NPC reference(3)
+  set npc position(tuxbeard, 22, 25)
+  set npc position(bearbeak, 22, 25)
+  walk npc(tuxbeard, south, 1)
+  wait for npc(tuxbeard)
+
+  set npc obstructs(tuxbeard, false)
+  pathfind npc to(tuxbeard, 22, 29)
+  pathfind npc to(bearbeak, 21, 29)
+  wait for npc(bearbeak)
+  set npc obstructs(tuxbeard, true)
+
+  while(not(tuxbeard and bearbeak block the way)) do(
+    wait for npc(tuxbeard)
+  )
+  resume player
+end
+
+plotscript, unfortunate turtle each step, begin
+  if(check tag(tag:bearbeak appears) == ON && check tag(tag:beat bearbeak) == OFF) then(
+    tuxbeard and bearbeak block the way
+  )
+end
+
+script, tuxbeard and bearbeak block the way, begin
+  variable(tuxbeard, bearbeak, x, x1, x2)
+  tuxbeard := NPC reference(2)
+  bearbeak := NPC reference(3)
+  set npc speed(tuxbeard, 5)
+  set npc speed(bearbeak, 5)
+  x := hero x(me)
+  x1 := npc x(bearbeak)
+  x2 := npc x(tuxbeard)
+  if(x < x1) then(
+    walk npc(bearbeak, west, 1)
+    set npc direction(bearbeak, south)
+    walk npc(tuxbeard, west, 1)
+    set npc direction(tuxbeard, south)
+  )else if(x > x2) then(
+    walk npc(tuxbeard, east, 1)
+    set npc direction(tuxbeard, south)
+    walk npc(bearbeak, east, 1)
+    set npc direction(bearbeak, south)
+  )
+  # Return true if they are close enough to be blocking
+  exit returning(x > x1 -- 1 && x < x2 + 1)
+end
+
+plotscript, tuxbeard and bearbeak battle, begin
+  suspend player
+  variable(tuxbeard, bearbeak)
+  tuxbeard := NPC reference(2)
+  bearbeak := NPC reference(3)
+  show text box(724) # Bob
+  wait for text box
+
+  show text box(725) # Tuxbeard
+  jiggle npc(tuxbeard, 3)
+  wait for text box
+  set npc direction(tuxbeard, west)
+  show text box(726)
+  jiggle npc(tuxbeard, 3)
+  wait for text box
+  
+  show text box(727) # Bearbeak
+  jiggle npc(bearbeak, 3)
+  wait for text box
+
+  set npc direction(tuxbeard, south)
+  show text box(728)
+  jiggle npc(tuxbeard, 3)
+  wait for text box
+  
+  if(fight formation(137)) then(
+    set tag(tag:beat bearbeak, ON)
+  )
+
+  resume player
+end
+
+plotscript, ship 2 sashimi, begin
+  get item(item:sashimi, 2)
+end
+
+plotscript, ship 2 life, begin
+  get item(item:life, 2)
+end
+
+plotscript, confront icefeather, begin
+  suspend player
+
+  variable(bob, gisli)
+  bob := rank in caterpillar(hero:Bob the Hamster)
+  gisli := rank in caterpillar(hero:Gisli)
+
+  variable(louis, icefeather)
+  louis := npc reference(7)
+  icefeather := npc reference(6)
+
+  focus camera(9, 10, 5)
+  pathfind npc to(louis, 10, 11)
+  wait for npc(louis)
+  set npc direction(louis, down)
+
+  show text box(742)
+  wait for text box
+  wait(3)
+  show text box(743)
+  jiggle npc(icefeather, 2)
+  set npc direction(louis, right)
+  wait(1)
+  set npc direction(louis, up)
+  wait for text box
+  walk hero(me, down, 1)
+  wait(3)
+  show text box(744)
+  set npc direction(louis, left)
+  jiggle npc(louis)
+  wait for text box
+  wait(3)
+  show text box(745)
+  wait(3)
+  set npc ignores walls(icefeather, true)
+  set npc speed(icefeather, 10)
+  walk npc(icefeather, up, 1)
+  wait for npc(icefeather)
+  jiggle npc(icefeather, 5)
+  wait for text box
+  
+  walk hero to y(me, 9)
+  focus camera(17, 9, 5)
+  wait for hero(me)
+  wait for camera
+  camera follows hero(me)
+
+  fight formation(143)
+  set tag(tag:Beat Icefeather, true)
+  wait(1)
+  
+  icefeather := npc reference(9)
+  show text box(746)
+  jiggle npc(2)
+  set hero direction(0, left)
+  set hero direction(1, left)
+  wait for text box
+  wait(3)
+  
+  suspend box advance
+  show text box(747)
+  jiggle hero(gisli, 1)
+  wait(15)
+  advance text box
+  show text box(748) # Not now, Gisli!
+  jiggle hero(bob, 1)
+  resume box advance
+  wait for text box
+  show text box(749)
+  wait for text box
+  wait(3)
+  show text box(750)
+  wait for text box
+  wait(3)
+  show text box(751)
+  wait for text box
+  wait(3)
+  show text box(752)
+  jiggle npc(2)
+  wait for text box
+  show text box(753)
+  wait for text box
+  
+  pathfind npc to(icefeather, 10, 5)
+  wait(12)
+  set hero direction(0, up)
+  set hero direction(1, up)
+  wait for npc(icefeather)
+  destroy npc(icefeather)
+  walk hero to y(me, 5)
+  wait for hero(me)
+  # goes through door to ship deck
+  wait(1)
+  icefeather := npc reference(12)
+  walk npc to y(icefeather, 30)
+  wait(5)
+  walk hero to y(me, 29)
+  wait for hero(me)
+  suspend caterpillar
+  walk hero(1, down, 1)
+  walk hero(1, left, 1)
+  wait for hero(1)
+  resume caterpillar
+  wait(3)
+  show text box(754) # Look Lively, Lads!
+  wait for text box
+
+  subscript, revive pirate, id, x, y, d, begin
+    variable(p)
+    p := npc reference(id)
+    set npc position(p, x, y)
+    set npc direction(p, d)
+    npc dissolve(p, dissolve:random scatter, true)
+    set npc direction(create npc(17, x, y), up)
+    wait(1)
+    advance revive effects
+  end
+
+  set tag(tag:Pirates Revived, true)
+  revive pirate(13, 22, 26, down)  # Mr Louis
+  revive pirate(18, 18, 29, right) # Hooks
+  revive pirate(19, 18, 30, right) # Pegs
+  revive pirate(20, 18, 31, right) # Patch
+  revive pirate(14, 28, 32, down)  # Brickson
+  revive pirate(15, 26, 29, left)  # Tuxbeard
+  revive pirate(16, 27, 29, left)  # Bearbeak
+  while(npc copy count(17)) do(
+    advance revive effects
+    wait(1)
+  )
+  
+  wait for npc dissolve(16)
+  
+  show text box(756) # Yikes!
+  wait for text box
+  show text box(757) # Witchcraft!
+  jiggle hero(gisli, 5)
+  wait for text box
+  
+  wait(3)
+  set npc direction(icefeather, right)
+  wait(1)
+  set npc direction(icefeather, up)
+  
+  show text box(758)
+  wait for text box
+  show text box(759)
+  wait for text box
+
+  # Re-order Bob and Gisli to remove empty slots
+  swap by position(0, find hero(hero by rank(0)))  
+  swap by position(1, find hero(hero by rank(1)))  
+  bob := rank in caterpillar(hero:Bob the Hamster)
+  gisli := rank in caterpillar(hero:Gisli)
+  # Add Icefeather
+  suspend caterpillar
+  add hero(hero:Icefeather)
+  set tag(tag:Icefeather joined, true)
+  icefeather := rank in caterpillar(hero:Icefeather)
+  set hero position(icefeather, 22, 30)
+  wait(1)
+  resume caterpillar
+  wait(3)  
+  # Bob: "What!?"
+  show text box(760)
+  wait for text box
+  
+  pathfind npc to(13, 24, 23) # Mr Louis moves to the helm
+  pathfind npc to(14, 28, 33) # Brickson pathfinds to anchor chain
+  
+  wait(3)
+  set hero direction(icefeather, up)
+  show text box(761) # What are your names?
+  jiggle hero(icefeather, 1)
+  wait for text box
+
+  wait(3)
+  show text box(762) # Bob
+  wait for text box
+
+  wait(3)
+  set hero direction(gisli, down)
+  show text box(763) # Gisli
+  jiggle hero(gisli, 1)
+  wait for text box
+
+  wait(3)
+  show text box(764) # Welcome aboard!
+  jiggle hero(icefeather, 1)
+  wait for text box
+
+  wait(3)
+  show text box(765) # Mersheep?
+  wait for text box
+
+  suspend box advance
+  show text box(766) # Gisli: Plunder!
+  jiggle hero(gisli, 1)
+  wait(15)
+  advance text box
+  show text box(748) # Not now, Gisli!
+  jiggle hero(bob, 1)
+  resume box advance
+  wait for text box
+  
+  wait(3)
+  show text box(767) # No gold?
+  jiggle hero(icefeather, 1)
+  wait for text box
+
+  wait(3)
+  show text box(768) # Maybe we will think of something
+  wait for text box
+  
+  wait(3)
+  show text box(769) # Icefeather: Show you around the ship
+  jiggle hero(icefeather, 1)
+  wait for text box
+  
+  wait for npc(13)
+  set npc direction(13, down)
+  set tag(tag: Louis at the Helm, true)
+
+  resume player
+end
+
+script, advance revive effects, begin
+  variable(i, n, d)
+  for(i, npc copy count(17) -- 1, 0, -1) do(
+    n := npc reference(17, i)
+    d := npc direction(n)
+    d += 1
+    if(d > 3) then(
+      destroy npc(n)
+    )else(
+      set npc direction(n, d)
+    )
+  )
+end
+
+plotscript, icefeather learns hooks summon, begin
+  icefeather learns summon(atk:Hooks, 775)
+end
+
+plotscript, icefeather learns pegs summon, begin
+  icefeather learns summon(atk:Pegs, 778)
+end
+
+plotscript, icefeather learns patch summon, begin
+  icefeather learns summon(atk:Patch, 781)
+end
+
+script, icefeather learns summon, atk, textbox, begin
+  variable(icefeather)
+  icefeather := find hero(hero:icefeather)
+  if(icefeather >= 0 && icefeather <= 3) then(
+    if(teach spell(icefeather, atk)) then(
+      show text box(textbox)
+      wait for text box
+    )
+  )
+end
+
+plotscript, talk to mr louis at the helm, begin
+  show text box(770)
+  wait for text box
+  if(check tag(tag:choice to set sail)) then(
+    set tag(tag:choice to set sail, false)
+    from the deck of the ship to the world map
+  )
+end
+
+script, from the deck of the ship to the world map, begin
+  if(check tag(tag:ship initialization) == false) then(
+    initialize ship
+  )
+  fade screen out(20, 20, 63)
+  wait(1)
+  teleport to map(map:World Map, ship x, ship y)
+  force mount vehicle(2)
+  set hero direction(me, ship dir)
+  wait(1)
+  fade screen in
+end
+
+script, initialize ship, begin
+  set tag(tag:ship initialization, true)
+  ship x := 32
+  ship y := 35
+  ship dir := right
+end
+
+plotscript, ship menu script, begin
+  suspend player
+  dismount vehicle
+  fade screen out(20, 20, 63)
+  wait(1)
+  teleport to map(map:Deck of the Unfortunate Turtle, 25, 23)
+  suspend caterpillar
+  variable(i)
+  for(i, 0, 3) do(
+    set hero position(i, 25 + i, 23)
+    set hero direction(i, down)
+  )
+  resume caterpillar
+  wait(1)
+  fade screen in
+  resume player
+end

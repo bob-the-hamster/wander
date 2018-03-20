@@ -1,0 +1,741 @@
+#---------------------------------------------------------------------------
+# Wandering Hamster - see wander.hss
+# Gallopeg Forest
+#---------------------------------------------------------------------------
+
+plotscript, Gallopeg Autorun, begin
+
+  # also run as an afterbattle script
+
+  if(check tag(tag:Rathmara in party))
+  then(
+    Alter NPC (1,NPC Stat:Activation,NPC Activation:Touch)
+  )
+
+  if(check tag(tag:Burned Gallopeg Log))
+  then(
+    write map block(72,40,82) # burned spot left
+    write map block(73,40,83) # burned spot right
+    write map block(71,40,98) # burned half left
+    write map block(74,40,99) # burned half right
+  )
+
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, Rathmara Burn Log, begin
+
+  variable(Bob, Skeppio, Rathmara)
+  variable(loop)
+
+  suspend player
+  suspend caterpillar
+  suspend NPCs
+  suspend NPC walls
+  suspend random enemys
+  suspend obstruction
+
+  if(check tag(tag:Rathmara in party))
+
+  then(
+    set tag(tag:Burned Gallopeg Log,ON)
+    Bob:=rank in caterpillar(hero:Bob the Hamster)
+    Skeppio:=rank in caterpillar(hero:Skeppio)
+    Rathmara:=rank in caterpillar(hero:Rathmara)
+
+    show text box(328)
+    focus camera(73,39,5)
+    wait for text box
+    wait for camera
+
+    set hero speed(Rathmara,2)
+
+    walk hero to X(Bob,72)
+    walk hero to Y(Bob,35)
+    walk hero to X(Skeppio,73)
+    walk hero to Y(Skeppio,35)
+    walk hero to X(Rathmara,73)
+    walk hero to Y(Rathmara,39)
+
+    set hero speed (Bob,5)
+    set hero speed (Skeppio,5)
+
+    wait for hero(Bob)
+    wait for hero(Skeppio)
+
+    set hero speed (Bob,4)
+    set hero speed (Skeppio,4)
+
+    set hero direction (Bob,     west)
+    set hero direction (Skeppio, east)
+    wait(2)
+
+    set hero direction (Bob,     south)
+    set hero direction (Skeppio, south)
+
+    wait for hero(Rathmara)
+
+    set hero speed(Rathmara,4)
+
+    wait(2)
+
+    set hero direction (Rathmara,West)
+    wait(2)
+
+    set hero direction (Rathmara,South)
+    wait(2)
+
+    set hero direction (Rathmara,West)
+    wait(1)
+
+    walk hero(Rathmara,north,2)
+    wait for hero(Rathmara)
+
+    set hero direction (Rathmara,West)
+    wait(1)
+    
+    set hero direction (Rathmara,South)
+    wait(1)
+
+    # Rathmara twitch
+    for(loop,0,7)
+    do(
+      set hero frame (Rathmara,(loop,mod,2))
+      wait(1)
+    )
+
+    set hero direction (Rathmara,West)
+    wait(1)
+
+    walk hero(Rathmara,north,1)
+    wait for hero(Rathmara)
+
+    set hero direction (Rathmara,West)
+    wait(1)
+
+    set hero direction (Rathmara,South)
+
+    # Rathmara twitch more
+    for(loop,0,13)
+    do(
+      set hero frame (Rathmara,(loop,mod,2))
+      wait(1)
+    )
+
+    # flame variables
+    variable(flame1,flame2,flame3,flame4)
+
+    # set flame speed
+    set NPC speed (2,5)
+
+    # big flame
+    flame1:=create NPC(2,hero X(rathmara),hero Y(rathmara)+1,0)
+    walk NPC (flame1,south,3)
+    set NPC direction(flame1,0)
+
+    wait(3)
+
+    # medium flame
+    flame2:=create NPC(2,hero X(rathmara),hero Y(rathmara)+1,1)
+    walk NPC (flame2,south,2)
+    set NPC direction(flame2,1)
+
+    wait(3)
+
+    # smallish flame
+    flame3:=create NPC(2,hero X(rathmara),hero Y(rathmara)+1,2)
+    walk NPC (flame3,south,1)
+    set NPC direction(flame3,2)
+
+    wait(3)
+
+    # itty-bitty flame
+    flame4:=create NPC(2,hero X(rathmara),hero Y(rathmara)+1,3)
+
+    # must manually animate the last flame, as it walketh not
+    for(loop,0,2) do(
+      set NPC frame(flame4,(loop,mod,2))
+      wait(1)
+    )
+
+    # make flames faster
+    set NPC speed(2,10)
+
+    walk NPC (flame2,south,1)
+    set NPC direction(flame2,1)
+
+    walk NPC (flame3,south,2)
+    set NPC direction(flame3,2)
+
+    walk NPC (flame4,south,3)
+    set NPC direction(flame4,3)
+
+    # manually animate all four flames, cause its easyer that way
+    for(loop,0,11) do(
+      set NPC frame(flame1,(loop,mod,2))
+      set NPC frame(flame2,(loop,mod,2))
+      set NPC frame(flame3,(loop,mod,2))
+      set NPC frame(flame4,(loop,mod,2))
+      wait(1)
+    )
+
+    # burn the log
+
+    write map block(72,40,82) # burned spot left
+    write map block(73,40,83) # burned spot right
+
+    write map block(71,40,160) # burning half left
+    write map block(74,40,161) # burning half right
+
+    # make each flame fly away in a different direction
+
+    walk NPC to X(flame1,NPC X(flame1)--2)
+    walk NPC to Y(flame1,NPC Y(flame1)--2)
+
+    walk NPC to X(flame2,NPC X(flame2)+2)
+    walk NPC to Y(flame2,NPC Y(flame2)--2)
+
+    walk NPC to X(flame3,NPC X(flame3)--2)
+    walk NPC to Y(flame3,NPC Y(flame3)+2)
+
+    walk NPC to X(flame4,NPC X(flame4)+2)
+    walk NPC to Y(flame4,NPC Y(flame4)+2)
+
+    # make all three flames medium
+    set NPC direction(flame1,1)
+    set NPC direction(flame2,1)
+    set NPC direction(flame3,1)
+    set NPC direction(flame4,1)
+
+    wait(1)
+
+    # make all three flames smallish
+    set NPC direction(flame1,2)
+    set NPC direction(flame2,2)
+    set NPC direction(flame3,2)
+    set NPC direction(flame4,2)
+
+    wait(1)
+
+    # make all three flames ittybitty
+    set NPC direction(flame1,3)
+    set NPC direction(flame2,3)
+    set NPC direction(flame3,3)
+    set NPC direction(flame4,3)
+
+    wait for NPC (flame1)
+
+    destroy NPC(flame1)
+    destroy NPC(flame2)
+    destroy NPC(flame3)
+    destroy NPC(flame4)
+
+    focus camera(hero X(me),hero Y(me),5)
+
+    set hero direction(Skeppio,West)
+
+    wait for camera
+    camera follows hero(me)
+    
+  )
+
+  else(
+    show text box(326)
+  )
+
+  resume player
+  resume caterpillar
+  resume NPCs
+  resume NPC walls
+  resume random enemys
+  resume obstruction
+
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, Jormungand Encounter, begin
+  variable (Bob,Skeppio,Rathmara)
+  Bob:=rank in caterpillar (hero:Bob the Hamster)
+  Skeppio:=rank in caterpillar (hero:Skeppio)
+  Rathmara:=rank in caterpillar (hero:Rathmara)
+
+  suspend player
+  suspend NPCs
+  suspend caterpillar
+  suspend hero walls
+  suspend npc walls
+  suspend random enemys
+ 
+  # pan down
+  focus camera (23,11)
+  walk hero to X(Bob,23)
+  wait for hero (Bob)
+  walk hero to Y (Bob,10)
+
+  set hero speed (Skeppio,2)
+  set hero speed (Rathmara,2)
+  walk hero to X(Skeppio,23)
+  walk hero to Y(Skeppio,7)
+  walk hero to X(Rathmara,24)
+  walk hero to Y(Rathmara,7)
+
+  Wait for hero (Skeppio)
+  set hero direction (Skeppio,south)
+  wait for hero (Rathmara)
+  set hero direction (Rathmara,south)
+
+  play song(song: Ruin Exploration)
+
+  wait for hero (Bob)
+  wait (1)
+
+  set hero direction (Bob,west)
+  wait (1)
+
+  set hero direction (Bob,north)
+  wait (5)
+
+  show text box (329) # Bob: Um.. What are you guys waiting for?
+  wait for text box
+
+  # Full-screen image?
+
+  set hero speed (Skeppio,4)
+  set hero speed (Rathmara,4)
+  walk hero (Rathmara, south, 1)
+  walk hero (Rathmara, east, 1)
+  wait for hero (Rathmara)
+  set hero direction (Rathmara,south)
+
+  show text box (331) # Rathmara: Sorry we have to do this to you Bob.
+  wait for text box
+
+  set hero speed (Skeppio,10)
+  set hero speed (Rathmara,10)
+
+  walk hero to Y (Skeppio,10)
+  walk hero to Y (Rathmara,10)
+  walk hero to X (Rathmara,23)
+  wait for hero (Skeppio)
+  wait for hero (Rathmara)
+  
+  show text box (330) # Bob: Ouch! Hey! What are you doing!?
+  suspend box advance
+
+  set hero speed (Bob,10)
+  walk hero (Bob,south,1)
+  set hero direction (Bob,north)
+  walk hero (Skeppio,south,1)
+  walk hero (Rathmara,south,1)
+
+  wait for hero (Bob)
+
+  # Change Bob's picture
+  # must use "find hero: here instead of the value from "rank in caterpillar"
+  set hero picture(find hero(hero:Bob the Hamster),48)
+  set hero direction (Bob,north)
+  set hero frame (Bob,0)
+
+  set hero speed (Bob,4)
+  set hero speed (Skeppio,4)
+  set hero speed (Rathmara,4)
+
+  # Full screen of Bob being tied-up
+
+  resume box advance
+  wait for text box
+
+  walk hero (Skeppio,north,1)
+  set hero direction (Skeppio,south)
+
+  walk hero (Rathmara,east,1)
+  set hero direction (Rathmara,west)
+
+  show text box (332) # Skeppio: Try not to take this personally, it is just business.  
+  wait for text box
+
+  wait(15)
+
+  show text box (333) # Bob: What are you going to do to me?
+  wait for text box
+
+  # remove rope from inventory
+  delete item(item:rope)
+
+  wait(3)
+
+  walk hero (Skeppio, east, 2)  
+  wait (1)
+  walk hero (Rathmara, east, 1)  
+  wait for hero (Rathmara)
+  set hero direction (Rathmara,south)
+  wait (1)
+  set hero direction (Rathmara,west)
+  wait for hero (Skeppio)
+  set hero direction (Skeppio,south)
+  wait (1)
+  set hero direction (Skeppio,west)
+
+  show text box (334) # Rathmara: Lets just say...  
+                      # Skeppio: You are bait.
+                      # Bob: Bait!? You monsters! Bait for WHAT!?
+  wait for text box
+
+  wait (5)
+  
+  show text box (337) # Rathmara: Better for you not to know.
+                      # Skeppio: Heh, heh, heh...
+  wait for text box
+
+  variable (Jorm, segment)
+  
+  Jorm := load medium enemy sprite(20)
+  set parent(Jorm, lookup slice(sl:map layer 1))
+  set slice x(Jorm, 14 * 20)
+  set slice y(Jorm, 11 * 20)
+
+  for(i, 1, 4) do(
+    segment := load medium enemy sprite(23)
+    set parent(segment, Jorm)
+    set slice x(segment, i * -50)
+  )
+
+  variable(i)
+  for(i, 0, 9) do(
+    set slice x(Jorm, slice x(Jorm) + 2)
+    wait(1)
+  )
+
+  show text box (339) # Bob: AAAAAAAAAA!
+  for(i, 0, 39) do(
+    set slice x(Jorm, slice x(Jorm) + 2)
+    wait(1)
+  )
+  advance text box
+
+  for(i, 0, 9) do(
+    set slice x(Jorm, slice x(Jorm) + 2)
+    wait(1)
+  )
+
+  swap out hero (hero:Bob the Hamster)
+  swap by position (find hero(hero:Skeppio),0) # force Skeppio into first slot
+  swap by position (find hero(hero:Rathmara),1) # force Rathmara into second slot
+
+  # because party-order just changed, re-get the variables
+  Skeppio:=rank in caterpillar (hero:Skeppio)
+  Rathmara:=rank in caterpillar (hero:Rathmara)
+
+  set hero speed (Skeppio,4)
+  set hero speed (Rathmara,4)
+
+  fade screen out # we fade out and set positions before the battle
+                  # to avoid that little "jump" in their positions
+                  # after the battle
+
+  set hero position (Skeppio,26,10)
+  set hero position (Rathmara,26,11)
+  set hero direction (Skeppio,west)
+  set hero direction (Rathmara,west)
+
+  set death script (@null death script) # cannot die in this battle!
+
+  # fight the boss!
+  variable(won)
+  won := fight formation (92)
+
+  set death script (@die in battle) # normal death script
+
+  if(won) then(
+    beat unbeatable Jormungandling (skeppio, rathmara, Jorm)
+  )else(
+    # lost to Jormungandling (normal)
+    show text box (340) # Skeppio: Its no good [...]
+                        # Rathmara: What a waste [...]
+    wait for text box
+  )
+
+  # Jorm darts forward
+  for(i, 0, 1) do(
+    set slice x(Jorm, slice x(Jorm) + 5)
+    wait(1)
+  )
+
+  walk hero (Skeppio,east,1)
+  set hero direction (Skeppio, west)
+  walk hero (Rathmara,east,1)
+  set hero direction (Rathmara, west)
+  
+  # Jorm darts forward a little more
+  for(i, 0, 1) do(
+    set slice x(Jorm, slice x(Jorm) + 5)
+    wait(1)
+  )
+  
+  wait for hero(Rathmara)
+
+  show text box (342) # Rathmara: Run!
+  wait for text box
+
+  resume caterpillar
+  set hero speed (Skeppio,10)  
+  walk hero (Skeppio,north,2)
+  wait for hero (Skeppio)
+  walk hero (Skeppio,west,3)
+  wait for hero (Skeppio)
+  walk hero (Skeppio,north,1)
+  wait for hero (Skeppio)
+  walk hero (Skeppio,west,1)
+  wait for hero (Skeppio)
+  walk hero (Skeppio,north,2)
+  wait for hero (Skeppio)
+
+  fade screen out
+
+  free slice(Jorm)
+
+  camera follows hero (me)
+
+  # put Bob back in the party, remove the cats
+  swap by position(
+     find hero(hero:Bob the Hamster)
+     find hero(hero:Skeppio)
+  )
+  swap out hero (hero:Rathmara)
+
+  # restore Bob's picture
+  set hero picture(find hero(hero:Bob the Hamster),0)
+
+  # Set Bob's HP to 25%
+  Bob := find hero(hero:Bob the Hamster)
+  set hero stat (Bob, stat:HP, get hero stat(Bob, stat:HP, maximum stat) / 4)
+
+  set hero speed (me,4)
+
+  teleport to map (map:Jormungandling's Belly,115,18)
+
+  resume caterpillar
+
+  fade screen in
+
+  wait (5)
+
+  walk hero (me,east,1)
+  wait for hero (me)
+
+  walk hero (me,west,2)
+  wait for hero (me)
+
+  show text box (175) # where am I?
+  wait (2)
+  set hero direction (me,south)
+  wait (2)
+  set hero direction (me,east)
+
+  wait for text box  
+
+  resume hero walls
+  resume npc walls
+  resume player
+  resume NPCs
+  resume random enemys
+
+end
+
+#---------------------------------------------------------------------------
+
+script, beat unbeatable jormungandling, skeppio, rathmara, jorm, begin
+  variable(i)
+  set tag(tag:Cats beat Jormungand, ON)
+  set slice x(Jorm, slice x(Jorm) -- 160)
+  variable(prize1, prize2)
+  prize1 := create NPC(4, 24, 10)
+  prize2 := create NPC(4, 24, 12)
+  set NPC direction(prize1, up)
+  set NPC direction(prize2, right)
+  set NPC speed(4, 5)
+  wait(16)
+  set hero direction(Skeppio, south)
+  set hero direction(Rathmara, north)
+  show text box (452) # can't believe we did it
+  wait for text box
+  wait(8)
+  set hero direction(Rathmara, west)
+  wait(14)
+  show text box(456) # see prize
+  wait for text box
+  set hero direction(Skeppio, west)
+  walk hero (rathmara, west, 1)
+  wait for hero(rathmara)
+  show text box(457) # take prize
+  
+  # move prizes
+  suspend obstruction
+  walk NPC (prize1, south, 1)
+  walk NPC (prize1, east, 1)
+  set NPC direction(prize1, up)
+  walk NPC (prize2, north, 1)
+  walk NPC (prize2, east, 1)
+  set NPC direction(prize2, right)
+  
+  # clear prizes after they are taken
+  wait for NPC(prize1)
+  destroy NPC(prize1)
+  wait for NPC(prize2)
+  destroy NPC(prize2)
+  resume obstruction
+  
+  wait for text box
+  wait(5)
+  
+  # Jorm returns
+  quake camera(30)
+  focus camera (23,11)
+  
+  show text box(458)
+  set hero direction(skeppio, south)
+  walk hero(rathmara, east, 1)
+  set hero direction(rathmara, north)
+  wait for text box
+  
+  walk hero(skeppio, west, 1)
+  walk hero(rathmara, west, 1)
+  
+  for(i, 0, 9) do(
+    set slice x(Jorm, slice x(Jorm) + 8)
+    wait(1)
+  )
+  
+  walk hero(skeppio, east, 1)
+  walk hero(rathmara, east, 1)
+  set hero direction(skeppio, west)
+  set hero direction(rathmara, west)
+
+  for(i, 0, 9) do(
+    set slice x(Jorm, slice x(Jorm) + 8)
+    wait(1)
+  )
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, Rathmara Finds Rope, begin
+  suspend player
+  suspend NPCs
+  suspend random enemys
+  suspend caterpillar
+
+  variable(Bob,Rathmara,Skeppio)
+
+  Bob:=rank in caterpillar(hero:Bob the Hamster)
+  Rathmara:=rank in caterpillar(hero:Rathmara)
+  Skeppio:=rank in caterpillar(hero:Skeppio)
+
+  show text box (346)
+
+  walk hero to X (Rathmara, 45)
+  wait for hero (Rathmara)
+
+  set hero direction(Bob, east)
+  set hero direction(Skeppio, east)
+
+  walk hero to Y (Rathmara, 14)
+  wait for hero (Rathmara)
+
+  set hero direction(Bob, north)
+  set hero direction(Skeppio, north)
+
+  focus camera(hero X(Rathmara), hero Y(Rathmara),4)
+
+  wait for text box
+  wait for camera
+
+  camera follows hero (Rathmara)
+
+  walk hero (Rathmara, north, 2)
+  wait for hero (Rathmara)
+
+  walk hero (Rathmara, east, 1)
+  wait for hero (Rathmara)
+
+  walk hero (Rathmara, north, 1)
+  wait for hero (Rathmara)
+
+  walk hero (Rathmara, east, 3)
+  wait for hero (Rathmara)
+
+  walk hero (Rathmara, north, 1)
+  wait for hero (Rathmara)
+
+  walk hero (Rathmara, east, 1)
+  wait for hero (Rathmara)
+
+  walk hero (Rathmara, north, 3)
+  wait for hero (Rathmara)
+
+  walk hero (Rathmara, east, 5)
+  wait for hero (Rathmara)
+
+  walk hero (Rathmara, north, 3)
+  wait for hero (Rathmara)
+
+  walk hero (Rathmara, east, 2)
+  wait for hero (Rathmara)
+
+  set hero direction (Rathmara, north)
+  wait(5)
+
+  use npc(NPC at spot(57,3))
+
+  wait for text box
+
+  wait(5)
+
+  walk hero (Rathmara, west, 4)
+  wait for hero (Rathmara)
+
+  walk hero (Rathmara, south, 3)
+  wait for hero (Rathmara)
+
+  walk hero (Rathmara, west, 3)
+  wait for hero (Rathmara)
+
+  walk hero (Rathmara, south, 3)
+  wait for hero (Rathmara)
+
+  walk hero (Rathmara, west, 2)
+  wait for hero (Rathmara)
+
+  walk hero (Rathmara, south, 1)
+  wait for hero (Rathmara)
+
+  walk hero (Rathmara, west, 2)
+  wait for hero (Rathmara)
+
+  walk hero (Rathmara, south, 1)
+  wait for hero (Rathmara)
+
+  walk hero (Rathmara, west, 1)
+  wait for hero (Rathmara)
+
+  walk hero (Rathmara, south, 2)
+  wait for hero (Rathmara)
+
+  focus camera(hero X(Bob), hero Y(Bob),4)
+
+  show text box (348)
+
+  wait for text box
+  wait for camera
+
+  camera follows hero (Bob)
+
+  resume player
+  resume NPCs
+  resume random enemys
+  resume caterpillar
+end
+
+#---------------------------------------------------------------------------
