@@ -895,4 +895,23 @@ end
 
 #---------------------------------------------------------------------------
 
+plotscript, deploy card table, begin
+  suspend player
+  suspend npcs
+  suspend caterpillar
+  show text box(826)
+  wait for text box
+
+  variable(palsk, dave, hal)
+  palsk := npc reference(4)
+  dave := npc reference(2)
+  hal := npc reference(3)
+  
+  
+  resume caterpillar
+  resume npcs
+  resume player
+end
+
+#---------------------------------------------------------------------------
 
