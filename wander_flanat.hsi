@@ -901,12 +901,25 @@ plotscript, deploy card table, begin
   suspend caterpillar
   show text box(826)
   wait for text box
+  if(check tag(tag:gave table to palsk)) then(
+    
+    pathfind hero to(0, 14, 47)
+    pathfind hero to(1, 13, 47)
+    pathfind hero to(2, 12, 47)
+    pathfind hero to(3, 11, 47)
 
-  variable(palsk, dave, hal)
-  palsk := npc reference(4)
-  dave := npc reference(2)
-  hal := npc reference(3)
-  
+    variable(palsk, dave, hal)
+    palsk := npc reference(4)
+    dave := npc reference(2)
+    hal := npc reference(3)
+    pathfind npc to(dave, 13, 48)
+    pathfind npc to(hal, 17, 48)
+    
+    show value(1)
+    wait for all
+    show value(2)
+
+  )
   
   resume caterpillar
   resume npcs
