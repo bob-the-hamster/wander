@@ -912,12 +912,45 @@ plotscript, deploy card table, begin
     palsk := npc reference(4)
     dave := npc reference(2)
     hal := npc reference(3)
+    set npc speed(dave, 10)
     pathfind npc to(dave, 13, 48)
     pathfind npc to(hal, 17, 48)
     
     show value(1)
     wait for all
     show value(2)
+    set hero direction(0, down)
+    set hero direction(1, down)
+    set hero direction(2, down)
+    set hero direction(3, down)
+    set npc direction(dave, right)
+    set npc direction(hal, left)
+    set npc speed(dave, 2)
+
+    # make the card table appear
+    set tag(tag:card table ready, true)
+    variable(table)
+    table := npc reference(42)
+    set npc position(table, 14, 47)
+    set npc speed(table, 5)
+    walk npc(table, right, 1)
+    wait for npc(table)
+    
+    # now Palskovitch walks down
+    set npc speed(palsk, 4)
+    walk npc(palsk, down, 1)
+    wait for npc(palsk)
+    walk npc(table, down, 1)
+    wait(1)
+    walk npc(palsk, down, 1)
+    wait for npc(palsk)
+    
+    # change the tag that affects which copy of Palskovitch starts on the map
+    set tag(tag:palsk moved to table, true)
+    palsk := npc reference(41)
+    
+    # remove the card table from the inventory
+    delete item(item:table)
 
   )
   
