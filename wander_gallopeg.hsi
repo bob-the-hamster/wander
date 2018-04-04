@@ -504,6 +504,11 @@ plotscript, Jormungand Encounter, begin
      find hero(hero:Skeppio)
   )
   swap out hero (hero:Rathmara)
+  
+  # Lock the cats in the swapped-out position
+  lock hero(hero:Skeppio)
+  lock hero(hero:Rathmara)
+  set tag(tag:fixed locking cats, true)
 
   # restore Bob's picture
   set hero picture(find hero(hero:Bob the Hamster),0)

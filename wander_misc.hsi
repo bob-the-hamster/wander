@@ -72,6 +72,15 @@ plotscript, on load, begin
       force equip(gisli slot, slot:head, item:viking)
     )
   )
+  
+  # Fix old saves where we forgot to lock Skeppio and Rathmara when we swapped them out
+  # FIXME: add another tag check here if it becomes possible to get them back later!
+  if(check tag(tag:Gisli Joined) && check tag(tag:fixed locking cats) == false) then(
+    lock hero(hero:Skeppio)
+    lock hero(hero:Rathmara)
+    set tag(tag:fixed locking cats, true)
+  )
+
 end
 
 script, jorm belly onload, begin
