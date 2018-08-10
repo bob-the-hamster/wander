@@ -7,4 +7,13 @@ wings
 splash effect
 card:sprite
 card:back
+checkers:back
+checkers:grid
+checkers:playarea
+checkers:red template
+checkers:blue template
+checkers:red face
+checkers:blue face
+checkers:red captured
+checkers:blue captured
 
