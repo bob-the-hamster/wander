@@ -16,4 +16,7 @@ checkers:red face
 checkers:blue face
 checkers:red captured
 checkers:blue captured
+cards:playarea
+cards:dealer face
+cards:player face
 
