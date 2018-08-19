@@ -46,6 +46,7 @@ include, wander_bontgommeri.hsi
 include, wander_shellgame.hsi
 include, wander_minigolf.hsi
 include, wander_blackjack.hsi
+include, wander_checkers.hsi
 
 #---------------------------------------------------------------------------
 

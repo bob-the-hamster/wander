@@ -1,0 +1,19 @@
+#---------------------------------------------------------------------------
+# Wandering Hamster - see wander.hss
+# Checkers Mini-Game
+#---------------------------------------------------------------------------
+
+plotscript, begin the checkers game, begin
+  suspend player
+  
+  variable(col)
+  col := load slice collection(3)
+  
+  wait(1)
+  wait for key
+  
+  free slice(col)
+  while(holding action key) do(wait(1))
+  wait(1)
+  resume player
+end
