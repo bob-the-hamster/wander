@@ -3,17 +3,229 @@
 # Checkers Mini-Game
 #---------------------------------------------------------------------------
 
+define constant(
+  0, chteam:red
+  1, chteam:blue
+  0, chsquare:white
+  1, chsquare:black
+  0, chtile:empty
+  1, chtile:red
+  2, chtile:blue
+  3, chtile:red king
+  4, chtile:blue king
+)
+
 plotscript, begin the checkers game, begin
-  suspend player
+  init checkers game
   
-  variable(col)
-  col := load slice collection(3)
+  #while(true) do(
+    # build board state
+    # make list of legal moves
+    # UI/AI to choose a move
+    # animate move
+  #)
   
   wait(1)
   wait for key
+
+  clean up checkers game  
+end
+
+script, init checkers game, begin
+  suspend player
   
-  free slice(col)
+  variable(col)
+  checkers:whole table := load slice collection(3)
+  
+  # Create a hidden container for checkers game state
+  checkers:state := create container(0, 0)
+  set slice visible(checkers:state, false)
+
+  # Get a handle to the play area
+  checkers:playarea := lookup slice(sli:checkers:playarea, checkers:whole table)
+
+  # Grab the piece templates and move them into state
+  variable(templ)
+  templ := lookup slice(sli:checkers:red template, checkers:whole table)
+  set parent(templ, checkers:state)
+  templ := lookup slice(sli:checkers:blue template, checkers:whole table)
+  set parent(templ, checkers:state)
+  
+  # Get handles to the captured areas
+  checkers:red captured := lookup slice(sli:checkers:red captured, checkers:whole table)
+  checkers:blue captured := lookup slice(sli:checkers:blue captured, checkers:whole table)
+  
+  # Create pieces for each team
+  variable(i, pc, cap)
+  cap := capture area(chteam:red)
+  for(i, 0, 11) do(
+    pc := clone piece template(chteam:red)
+    set parent(pc, cap)
+    # position in the capture area for each team
+    set slice screen x(pc, slice screen x(cap) + random(0, slice width(cap) -- slice width(pc)))
+    set slice screen y(pc, slice screen y(cap) + random(0, slice height(cap) -- slice height(pc)))
+  )
+  cap := capture area(chteam:blue)
+  for(i, 0, 11) do(
+    pc := clone piece template(chteam:blue)
+    set parent(pc, cap)
+    # position in the capture area for each team
+    set slice screen x(pc, slice screen x(cap) + random(0, slice width(cap) -- slice width(pc)))
+    set slice screen y(pc, slice screen y(cap) + random(0, slice height(cap) -- slice height(pc)))
+  )
+  
+  # Create the starting board state
+  variable(board)
+  board := create board state
+  force starting board state(board)
+  grab pieces for board state(board)
+  wait(14)
+
+  # chteam:red or chteam:blue
+  checkers:turn := chteam:red
+end
+
+script, clean up checkers game, begin
+  free slice(checkers:whole table)
+  free slice(checkers:state)
   while(holding action key) do(wait(1))
   wait(1)
   resume player
 end
+
+script, clone piece template, team, begin
+  variable(templ, pc)
+  if(team == chteam:red) then(
+    templ := lookup slice(sli:checkers:red template, checkers:state)
+  )else if(team == chteam:blue) then(
+    templ := lookup slice(sli:checkers:blue template, checkers:state)
+  )else(
+    script error(string sprintf(0, $1="clone piece template(%d) invalid team number", team))
+  )
+  pc := clone slice(templ)
+  set parent(pc, checkers:playarea)
+  exit returning(pc)
+end
+
+script, create board state, begin
+  # Create an invisible slice-based data structure to represent the logical layout of a board
+  variable(board)
+  board := create container(0, 0)
+  set slice visible(board, false)
+  set parent(board, checkers:state)
+  variable(x, y, tile, colorcode)
+  for(y, 0, 7) do(
+    for(x, 0, 7) do(
+      tile := create container(0, 0)
+      set parent(tile, board)
+      set slice x(tile, x)
+      set slice y(tile, y)
+      # Store black/white in width
+      # white=0 black=1
+      colorcode := (x+y) ,mod, 2
+      set slice width(tile, colorcode)
+    )
+  )
+  exit returning(board)
+end
+
+script, force starting board state, board, begin
+  variable(x, y)
+  # First clear the whole board
+  for(y, 0, 7) do(
+    for(x, 0, 7) do(
+      write board tile(board, x, y, chtile:empty)
+    )
+  )
+  # Write red starting pieces
+  for(y, 0, 2) do(
+    for(x, 0, 7) do(
+      if(get board square color(board, x, y) == chsquare:black) then(
+        write board tile(board, x, y, chtile:red)
+      )
+    )
+  )
+  # Write blue starting pieces
+  for(y, 5, 7) do(
+    for(x, 0, 7) do(
+      if(get board square color(board, x, y) == chsquare:black) then(
+        write board tile(board, x, y, chtile:blue)
+      )
+    )
+  )
+end
+
+script, grab pieces for board state, board, begin
+  variable(x, y, pc)
+  # First clear the whole board
+  for(y, 0, 7) do(
+    for(x, 0, 7) do(
+      switch(read board tile(board, x, y)) do(
+        case(chtile:red)
+          pc := piece from capture(chteam:red)
+          set parent keeping screen pos(pc, checkers:playarea)
+          animate piece to pos(pc, x, y, random(8, 14))
+        case(chtile:blue)
+          pc := piece from capture(chteam:blue)
+          set parent keeping screen pos(pc, checkers:playarea)
+          animate piece to pos(pc, x, y, random(8, 14))
+      )
+    )
+  )
+end
+
+script, piece from capture, team, begin
+  variable(cap)
+  cap := capture area(team)
+  #FIXME: need to handle the case when we ask for a piece and none exist in the capture area
+  exit returning(last child(cap))
+end
+
+script, animate piece to pos, pc, tx, ty, ticks=12, begin
+  variable(x, y)
+  x := slice width(checkers:playarea) / 8 * tx
+  y := slice width(checkers:playarea) / 8 * ty
+  move slice to(pc, x, y, ticks)
+end
+
+script, set parent keeping screen pos, sl, new parent, begin
+  variable(x, y)
+  x := slice screen x(sl)
+  y := slice screen y(sl)
+  set parent(sl, new parent)
+  set slice screen x(sl, x)
+  set slice screen y(sl, y)
+end
+
+script, tile by pos, board, x, y, begin
+  exit returning(slice child(board, y * 8 + x))
+end
+
+script, get board square color, board, x, y, begin
+  # Return 0 for white, 1 for black
+  variable(tile)
+  tile := tile by pos(board, x, y)
+  exit returning(slice width(tile))
+end
+
+script, write board tile, board, x, y, tileval, begin
+  variable(tile)
+  tile := tile by pos(board, x, y)
+  set slice extra(tile, 0, tileval)
+end
+
+script, read board tile, board, x, y, begin
+  variable(tile)
+  tile := tile by pos(board, x, y)
+  exit returning(get slice extra(tile, 0))
+end
+
+script, capture area, team, begin
+  if(team == chteam:red) then(exit returning(checkers:red captured))
+  if(team == chteam:blue) then(exit returning(checkers:blue captured))
+  script error(string sprintf(0, $1="captured area(%d) team number invalid", team))
+end
+
+
+
+

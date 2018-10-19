@@ -35,6 +35,14 @@ global variable(51, parallax camera follows hero)
 global variable(52, next camera pixel x)
 global variable(53, next camera pixel y)
 
+# globals used by the Checkers mini-game
+global variable(60, checkers:state)
+global variable(61, checkers:whole table)
+global variable(62, checkers:turn)
+global variable(63, checkers:red captured)
+global variable(64, checkers:blue captured)
+global variable(65, checkers:playarea)
+
 # variables after 100 used for temporary fake-array
 global variable(100,array)
 
