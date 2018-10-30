@@ -3,9 +3,17 @@
 # Checkers Mini-Game
 #---------------------------------------------------------------------------
 
+# Board state guide
+# one slice for each tile on the board (including the never-used white squares)
+# * x and y match the board position
+# * width is 0 for white and 1 for black
+# * extra 0 is a chtile: value
+# * extra 1 is a reference to a piece slice
+
 define constant(
   0, chteam:red
   1, chteam:blue
+  -1, chteam:none
   0, chsquare:white
   1, chsquare:black
   0, chtile:empty
@@ -16,19 +24,38 @@ define constant(
 )
 
 plotscript, begin the checkers game, begin
-  init checkers game
+  variable(board)
+  board := init checkers game
   
-  #while(true) do(
-    # build board state
+  while(true) do(
     # make list of legal moves
+    update list of legal moves(board)
     # UI/AI to choose a move
     # animate move
-  #)
+    wait(1)
+    if(keyval(key:esc) >= 1) then(break)
+  )
   
-  wait(1)
-  wait for key
-
   clean up checkers game  
+end
+
+script, update list of legal moves, board, begin
+  free slice children(checkers:movelist)
+  variable(x, y, tile)
+  for(y, 0, 7) do(
+    for(x, 0, 7) do(
+      if(tile is black(board, x, y)) then(
+        tile := read board tile(board, x, y)
+        if(turn of tile(tile) == checkers:turn) then(
+          check moves(board, x, y, tile, checkers:movelist)
+        )
+      )
+    )
+  )
+end
+
+script, check moves, board, x, y, with tile, movelist, begin
+  
 end
 
 script, init checkers game, begin
@@ -83,6 +110,12 @@ script, init checkers game, begin
 
   # chteam:red or chteam:blue
   checkers:turn := chteam:red
+  
+  # create move list holder
+  checkers:movelist := create container(0,0)
+  set parent(checkers:movelist, checkers:state)
+  
+  exit returning(board)
 end
 
 script, clean up checkers game, begin
@@ -91,6 +124,14 @@ script, clean up checkers game, begin
   while(holding action key) do(wait(1))
   wait(1)
   resume player
+end
+
+script, turn of tile, tile, begin
+  if(tile == chtile:red) exit returning(chturn:red)
+  if(tile == chtile:red king) exit returning(chturn:red)
+  if(tile == chtile:blue) exit returning(chturn:blue)
+  if(tile == chtile:blue king) exit returning(chturn:blue)
+  exit returning(chturn:none)
 end
 
 script, clone piece template, team, begin
@@ -140,7 +181,7 @@ script, force starting board state, board, begin
   # Write red starting pieces
   for(y, 0, 2) do(
     for(x, 0, 7) do(
-      if(get board square color(board, x, y) == chsquare:black) then(
+      if(tile is black(board, x, y)) then(
         write board tile(board, x, y, chtile:red)
       )
     )
@@ -148,7 +189,7 @@ script, force starting board state, board, begin
   # Write blue starting pieces
   for(y, 5, 7) do(
     for(x, 0, 7) do(
-      if(get board square color(board, x, y) == chsquare:black) then(
+      if(tile is black(board, x, y)) then(
         write board tile(board, x, y, chtile:blue)
       )
     )
@@ -165,10 +206,12 @@ script, grab pieces for board state, board, begin
           pc := piece from capture(chteam:red)
           set parent keeping screen pos(pc, checkers:playarea)
           animate piece to pos(pc, x, y, random(8, 14))
+          write piece ref(board, x, y, pc)
         case(chtile:blue)
           pc := piece from capture(chteam:blue)
           set parent keeping screen pos(pc, checkers:playarea)
           animate piece to pos(pc, x, y, random(8, 14))
+          write piece ref(board, x, y, pc)
       )
     )
   )
@@ -201,6 +244,10 @@ script, tile by pos, board, x, y, begin
   exit returning(slice child(board, y * 8 + x))
 end
 
+script, tile is black, board, x, y, begin
+  exit returning(get board square color(board, x, y) == chsquare:black)
+end
+
 script, get board square color, board, x, y, begin
   # Return 0 for white, 1 for black
   variable(tile)
@@ -218,6 +265,18 @@ script, read board tile, board, x, y, begin
   variable(tile)
   tile := tile by pos(board, x, y)
   exit returning(get slice extra(tile, 0))
+end
+
+script, write piece ref, board, x, y, pc, begin
+  variable(tile)
+  tile := tile by pos(board, x, y)
+  set slice extra(tile, 1, pc)
+end
+
+script, read piece ref, board, x, y, begin
+  variable(tile)
+  tile := tile by pos(board, x, y)
+  exit returning(get slice extra(tile, 1))
 end
 
 script, capture area, team, begin
