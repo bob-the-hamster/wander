@@ -127,11 +127,11 @@ script, clean up checkers game, begin
 end
 
 script, turn of tile, tile, begin
-  if(tile == chtile:red) exit returning(chturn:red)
-  if(tile == chtile:red king) exit returning(chturn:red)
-  if(tile == chtile:blue) exit returning(chturn:blue)
-  if(tile == chtile:blue king) exit returning(chturn:blue)
-  exit returning(chturn:none)
+  if(tile == chtile:red)       then(exit returning(chteam:red))
+  if(tile == chtile:red king)  then(exit returning(chteam:red))
+  if(tile == chtile:blue)      then(exit returning(chteam:blue))
+  if(tile == chtile:blue king) then(exit returning(chteam:blue))
+  exit returning(chteam:none)
 end
 
 script, clone piece template, team, begin

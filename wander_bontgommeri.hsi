@@ -7,6 +7,7 @@ plotscript, Bontgommeri ruins each step, begin
   variable(x, y)
   x := hero x(me)
   y := hero y(me)
+  write sand footprints(x, y)
   if(x == 0 || x == map width -- 1 || y == 0 || y == map height -- 1) then(
     # If you walk to the edge of the map, go to door 10 on the world map
     variable(dx, dy)
@@ -16,6 +17,13 @@ plotscript, Bontgommeri ruins each step, begin
     teleport to map(map:World Map, dx, dy)
     fade screen in
   )
+end
+
+#---------------------------------------------------------------------------
+
+script, write sand footprints, x, y, begin
+  if (current map <> map: bontgommeri desert ruins) then(exit script)
+  write map block(x, y, 144, 3)
 end
 
 #---------------------------------------------------------------------------
