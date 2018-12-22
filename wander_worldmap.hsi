@@ -13,6 +13,21 @@ end
 
 #---------------------------------------------------------------------------
 
+plotscript, world map eachstep, begin
+  if (current map == map:world map) then(
+    if(read zone(10, hero x(me), hero y(me))) then(
+      if(check tag(tag:got desert warning)==off) then(
+        # Warn the player about the danger of Bontgommeri desert
+        show text box(827)
+        wait for text box
+        set tag(tag:got desert warning, on)
+      )
+    )
+  )
+end
+
+#---------------------------------------------------------------------------
+
 plotscript,World Map Afterbattle,begin
   if (check tag(tag:Riding the Ship)) then,begin
     play song(song:vehicle riding)
