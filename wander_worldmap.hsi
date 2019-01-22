@@ -23,6 +23,17 @@ plotscript, world map eachstep, begin
         set tag(tag:got desert warning, on)
       )
     )
+    if(read zone(11, hero x(me), hero y(me))) then(
+      # Vehicle door to Sandbar map
+      suspend player
+      fade screen out
+      wait for hero(me)
+      teleport to map(map:Sandbar, 30, 12)
+      walk hero(me, south, 1)
+      wait(1)
+      fade screen in
+      resume player
+    )
   )
 end
 
