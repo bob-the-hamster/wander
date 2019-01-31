@@ -1,12 +1,12 @@
 plotscript, sandbar eachstep, begin
   if (current map == map:sandbar) then(
-    show value(read zone(11, hero x(me), hero y(me)))
     if(read zone(11, hero x(me), hero y(me))) then(
       # Exit Sandbar map directly to riding ship
       suspend player
       fade screen out
       wait for hero(me)
       teleport to map(map:World map, 6, 31)
+      set npc position(2, 6, 31)
       force mount vehicle(2)
       set hero direction(me, south)
       wait(1)
