@@ -16,3 +16,9 @@ plotscript, sandbar eachstep, begin
     )
   )
 end
+
+plotscript, sandbar onkeypress, begin
+  #if (current map == map:sandbar) then(
+  #  if(keyval(key:space) > 1 || keyval(key:enter) > 1 || keyval(key))
+  #)  
+end
