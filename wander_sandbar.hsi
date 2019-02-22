@@ -18,7 +18,36 @@ plotscript, sandbar eachstep, begin
 end
 
 plotscript, sandbar onkeypress, begin
-  #if (current map == map:sandbar) then(
-  #  if(keyval(key:space) > 1 || keyval(key:enter) > 1 || keyval(key))
-  #)  
+  showstring($0="keypress")
+  if(check tag(tag:digging right now) == false) then(
+    if (current map == map:sandbar && not(hero is walking(me))) then(
+      if(scripted use action) then(
+        variable(x, y)
+        x := x ahead of hero(me)
+        y := y ahead of hero(me)
+        if(read zone(1, x, y)) then(
+          sandbar: dig a hole(x, y)
+        )
+      )
+    )
+  )
 end
+
+script, sandbar: dig a hole, x, y, begin
+  suspend player
+  set tag(tag:digging right now, true)
+
+  variable(shovel)
+  shovel := create npc(7, x, y, hero direction(me))
+  play sound(sfx:gleeurp, false, true)
+  wait(4)
+  write map block(x, y, 3, 3)
+  write zone(1, x, y, false)
+  destroy npc(shovel)
+  
+  set tag(tag:digging right now, false)
+  resume player
+end
+
+
+
