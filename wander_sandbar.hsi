@@ -18,15 +18,16 @@ plotscript, sandbar eachstep, begin
 end
 
 plotscript, sandbar onkeypress, begin
-  showstring($0="keypress")
   if(check tag(tag:digging right now) == false) then(
     if (current map == map:sandbar && not(hero is walking(me))) then(
-      if(scripted use action) then(
-        variable(x, y)
-        x := x ahead of hero(me)
-        y := y ahead of hero(me)
-        if(read zone(1, x, y)) then(
-          sandbar: dig a hole(x, y)
+      if(inventory(item:shovel)) then(
+        if(scripted use action) then(
+          variable(x, y)
+          x := x ahead of hero(me)
+          y := y ahead of hero(me)
+          if(read zone(1, x, y)) then(
+            sandbar: dig a hole(x, y)
+          )
         )
       )
     )
@@ -44,10 +45,59 @@ script, sandbar: dig a hole, x, y, begin
   write map block(x, y, 3, 3)
   write zone(1, x, y, false)
   destroy npc(shovel)
+  dig up an item(x, y)
   
   set tag(tag:digging right now, false)
   resume player
 end
 
+script, dig up an item, x, y, begin
+  variable(n)
+  n := random(1, 100)
+  if(n <= 30) then(
+    # Nothing
+  )else if(n <= 40) then(
+    # Pebble
+    create npc(8, x, y)
+  )else if(n <= 45) then(
+    # Shell 1
+    create npc(10, x, y)
+  )else if(n <= 50) then(
+    # Shell 2
+    create npc(11, x, y)
+  )else if(n <= 55) then(
+    # Shell 3
+    create npc(12, x, y)
+  )else if(n <= 60) then(
+    # Shell 4
+    create npc(13, x, y)
+  )else(
+    # Coin
+    create npc(9, x, y)
+  )
+end
 
+plotscript, pick up item from sand, arg, npc, begin
+  variable(item)
+  item := read npc(npc, NPCstat:give item) -- 1
+  if(item >= 0) then(
+    play sound(sfx: treasure blip)
+    get item name(1, item)
+    show text box(831)
+    suspend player
+    wait for text box
+    resume player
+  )
+  destroy npc(npc)
+end
 
+plotscript, pick up coin from sand, arg, npc, begin
+  variable(item)
+  show text box(832)
+  get money(1)
+  play sound(sfx: treasure blip)
+  suspend player
+  wait for text box
+  resume player
+  destroy npc(npc)
+end
