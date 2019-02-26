@@ -85,7 +85,7 @@ plotscript, pick up item from sand, arg, npc, begin
     get item name(1, item)
     show text box(831)
     suspend player
-    wait for text box
+    wait for text box advance with arrow key
     resume player
   )
   destroy npc(npc)
@@ -97,7 +97,7 @@ plotscript, pick up coin from sand, arg, npc, begin
   get money(1)
   play sound(sfx: treasure blip)
   suspend player
-  wait for text box
+  wait for text box advance with arrow key
   resume player
   destroy npc(npc)
 end

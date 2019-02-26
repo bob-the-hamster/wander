@@ -56,8 +56,15 @@ script, holding action key, begin
        || keyispressed(joy:button 1))
 end
 
+script, holding any arrow key, begin
+  return (key is pressed(key:left)
+       || key is pressed(key:right)
+       || key is pressed(key:up)
+       || key is pressed(key:down))
+end
+
 script, scripted use action, begin
-  if(keyval(key:space) > 1 || keyval(key:enter) > 1 || keyval(key:ctrl) || click on leader) then(
+  if(click on leader || keyval(key:space) > 1 || keyval(key:enter) > 1 || keyval(key:ctrl)) then(
     exit returning(true)
   )
   exit returning(false)
@@ -75,6 +82,16 @@ script, click on leader, begin
     )
   )
   exit returning(false)
+end
+
+script, wait for text box advance with arrow key, begin
+  while(true) do(
+    wait(1)
+    if(holding action key) then(break)
+    if(holding any arrow key) then(break)
+    if(mouse button(left button)) then(break)
+  )
+  advance text box
 end
 
 #---------------------------------------------------------------------------
