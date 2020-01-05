@@ -1,7 +1,7 @@
 #---------------------------------------------------------------------------
 # Wandering Hamster - see wander.hss
 # Utility scripts - Everything here is generic and not wandering-hamster-specific
-# See also wander_misc.hsi
+# See also wander_misc.hsi for generic wandering-hamster specfic stuff
 #---------------------------------------------------------------------------
 
 script, large, n1, n2, begin
@@ -363,6 +363,52 @@ script, jiggle hero, rank, count=1, begin
     put hero(rank, x, y -- 0)
     wait(1)
   )
+end
+
+#---------------------------------------------------------------------------
+
+script, random tile with zone, x id, y id, zone, distance from player, begin
+  # Pick a random tile that has a zone and is a given distance away from the
+  # player return the x,y position in the global variables ids specified
+  # in the "x id" and "y id" arguments
+  # Returns true for success, or false if it fails
+  variable(a, sl) # used for fakearray
+  a := create container(0, 0)
+  variable(x, y)
+  # Find all qualifying tiles
+  for(y, 0, map height -- 1) do(
+    for(x, 0, map width -- 1) do(
+      if(read zone(zone, x, y)) then(
+        if(further from player(x, y, distance from player)) then(
+          # Store this tile in the fake array
+          sl := create container()
+          put slice(sl, x, y)
+        )
+      )
+    )
+  )
+  # If there are zero valid tiles, fail now
+  if(child count(a) == 0) then(
+    free slice(a)
+    exit returning(false)
+  )
+  # Choose a random tile from the fake array
+  variable(pick)
+  pick := random(0, child count(0) -- 1)
+  # store the tile x and y in the globals
+  write global(x id, slice x(slice child(a, pick)))
+  write global(y id, slice y(slice child(a, pick)))
+  exit returning(true)
+end
+
+#---------------------------------------------------------------------------
+
+script, further from player, x, y, distance, rank=0, begin
+  # Return true if the x,y position is more than "distance" tiles in any
+  # direction from the hero
+  if(abs(x -- hero x(rank)) <= distance) then(exit returning(false))
+  if(abs(y -- hero y(rank)) <= distance) then(exit returning(false))
+  exit returning(true)
 end
 
 #---------------------------------------------------------------------------

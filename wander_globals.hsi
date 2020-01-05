@@ -28,6 +28,8 @@ global variable(22,skill point max)
 global variable(23,breath memory)
 global variable(24, breath bonus)
 global variable(25, ship dir)
+global variable(26, starfish x)
+global variable(27, starfish y)
 
 # Used by TMC's parallax voodoo
 global variable(50, camera slice)
