@@ -382,6 +382,7 @@ script, random tile with zone, x id, y id, zone, distance from player, begin
         if(further from player(x, y, distance from player)) then(
           # Store this tile in the fake array
           sl := create container()
+          set parent(sl, a)
           put slice(sl, x, y)
         )
       )
@@ -394,10 +395,12 @@ script, random tile with zone, x id, y id, zone, distance from player, begin
   )
   # Choose a random tile from the fake array
   variable(pick)
-  pick := random(0, child count(0) -- 1)
+  pick := random(0, child count(a) -- 1)
+  sl := slice child(a, pick)
   # store the tile x and y in the globals
-  write global(x id, slice x(slice child(a, pick)))
-  write global(y id, slice y(slice child(a, pick)))
+  write global(x id, slice x(sl))
+  write global(y id, slice y(sl))
+  free slice(a)
   exit returning(true)
 end
 
@@ -409,6 +412,16 @@ script, further from player, x, y, distance, rank=0, begin
   if(abs(x -- hero x(rank)) <= distance) then(exit returning(false))
   if(abs(y -- hero y(rank)) <= distance) then(exit returning(false))
   exit returning(true)
+end
+
+script, npc is near hero, ref, rank=0, begin
+  variable(d, x, y)
+  for(d, 0, 3) do(
+    x := hero x(rank) + ahead x(d)
+    y := hero y(rank) + ahead y(d)
+    if(npc x(ref) == x && npc y(ref) == y) then(exit returning(true))
+  )
+  exit returning(false)
 end
 
 #---------------------------------------------------------------------------

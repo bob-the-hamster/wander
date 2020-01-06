@@ -26,7 +26,11 @@ plotscript, sandbar onkeypress, begin
           x := x ahead of hero(me)
           y := y ahead of hero(me)
           if(read zone(1, x, y)) then(
-            sandbar: dig a hole(x, y)
+            if(npc at spot(x, y)) then(
+              # NPC is in the way
+            )else(
+              sandbar: dig a hole(x, y)
+            )
           )
         )
       )
@@ -56,7 +60,7 @@ script, dig up an item, x, y, begin
   n := random(1, 100)
   if(n <= 25) then(
     # Nothing
-  )else if(n <= 30) then(
+  )else if(n <= 30 || key is pressed(key:a)) then(
     # Starfish
     create random starfish(x, y)
   )else if(n <= 40) then(
@@ -105,13 +109,65 @@ script, create random starfish, x, y, begin
   variable(id, ref)
   id := random(1, 5)
   ref := create npc(id, x, y)
+  set npc extra(ref, 0, 1) # runaway count
+  set npc speed(ref, 3)
+  if(id == 5) then(
+    # Special handling for triangle star
+    set npc extra(ref, 0, 3) # runaway count
+    set npc speed(ref, 6)
+  )
   start starfish scuttle(ref)
 end
 
-script, start starfish scuttle, ref, begin
+script, start starfish scuttle, ref, zone=1, begin
   # Find a random diggable tile far enough away from the party
-  random tile with zone(@starfish x, @starfish y, 1, 10)
-  pathfind npc to(ref, starfish x, starfish y)
+  random tile with zone(@starfish x, @starfish y, zone, 10)
+  pathfind npc to(ref, starfish x, starfish y, 8)
+  set npc extra(ref, 1, starfish x)
+  set npc extra(ref, 2, starfish y)
+  set timer(starfish timer, 0, 1, @update all starfish)
 end
 
+script, update all starfish, begin
+  if(current map <> map:sandbar) then(exit script)
+  # Loop through all npcs looking for starfish
+  variable(ref, id)
+  ref := next NPC reference()  # The first NPC
+  while (ref) do (
+    id := get npc id(ref)
+    if(id >= 1 && id <= 5) then(
+      update this starfish(ref)
+    )
+    ref := next NPC reference(ref)
+  )
+  set timer(starfish timer, 0, 1, @update all starfish)
+end
+
+script, update this starfish, ref, begin
+  if(get npc speed(ref) <= 5) then(
+    if(npc is near hero(ref)) then(
+      set npc speed(ref, 5)
+    )
+    if(random(1, 10) == 1 && get npc speed(ref) > 3) then(
+      set npc speed(ref, get npc speed(ref) -- 1)
+    )
+  )
+  if(not(npc is walking(ref))) then(
+    variable(xtra)
+    xtra := npc extra(ref, 0)
+    set npc extra(ref, 0, large(xtra -- 1, 0))
+    if(xtra > 0) then(
+      # Scuttle again
+      variable(zone)
+      zone := 1
+      if(xtra == 1) then(zone := 2)
+      start starfish scuttle(ref, zone)
+    )else(
+      # Reached final destination, go into the water
+      set npc ignores walls(ref, true)
+      walk npc to x(ref, npc extra(ref, 1))
+      walk npc to y(ref, npc extra(ref, 2))
+    )
+  )
+end
 
