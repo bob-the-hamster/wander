@@ -113,7 +113,7 @@ script, create random starfish, x, y, begin
   set npc speed(ref, 3)
   if(id == 5) then(
     # Special handling for triangle star
-    set npc extra(ref, 0, 3) # runaway count
+    set npc extra(ref, 0, 2) # runaway count
     set npc speed(ref, 6)
   )
   start starfish scuttle(ref)
@@ -131,14 +131,15 @@ end
 script, update all starfish, begin
   if(current map <> map:sandbar) then(exit script)
   # Loop through all npcs looking for starfish
-  variable(ref, id)
+  variable(ref, next ref, id)
   ref := next NPC reference()  # The first NPC
   while (ref) do (
+    next ref := next NPC reference(ref)
     id := get npc id(ref)
     if(id >= 1 && id <= 5) then(
       update this starfish(ref)
     )
-    ref := next NPC reference(ref)
+    ref := next ref
   )
   set timer(starfish timer, 0, 1, @update all starfish)
 end
@@ -155,13 +156,15 @@ script, update this starfish, ref, begin
   if(not(npc is walking(ref))) then(
     variable(xtra)
     xtra := npc extra(ref, 0)
-    set npc extra(ref, 0, large(xtra -- 1, 0))
+    set npc extra(ref, 0, xtra -- 1)
     if(xtra > 0) then(
       # Scuttle again
       variable(zone)
       zone := 1
       if(xtra == 1) then(zone := 2)
       start starfish scuttle(ref, zone)
+    )else if(xtra == -1) then(
+      destroy npc(ref)
     )else(
       # Reached final destination, go into the water
       set npc ignores walls(ref, true)
