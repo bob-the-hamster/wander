@@ -305,7 +305,8 @@ plotscript, Jormungand Encounter, begin
   suspend hero walls
   suspend npc walls
   suspend random enemys
- 
+  gallopeg fog
+
   # pan down
   focus camera (23,11)
   walk hero to X(Bob,23)
@@ -669,6 +670,7 @@ plotscript, Rathmara Finds Rope, begin
   suspend NPCs
   suspend random enemys
   suspend caterpillar
+  gallopeg fog
 
   variable(Bob,Rathmara,Skeppio)
 
