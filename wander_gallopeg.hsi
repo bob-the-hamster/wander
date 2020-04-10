@@ -20,6 +20,43 @@ plotscript, Gallopeg Autorun, begin
     write map block(74,40,99) # burned half right
   )
 
+  gallopeg fog
+
+end
+
+#---------------------------------------------------------------------------
+
+script, gallopeg fog, begin
+  # If you leave the Gallopeg map, get rid of the fog
+  if(current map <> map:gallopeg forest) then(
+    if(fog slice) then(
+      free slice(fog slice)
+      fog slice := none
+    )
+    exit script
+  )
+  # If the fog has not been loaded yet, load it now
+  if(not(fog slice)) then(
+    variable(col)
+    col := load slice collection(5)
+    fog slice := first child(col)
+    set parent(fog slice, sprite layer)
+    free slice(col)
+    fog tick := 4
+    fog dir := 1
+  )
+  # Oscillate the fog animation
+  if(fog dir == 1) then(
+    fog tick += 1
+    if(fog tick >= 100) then(fog dir := -1)
+  )else(
+    fog tick -= 1
+    if(fog tick <= 40 ) then(fog dir := 1)
+  )
+  # Update the fog animation
+  dissolve sprite(fog slice, dissolve:evaporate, 100, fog tick / 10, false, false)
+  # Queue this script to be run again on the next tick
+  set timer(fog timer, 0, 1, @gallopeg fog)
 end
 
 #---------------------------------------------------------------------------

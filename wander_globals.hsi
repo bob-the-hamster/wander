@@ -30,6 +30,9 @@ global variable(24, breath bonus)
 global variable(25, ship dir)
 global variable(26, starfish x)
 global variable(27, starfish y)
+global variable(28, fog slice)
+global variable(29, fog tick)
+global variable(30, fog dir)
 
 # Used by TMC's parallax voodoo
 global variable(50, camera slice)
@@ -58,6 +61,7 @@ define constant(4, troll mountain parallax timer)
 define constant(5, splash animation timer)
 define constant(6, mer sculptor timer)
 define constant(7, starfish timer)
+define constant(8, fog timer)
 
 define constant(0, str:golf swing)
 define constant(1, str:golf score)
