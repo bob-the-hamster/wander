@@ -95,16 +95,16 @@ script, show final golf score, begin
        $str:golf score="poor"
        break
      )
+     if(golf total >= 117) then(
+       # average 13 hits per hole
+       $str:golf score="INSANELY bad"
+       reward box := 446 # fight snake spleen again
+       break
+     )
      if(golf total >= 63) then(
        # average 7 hits per hole
        $str:golf score="astonishingly bad"
        reward box := 445 # chai tea
-       break
-     )
-     if(golf total <= 117) then(
-       # average 13 hits per hole
-       $str:golf score="INSANELY bad"
-       reward box := 446 # fight snake spleen again
        break
      )
      # between 46 and 62
@@ -139,7 +139,7 @@ plotscript, whack the golf ball, arg=0, ref=0, begin
     set NPC direction(club, hero direction(me))
     set NPC frame(club, 0)
     advance NPC by pixels(club, 15)
-    while(holding action key) do, begin
+    while(holding action key || mouse button(left button)) do, begin
       charge += 1
       if ((charge, mod, 3) == 0) then, begin
        if(force << 32) then, begin

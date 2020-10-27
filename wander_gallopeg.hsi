@@ -54,7 +54,7 @@ script, gallopeg fog, begin
     if(fog tick <= 40 ) then(fog dir := 1)
   )
   # Update the fog animation
-  dissolve sprite(fog slice, dissolve:evaporate, 100, fog tick / 10, false, false)
+  dissolve sprite(fog slice, dissolve:ghostly fade, 100, fog tick / 10, false, false)
   # Queue this script to be run again on the next tick
   set timer(fog timer, 0, 1, @gallopeg fog)
 end
