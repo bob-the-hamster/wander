@@ -27,3 +27,31 @@ script, write sand footprints, x, y, begin
 end
 
 #---------------------------------------------------------------------------
+
+plotscript, voguson inn, begin
+  suspend player
+  pathfind hero to(me, 21, 22, 10)
+  wait for hero(me)
+  suspend caterpillar
+  pathfind hero to(0, 22, 21, 10)
+  pathfind hero to(1, 23, 22, 10)
+  pathfind hero to(2, 22, 20, 10)
+  pathfind hero to(3, 23, 23, 10)
+  wait for hero(0)
+  wait for hero(1)
+  wait for hero(2)
+  wait for hero(3)
+  
+  variable(song)
+  song := current song
+  play song (song:Sleeping Music)
+  tweak palette(-40, -40, -10)
+  fade screen in
+  key wait seconds(8)
+  reset palette
+  fade screen in
+  play song(song)
+ 
+  resume caterpillar
+  resume player
+end
