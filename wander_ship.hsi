@@ -488,5 +488,14 @@ plotscript, ship menu script, begin
   resume caterpillar
   wait(1)
   fade screen in
+  upon returning to the ship
   resume player
+end
+
+script, upon returning to the ship, begin
+  if(not(check tag(tag:ship hint visit misa))) then(
+    show text box(850)
+    wait for text box
+    set tag(tag:ship hint visit misa, true)
+  )
 end

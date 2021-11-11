@@ -347,22 +347,6 @@ end
 # TMC's Parallax support scripts from:
 # http://rpg.hamsterrepublic.com/ohrrpgce/Scripts:Hero_will_move
 
-script, dir X, dir, begin
-  switch (dir) do (
-    case (up, down) do (return (0))
-    case (right) do (return (1))
-    case (left) do (return (-1))
-  )
-end
-
-script, dir Y, dir, begin
-  switch (dir) do (
-    case (left, right) do (return (0))
-    case (down) do (return (1))
-    case (up) do (return (-1))
-  )
-end
-
 script, trying to move direction, begin
   return (-1)
   if(top menu) then(exit script)
