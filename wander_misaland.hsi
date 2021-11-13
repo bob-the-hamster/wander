@@ -186,3 +186,36 @@ plotscript,Cats Enlist Bob,begin
 end
 
 #---------------------------------------------------------------------------
+
+script, misa castle autorun, begin
+  if(check tag(tag:ship initialization)) then(
+    set tag(tag: dancing guards, true)
+    dance counter := 0
+    set timer(dancing guard timer, 0, 3, @dancing guards twirl)
+  )
+end
+
+script, dancing guards twirl, begin
+  if(current map <> map:broaste's castle) then(exit script)
+  if(dance counter < 12) then(
+    rotate all npc copies(32, pool:local)
+    dance counter += 1
+    set timer(dancing guard timer, 0, 3, @dancing guards twirl)
+  )else(
+    dance counter := 0
+    set timer(dancing guard timer, 0, 3, @dancing guards jump)
+  )
+end
+
+script, dancing guards jump, begin
+  if(current map <> map:broaste's castle) then(exit script)
+  walk ahead all npc copies(32, pool:local)
+  set timer(dancing guard timer, 0, 5, @dancing guards back up)
+end
+
+script, dancing guards back up, begin
+  if(current map <> map:broaste's castle) then(exit script)
+  walk back all npc copies(32, pool:local)
+  set timer(dancing guard timer, 0, 5, @dancing guards twirl)
+end
+

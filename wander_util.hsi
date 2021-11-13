@@ -158,6 +158,47 @@ script, rotate, dir=0, which way=1, quarters=1, begin
   exit returning(dir)
 end
 
+script, rotate npc, n, which way=1, quarters=1, begin
+  set npc direction(n, rotate(npc direction(n), which way, quarters))
+end
+
+script, rotate all npc copies, id, pool=pool:local, which way=1, quarters=1, begin
+  variable(i, n)
+  for(i, 0, npc copy count(id, pool)) do(
+    n := npc reference(id, i, false, pool)
+    rotate npc(n, which way, quarters)
+  )
+end
+
+#---------------------------------------------------------------------------
+
+script, walk ahead npc, n, distance=1, begin
+  walk npc(n, npc direction(n), distance)
+end
+
+script, walk ahead all npc copies, id, pool=pool:local, distance=1, begin
+  variable(i, n)
+  for(i, 0, npc copy count(id, pool)) do(
+    n := npc reference(id, i, false, pool)
+    walk ahead npc(n, distance)
+  )
+end
+
+script, walk back npc, n, distance=1, begin
+  variable(d)
+  d := npc direction(n)
+  walk npc(n, rotate(d, clockwise, 2), distance)
+  set npc direction(n, d)
+end
+
+script, walk back all npc copies, id, pool=pool:local, distance=1, begin
+  variable(i, n)
+  for(i, 0, npc copy count(id, pool)) do(
+    n := npc reference(id, i, false, pool)
+    walk back npc(n, distance)
+  )
+end
+
 #---------------------------------------------------------------------------
 
 script, quake camera, ticks, distance=4, begin

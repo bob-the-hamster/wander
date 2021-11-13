@@ -110,6 +110,10 @@ plotscript,Broaste Castle Autorun,begin
   myrmidon Y:=NPC Y(4)
  end
 
+ if(check tag(tag:misa took castle)) then(
+   Misa castle autorun
+ )
+
 end
 
 #---------------------------------------------------------------------------
