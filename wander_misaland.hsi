@@ -195,15 +195,18 @@ script, misa castle autorun, begin
   )
 end
 
+#---------------------------------------------------------------------------
+# Dancing Guards
+
 script, dancing guards twirl, begin
   if(current map <> map:broaste's castle) then(exit script)
   if(dance counter < 12) then(
     rotate all npc copies(32, pool:local)
     dance counter += 1
-    set timer(dancing guard timer, 0, 3, @dancing guards twirl)
+    set timer(dancing guard timer, 0, 2, @dancing guards twirl)
   )else(
     dance counter := 0
-    set timer(dancing guard timer, 0, 3, @dancing guards jump)
+    set timer(dancing guard timer, 0, 2, @dancing guards jump)
   )
 end
 
@@ -219,3 +222,17 @@ script, dancing guards back up, begin
   set timer(dancing guard timer, 0, 5, @dancing guards twirl)
 end
 
+plotscript, talk to dancing guards, begin
+  switch(dance guard text) do(
+    case(0)
+      show text box(852)
+      wait for text box
+    case(1)
+      show text box(854)
+      wait for text box
+  )
+  
+  dance guard text := loop n(dance guard text, 1)
+end
+
+#---------------------------------------------------------------------------

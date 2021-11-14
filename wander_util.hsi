@@ -14,6 +14,14 @@ end
 
 #---------------------------------------------------------------------------
 
+script, loop n, n, max, min=0, inc=1, begin
+  n += inc
+  if(n > max) then(n -= (max -- min + 1))
+  exit returning(n)
+end
+
+#---------------------------------------------------------------------------
+
 script, key wait, ticks, begin
   # Returns true if the wait was canceled by a keypress.
   show virtual gamepad

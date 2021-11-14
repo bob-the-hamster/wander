@@ -34,6 +34,7 @@ global variable(28, fog slice)
 global variable(29, fog tick)
 global variable(30, fog dir)
 global variable(31, dance counter)
+global variable(32, dance guard text)
 
 # Used by TMC's parallax voodoo
 global variable(50, camera slice)
