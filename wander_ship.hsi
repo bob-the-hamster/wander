@@ -499,3 +499,99 @@ script, upon returning to the ship, begin
     set tag(tag:ship hint visit misa, true)
   )
 end
+
+plotscript, myrmidon shows you the ship, begin
+  $0="You are Here"
+  $1=""
+  myrmidon shows you the map(-1, -1)
+end
+
+plotscript, myrmidon shows you flanat, begin
+  $0="Flanat Castle"
+  $1="& Flanat Village"
+  myrmidon shows you the map(70, 35)
+end
+
+plotscript, myrmidon shows you misaland, begin
+  $0="Misaland"
+  $1="(Formerly Broastia)"
+  myrmidon shows you the map(53, 26)
+end
+
+plotscript, myrmidon shows you ixnekolan, begin
+  $0="Ixnekolan"
+  $1="Home of the Cat Folk"
+  myrmidon shows you the map(43, 12)
+end
+
+plotscript, myrmidon shows you kelp reef, begin
+  $0="Kelp Reef"
+  $1="Home of the Mer-Sheep"
+  myrmidon shows you the map(27, 37)
+end
+
+plotscript, myrmidon shows you sandbar, begin
+  $0="Remote Sandbar"
+  $1=""
+  myrmidon shows you the map(6, 32)
+end
+
+plotscript, myrmidon shows you bontgommeri, begin
+  $0="Bontgommeri Desert"
+  $1="Sandy & Dangerous"
+  myrmidon shows you the map(36, 48)
+end
+
+plotscript, myrmidon shows you gondbara, begin
+  $0="Gondbara Continent"
+  $1="???"
+  myrmidon shows you the map(29, 72)
+end
+
+plotscript, myrmidon shows you the map, show x=-1, show y=-1, begin
+  suspend player
+  suspend npcs
+  suspend random enemies
+  if (show x == -1) then(show x := ship x)
+  if (show y == -1) then(show y := ship y)
+  
+  # Save party position
+  save party position
+  variable(old map, n, nx, ny, nd)
+  n := npc reference(22)
+  nx := npc x(n) , ny := npc y(n) , nd := npc direction(n)
+  old map := current map
+  
+  # Show the map
+  advance text box
+  tweak palette(-63, -63, -63)
+  update palette
+  teleport to map(map:World Map, show x, show y)
+  set hero direction(me, ship dir)
+  center string at(0, 160, 5)
+  center string at(1, 160, 189)
+  string style(0, string:flat)
+  string style(1, string:flat)
+  string color(0, get ui color(ui:Text), get ui color(ui:highlight A))
+  string color(1, get ui color(ui:Text), get ui color(ui:highlight A))
+  wait(1) # strings don't appear without this wait before show mini map
+  reset palette, update palette
+  show mini map
+  hide string(0)
+  hide string(1)
+  teleport to map(old map, saved hero0 x, saved hero0 y)
+  
+  # Restore party position
+  restore party position
+  n := npc reference(22)
+  set npc position(n, nx, ny) , set npc direction(n, nd)
+
+  resume player
+  resume npcs
+  resume random enemies
+  
+  # re-show the menu
+  show text box(885)
+end
+
+

@@ -4,7 +4,10 @@
 #---------------------------------------------------------------------------
 
 plotscript,Cyclic Misa Saying,begin
-  show text box(283+Misa Saying)
+  variable(base box)
+  base box := 283
+  if(check tag(tag:ship initialization)) then(base box := 868)
+  show text box(base box + Misa Saying)
   wait for text Box
   increment(Misa Saying,1)
   if (Misa Saying >> 3 || Misa Saying << 0) then(Misa Saying:=0)
@@ -233,6 +236,21 @@ plotscript, talk to dancing guards, begin
   )
   
   dance guard text := loop n(dance guard text, 1)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, recruit myrmapdon, begin
+  suspend player
+  variable(mm)
+  mm := npc reference(35)
+  set npc speed(mm, 4)
+  pathfind npc to(mm, 7, 12)
+  wait for npc(mm)
+  walk npc(mm, south, 4)
+  wait for npc(mm)
+  set tag(tag:recruit myrmapdon, true)
+  resume player
 end
 
 #---------------------------------------------------------------------------

@@ -367,3 +367,28 @@ script, skill point bean, lev, item, begin
 end
 
 #---------------------------------------------------------------------------
+
+# Uses globals, so you can't nest these
+
+script, save party position, begin
+  variable(i)
+  for(i, 0, 3) do(
+    write global(@saved hero0 x + i, hero x(i))
+    write global(@saved hero0 y + i, hero y(i))
+    write global(@saved hero0 d + i, hero direction(i))
+  )
+end
+
+script, restore party position, begin
+  variable(i)
+  for(i, 0, 3) do(
+    set hero position(i,
+      read global(@saved hero0 x + i),
+      read global(@saved hero0 y + i),
+    )
+    set hero direction(i, read global(@saved hero0 d + i))
+  )
+end
+
+
+#---------------------------------------------------------------------------
