@@ -6,7 +6,10 @@
 plotscript,Cyclic Misa Saying,begin
   variable(base box)
   base box := 283
-  if(check tag(tag:ship initialization)) then(base box := 868)
+  if(check tag(tag:ship initialization)) then(
+    base box := 868
+    set tag(tag:misaland cactus, true)
+  )
   show text box(base box + Misa Saying)
   wait for text Box
   increment(Misa Saying,1)
@@ -251,6 +254,97 @@ plotscript, recruit myrmapdon, begin
   wait for npc(mm)
   set tag(tag:recruit myrmapdon, true)
   resume player
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, misaland cactus sighting part 1, begin
+  suspend player
+  suspend random enemies
+  play song(song:cactus theme)
+  set hero direction(0, left)
+  variable(cactus)
+  cactus := npc reference(36)
+  walk npc(cactus, left, 1)
+  wait(2)
+  show text box(886)
+  wait for npc(cactus)
+  set npc ignores walls(cactus, true)
+  walk npc(cactus, up, 2)
+  wait for npc(cactus)
+  resume player
+  resume random enemies
+  set tag(tag:misaland cactus pt1, true)
+end
+
+plotscript, misaland cactus sighting part 2, begin
+  play song(song:cactus theme)
+  variable(cactus)
+  cactus := npc reference(38)
+  set npc ignores walls(cactus, true)
+  walk npc(cactus, north, 6)
+  wait for npc(cactus)
+  set tag(tag:misaland cactus pt2, true)
+end
+
+plotscript, misaland cactus sighting part 3, begin
+  play song(song:cactus theme)
+  variable(cactus)
+  cactus := npc reference(40)
+  set npc ignores walls(cactus, true)
+  walk npc(cactus, up, 2)
+  wait for npc(cactus)
+  walk npc(cactus, right, 1)
+  wait for npc(cactus)
+  walk npc(cactus, up, 2)
+  wait for npc(cactus)
+  set tag(tag:misaland cactus pt3, true)
+end
+
+plotscript, misaland cactus sighting part 4, begin
+  play song(song:cactus theme)
+  variable(cactus)
+  cactus := npc reference(42)
+  pathfind npc to(cactus, 56, 28)
+  wait for npc(cactus)
+  set npc ignores walls(cactus, true)
+  walk npc(cactus, up, 1)
+  wait for npc(cactus)
+  set tag(tag:misaland cactus pt4, true)
+end
+
+plotscript, misaland cactus sighting part 5, begin
+  play song(song:cactus theme)
+  variable(cactus)
+  cactus := npc reference(44)
+  pathfind npc to(cactus, 9, 26)
+  wait for npc(cactus)
+  set npc ignores walls(cactus, true)
+  walk npc(cactus, up, 1)
+  wait for npc(cactus)
+  set tag(tag:misaland cactus pt5, true)
+end
+
+plotscript, misaland cactus sighting done, begin
+  suspend player
+  walk hero(me, up, 1)
+  wait for hero(me)
+  variable(i)
+  for(i, 0, 2) do(
+    set hero direction(me, left)
+    wait(4)
+    set hero direction(me, up)
+    wait(4)
+    set hero direction(me, right)
+    wait(4)
+    set hero direction(me, up)
+    wait(4)
+  )
+  show text box(887)
+  play song(get ambient music)
+  wait for text box
+  resume player
+  set tag(tag:misaland cactus done, true)
 end
 
 #---------------------------------------------------------------------------
