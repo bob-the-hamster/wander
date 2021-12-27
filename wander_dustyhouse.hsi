@@ -134,5 +134,57 @@ plotscript, stress cat couch action, begin
   )
 end
 
+#---------------------------------------------------------------------------
+
+plotscript, dusty teaches icefeather refresh, begin
+  suspend player
+  suspend caterpillar
+  variable(i, who, dusty)
+  for(i, 0, 3) do(
+    who := hero by rank(i)
+    if(who == hero:icefeather) then(pathfind hero to(i, 17, 156))
+    else(
+      if(who > -1) then(pathfind hero to(i, 15 + i, 158))
+    )
+  )
+  dusty := npc reference(32)
+  pathfind npc to(dusty, 15, 156)
+  focus camera(16, 156, 4)
+  wait for npc(dusty)
+  set npc direction(dusty, right)
+  for(i, 0, 3) do(
+    wait for hero(i)
+    set hero direction(i, up)
+  )
+  wait for camera
+  variable(icef)
+  icef := rank in caterpillar(hero:icefeather)
+  set hero direction(icef, left)
+  show text box(906)
+  wait for text box
+  twirl npc(dusty, 2, 2)
+  twirl hero(icef, 2, 4)
+  show text box(907)
+  wait for text box
+  wait(6)
+  teach spell(find hero(hero:icefeather), atk:Refresh 2)
+  show text box(909)
+  wait for text box
+
+  focus camera(hero x(0), hero y(0), 4)
+  for(i, 0, 3) do(
+    who := hero by rank(i)
+    if(who > -1) then(pathfind hero to(i, 15 + i, 158))
+  )
+  for(i, 0, 3) do(
+    wait for hero(i)
+  )
+  set hero direction(icef, up)
+  wait for camera
+  camera follows hero(0)
+  
+  resume caterpillar
+  resume player
+end
 
 #---------------------------------------------------------------------------

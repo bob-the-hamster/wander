@@ -55,6 +55,28 @@ script,Spin NPC,who,speed=2,turns=1,begin
   end
 end
 
+script, twirl npc, n, speed=2, turns=1, begin
+  variable(i, j, d)
+  for(i, 1, turns) do(
+    for(j, 0, 3) do(
+      d := npc direction(n)
+      set npc direction(n, (d + 1 ,mod, 4))
+      wait(speed)
+    )
+  )
+end
+
+script, twirl hero, who, speed=2, turns=1, begin
+  variable(i, j, d)
+  for(i, 1, turns) do(
+    for(j, 0, 3) do(
+      d := hero direction(who)
+      set hero direction(who, (d + 1 ,mod, 4))
+      wait(speed)
+    )
+  )
+end
+
 #---------------------------------------------------------------------------
 
 script, holding action key, begin
