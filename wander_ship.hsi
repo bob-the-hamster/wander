@@ -542,6 +542,12 @@ plotscript, myrmidon shows you bontgommeri, begin
   myrmidon shows you the map(36, 48)
 end
 
+plotscript, myrmidon shows you straits, begin
+  $0="Straits of Unreasonable Peril"
+  $1="(known to be perilous!)"
+  myrmidon shows you the map(17, 60)
+end
+
 plotscript, myrmidon shows you gondbara, begin
   $0="Gondbara Continent"
   $1="???"

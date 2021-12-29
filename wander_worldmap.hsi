@@ -21,6 +21,7 @@ plotscript, world map eachstep, begin
         show text box(827)
         wait for text box
         set tag(tag:got desert warning, on)
+        set tag(tag:know of bontgommeri, on)
       )
     )
     if(read zone(11, hero x(me), hero y(me))) then(
@@ -29,6 +30,7 @@ plotscript, world map eachstep, begin
       fade screen out
       wait for hero(me)
       teleport to map(map:Sandbar, 30, 12)
+      set tag(tag:know of sandbar)
       walk hero(me, south, 1)
       wait(1)
       fade screen in

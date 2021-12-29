@@ -3,6 +3,14 @@
 # Flanat Castle
 #---------------------------------------------------------------------------
 
+plotscript, flanat castle autorun, begin
+ if(check tag(tag:ship initialization)) then(
+  replace hasims carpet
+ )
+end
+
+#---------------------------------------------------------------------------
+
 plotscript, Broaste Lackeys Block Castle,begin
  suspend player
  suspend obstruction
@@ -259,6 +267,19 @@ plotscript,Rolf Inn,begin
   resume player
   resume random enemies
   resume hero walls
+end
+
+#---------------------------------------------------------------------------
+
+script, replace hasims carpet, begin
+  variable(x, y, cx, cy)
+  cx := 41
+  cy := 11
+  for(x, 0, 2) do(
+    for(y, 0, 5) do(
+      write map block(cx + x, cy + y, 1 + x, 2)
+    )
+  ) 
 end
 
 #---------------------------------------------------------------------------
