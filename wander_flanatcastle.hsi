@@ -283,3 +283,159 @@ script, replace hasims carpet, begin
 end
 
 #---------------------------------------------------------------------------
+
+plotscript, hasim teaches gisli, begin
+  suspend player
+  suspend caterpillar
+  suspend npcs
+  pan camera(down, 2, 2)
+  
+  # Move everybody into position
+  variable(i, who, gisli)
+  gisli := rank in caterpillar(hero:gisli)
+  for(i, 0, 3) do(
+    who := hero by rank(i)
+    if(i == gisli) then(
+      pathfind hero to(i, 43, 12)
+    )else if(who > -1) then(
+      pathfind hero to(i, 41 + i, 14)
+    )
+  )
+  # Move Hasim
+  variable(hasim)
+  hasim := npc reference(27)
+  set npc speed(hasim, 4)
+  pathfind npc to(hasim, 41, 12)
+  # Move guards
+  variable(guard)
+  guard := npc at spot(40, 12)
+  set npc speed(guard, 5)
+  walk npc(guard, left, 2)
+  set npc direction(guard, right)
+  guard := npc at spot(44, 12)
+  set npc speed(guard, 5)
+  walk npc(guard, right, 2)
+  set npc direction(guard, left)
+  # wait for everybody to get there
+  wait for npc(hasim)
+  set npc direction(hasim, right)
+  for(i, 0, 3) do(
+    wait for hero(i)
+    if(i == gisli) then(
+      set hero direction(i, left)
+    )else(
+      set hero direction(i, up)
+    )
+  )
+  set npc speed(guard, 0)
+  
+  # Add the axe
+  force equip(find hero(hero:Gisli), slot:weapon, 128)
+  show text box(926)
+  wait for text box
+  variable(axe, z)
+  axe := create npc(36, 41, 12)
+  set npc obstructs(axe, false)
+  walk npc(axe, right, 2)
+  for(i, 0, 9) do(
+    z := 5 -- (i -- 5)
+    set npc z(axe, z)
+    wait(1)
+  )
+  wait for npc(axe)
+  destroy npc(axe)
+  twirl hero(gisli, 1, 1)
+  
+  show text box(927)
+  wait for text box
+  
+  # Training dance
+  
+  set npc speed(hasim, 10)
+  set hero speed(gisli, 10)
+  
+  for(i, 0, 1) do(
+    walk npc(hasim, right, 1)
+    wait for npc(hasim)
+    walk npc(hasim, left, 1)
+    set npc direction(hasim, right)
+    wait(1)
+    walk hero(gisli, left, 1)
+    wait for hero(gisli)
+    walk hero(gisli, right, 1)
+    set hero direction(gisli, left)
+    wait for hero(gisli)
+  )
+  walk npc(hasim, right, 1)
+  wait(1)
+  walk hero(gisli, up, 1)
+  set hero direction(gisli, down)
+  wait for hero(gisli)
+  set hero direction(gisli, left)
+  for(i, 0, 2) do(
+    walk hero(gisli, down, 1)
+    set hero direction(gisli, left)
+    walk npc(hasim, up, 1)
+    set npc direction(hasim, right)
+    wait for hero(gisli)
+    wait for npc(hasim)
+    walk hero(gisli, up, 1)
+    set hero direction(gisli, left)
+    walk npc(hasim, down, 1)
+    set npc direction(hasim, right)
+    wait for hero(gisli)
+    wait for npc(hasim)
+  )
+  set hero speed(gisli, 5)
+  set npc speed(hasim, 5)
+  walk hero(gisli, down, 1)
+  set hero direction(gisli, left)
+  walk npc(hasim, left, 1)
+  set npc direction(hasim, right)
+  twirl hero(gisli, 2, 1)
+  twirl npc(hasim, 2, 1)
+  
+  # Gisli does the SlowFury attack
+  show text box(930)
+  wait for textbox
+  for(i, 0, 20) do(
+    tweak palette(0, -1, -1)
+    update palette
+    wait(1)
+  )
+  wait(20)
+  set hero speed(gisli, 5)
+  axe := create npc(36, 43, 12)
+  set npc speed(axe, 10)
+  set npc obstructs(axe, false)
+  walk npc(axe, left, 2)
+  walk hero(gisli, left, 1)
+  wait for hero(gisli)
+  play sound(sfx:Slash8bit)
+  reset palette
+  fade screen in
+  destroy npc(axe)
+
+  show text box(929)
+  wait for text box
+  
+  # Return to party lineup
+  set npc direction(hasim, down)
+  set hero speed(gisli, 4)
+  for(i, 0, 3) do(
+    pathfind hero to(i, 41 + i, 14)
+  )
+  focus camera(hero x(me), hero y(me), 4)
+  wait for hero(gisli)
+  set hero direction(gisli, up)
+  camera follows hero(me)
+  
+  show text box(931)
+  
+  resume caterpillar
+  resume player
+  resume npcs
+end
+
+
+#---------------------------------------------------------------------------
