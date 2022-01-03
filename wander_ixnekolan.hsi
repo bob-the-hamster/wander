@@ -4,6 +4,10 @@
 #---------------------------------------------------------------------------
 
 plotscript, Fluffy-Mu, begin
+  if (check tag(tag:ship initialization)) then(
+    fluffy mu apology
+    exit script
+  )
   if (check tag(tag:joined cat's quest))
   then(
     if (check tag(tag:betrayed by cats))
@@ -144,3 +148,122 @@ end
 
 #---------------------------------------------------------------------------
 
+script, fluffy mu apology, begin
+  suspend player
+  show text box(956)
+  wait for text box
+  set tag(tag: fluffy mu apology, true)
+  resume player
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, skeppio runs away pt1, begin
+  variable(skeppio)
+  skeppio := npc reference(19)
+  twirl npc(skeppio, 1, 1)
+  set npc ignores walls(skeppio, true)
+  walk npc(skeppio, north, 3)
+  wait for npc(skeppio)
+  set tag(tag:skeppio ran 1, true)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, skeppio runs away pt2, begin
+  suspend player
+  suspend caterpillar
+
+  variable(skeppio)
+  skeppio := npc reference(18)
+  
+  focus camera(68, 7)
+  show text box(964)
+  walk npc(me, up, 1)
+  twirl npc(skeppio, 1, 1)
+  wait(2)
+  walk npc(skeppio, down, 1)
+  wait for text box
+  
+  set npc speed(skeppio, 10)
+  set npc obstructs(skeppio, false)
+  hero chases npc(0, skeppio)
+  hero chases npc(1, skeppio)
+  hero chases npc(2, skeppio)
+  hero chases npc(3, skeppio)
+  set hero speed(0, 4)
+  set hero speed(1, 3)
+  set hero speed(2, 2)
+  set hero speed(3, 1)
+  
+  pathfind npc to(skeppio, 72, 6)
+  wait for npc(skeppio)
+  pathfind npc to(skeppio, 64, 5)
+  wait for npc(skeppio)
+  set npc ignores walls(skeppio, true)
+  walk npc(skeppio, down, 3)
+  play sound(sfx:skeppio02 exclam)
+  wait for npc(skeppio)
+  set npc ignores walls(skeppio, false)
+  set npc direction(skeppio, right)
+  wait(2)
+  pathfind npc to(skeppio, 62, 8)
+  wait for npc(skeppio)
+  set npc direction(skeppio, right)
+  wait(2)
+  set npc ignores walls(skeppio, true)
+  walk npc(skeppio, up, 2)
+  set npc direction(skeppio, down)
+  wait for npc(skeppio)
+  variable(fire)
+  fire := create npc(19, 62, 6, left)
+  play sound(sfx:fire)
+  wait(1)
+  set npc direction(fire, down)
+  wait(1)
+  set npc direction(fire, right)
+  wait(1)
+  set npc direction(fire, up)
+  wait(1)
+  set npc position(skeppio, 74, 6)
+  set npc position(fire, 74, 6)
+  set npc direction(fire, left)
+  wait(1)
+  set npc direction(fire, down)
+  wait(1)
+  set npc direction(fire, right)
+  wait(1)
+  set npc direction(fire, up)
+  wait(1)
+  destroy npc(fire)
+  play sound(sfx:skeppio02 exclam)
+  walk npc(skeppio, down, 2)
+  wait for npc(skeppio)
+  set npc ignores walls(skeppio, false)
+  pathfind npc to(skeppio, 68, 12)
+  pan camera(south, 1, 4)
+  wait for npc(skeppio)
+  walk npc(skeppio, south, 1)
+  wait for npc(skeppio)
+  pathfind hero to(0, 68, 10)
+  pathfind hero to(1, 67, 11)
+  pathfind hero to(2, 69, 11)
+  pathfind hero to(3, 69, 10)
+  focus camera(68, 10, 4)
+  wait for hero(0)
+  set hero direction(0, down)
+  wait for camera
+  camera follows hero
+  show text box(965)
+
+  set hero speed(0, 4)
+  set hero speed(1, 4)
+  set hero speed(2, 4)
+  set hero speed(3, 4)
+  
+  set tag(tag: skeppio ran 2, true)
+  resume player
+  resume caterpillar
+end
+
+#---------------------------------------------------------------------------
