@@ -1,8 +1,6 @@
 Cotton Ball - Andrew Verner
 Sucralose - Andrew Verner
 Dexter (min-pin) - RMZ
-Ralph (Orange Tabby) - RMZ
-Stella (Gray Tabby) - RMZ
 Markothy - quackgyver
 Burlap Boy - quackgyver
 Pu - quackgyver
@@ -12,3 +10,5 @@ Used
 ----
 
 Timbert (Sleeping guard in Misa's castle) - quackgyver
+Ralph (Glibby's friend - Orange Tabby) - RMZ
+Stella (Glibby's friend - Gray Tabby) - RMZ
