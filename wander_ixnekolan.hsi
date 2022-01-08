@@ -173,6 +173,7 @@ end
 plotscript, skeppio runs away pt2, begin
   suspend player
   suspend caterpillar
+  suspend random enemies
 
   variable(skeppio)
   skeppio := npc reference(18)
@@ -200,6 +201,12 @@ plotscript, skeppio runs away pt2, begin
   wait for npc(skeppio)
   pathfind npc to(skeppio, 64, 5)
   wait for npc(skeppio)
+  variable(book)
+  book := create npc(20, 65, 4)
+  set npc ignores walls(book, true)
+  set npc speed(book, 5)
+  walk npc(book, down, 1)
+  
   set npc ignores walls(skeppio, true)
   walk npc(skeppio, down, 3)
   play sound(sfx:skeppio02 exclam)
@@ -243,7 +250,8 @@ plotscript, skeppio runs away pt2, begin
   pathfind npc to(skeppio, 68, 12)
   pan camera(south, 1, 4)
   wait for npc(skeppio)
-  walk npc(skeppio, south, 1)
+  set npc ignores walls(skeppio, true)
+  walk npc(skeppio, south, 2)
   wait for npc(skeppio)
   pathfind hero to(0, 68, 10)
   pathfind hero to(1, 67, 11)
@@ -254,16 +262,40 @@ plotscript, skeppio runs away pt2, begin
   set hero direction(0, down)
   wait for camera
   camera follows hero
-  show text box(965)
 
   set hero speed(0, 4)
   set hero speed(1, 4)
   set hero speed(2, 4)
   set hero speed(3, 4)
+  resume caterpillar
   
   set tag(tag: skeppio ran 2, true)
+  walk hero (me, south, 3)
+  wait for hero(me)
+  wait(1)
+  # Outside now
+  skeppio := npc reference(20)
+  set npc speed(skeppio, 10)
+  pathfind npc to(skeppio, 50, 29)
+  walk hero(me, south, 1)
+  wait for hero(me)
+  focus camera(50, 15, 7)
+  pathfind hero to(me, 53, 36)
+  wait for npc(skeppio)
+  show text box(965)
+  pathfind npc to(skeppio, 50, 17)
+  wait for npc(skeppio)
+  walk npc(skeppio, up, 20)
+  wait for text box
+  wait for hero(me)
+  focus camera(hero x(me), hero y(me)--3, 10)
+  walk hero(me, up, 3)
+  wait for camera
+  camera follows hero(me)
+  
+  set tag(tag: skeppio ran 3, true)
+  resume random enemies
   resume player
-  resume caterpillar
 end
 
 #---------------------------------------------------------------------------

@@ -392,3 +392,39 @@ end
 
 
 #---------------------------------------------------------------------------
+
+plotscript, upgrade spellbreak, begin
+  upgrade bob skill(atk:spellbreak, atk:spellbreak2)
+end
+
+script, upgrade bob skill, oldatk, newatk, begin
+  variable(bob)
+  bob := find hero(hero:Bob the Hamster)
+  if(knows spell(bob, newatk)) then(
+    read attack name(str:intobox, newatk)
+    show text box(971)
+    wait for text box
+    exit script
+  )
+  if(not(knows spell(bob, oldatk))) then(
+    read attack name(str:intobox, newatk)
+    show text box(968)
+    wait for text box
+    exit script
+  )
+  read attack name(str:intobox, oldatk)
+  show text box(970)
+  wait for text box
+
+  variable(slot)
+  for (slot, 0, 23) do(
+    if(read spell(bob, 0, slot) == oldatk) then(
+      write spell(bob, 0, slot, newatk)
+    )
+  )
+
+  read attack name(str:intobox, newatk)
+  show text box(972)
+end
+
+#---------------------------------------------------------------------------
