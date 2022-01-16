@@ -32,6 +32,7 @@ include, wander_misc.hsi
 include, wander_worldmap.hsi
 include, wander_flanat.hsi
 include, wander_flanatcastle.hsi
+include, wander_pliptamer.hsi
 include, wander_dustyhouse.hsi
 include, wander_trollmt.hsi
 include, wander_broastia.hsi
