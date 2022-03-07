@@ -1,0 +1,54 @@
+#---------------------------------------------------------------------------
+# Wandering Hamster - see wander.hss
+# Plip Tamer's House
+#---------------------------------------------------------------------------
+
+plotscript, catch the fraidy plip, begin
+  suspend player
+  variable(plip)
+  plip := npc reference(2)
+  alter npc(plip, NPCstat:move type, NPCmovetype:walkinplace)
+  set npc obstructs(plip, false)
+  set npc speed(plip, 7)
+  set hero speed(me, 5)
+  hero chases npc(me, plip)
+  pathfind npc to(plip, 13, 7)
+  wait for npc(plip)
+  set npc speed(plip, 6)
+  pathfind npc to(plip, 13, 15)
+  wait for npc(plip)
+  pathfind npc to(plip, 5, 15)
+  wait for npc(plip)
+  set npc speed(plip, 5)
+  pathfind npc to(plip, 7, 5)
+  wait for npc(plip)
+  pathfind npc to(plip, 15, 4)
+  pathfind hero to(me, 15, 5)
+  wait for npc(plip)
+  twirl npc(plip, 2)
+  set npc direction(plip, down)
+  wait for hero(me)
+  set hero direction(me, up)
+  
+  show text box(998)
+  wait for text box
+  set npc obstructs(plip, false)
+  pathfind npc to(plip, hero x(3), hero y(3))
+  wait for npc(plip)
+
+  add hero(hero: fraidy plip)
+  set hero speed(me, 4)
+  set tag(tag:got fraidy plip, true)
+
+  show text box(1002)
+  wait for text box
+
+  resume player
+end
+
+plotscript, plip auto battle, begin
+  variable(i)
+  for(i, 0, 3) do(set hero auto battle(i, true))
+  fight formation(150)
+  for(i, 0, 3) do(set hero auto battle(i, false))
+end
