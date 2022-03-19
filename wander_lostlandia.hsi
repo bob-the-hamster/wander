@@ -1,0 +1,8 @@
+#---------------------------------------------------------------------------
+# Wandering Hamster - see wander.hss
+# Lostlandia Garden
+#---------------------------------------------------------------------------
+
+plotscript, lostlandia autorun, begin
+  set tag(tag:know of lostlandia, true)
+end

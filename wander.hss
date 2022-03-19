@@ -44,6 +44,7 @@ include, wander_kelpreef.hsi
 include, wander_ship.hsi
 include, wander_bontgommeri.hsi
 include, wander_sandbar.hsi
+include, wander_lostlandia.hsi
 
 include, wander_shellgame.hsi
 include, wander_minigolf.hsi
