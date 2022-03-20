@@ -42,6 +42,7 @@ end
 #---------------------------------------------------------------------------
 
 plotscript,World Map Afterbattle,begin
+  default afterbattle
   if (check tag(tag:Riding the Ship)) then,begin
     play song(song:vehicle riding)
   end

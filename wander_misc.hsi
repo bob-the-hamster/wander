@@ -99,6 +99,23 @@ end
 
 #---------------------------------------------------------------------------
 
+plotscript, default afterbattle, begin
+ # Don't forget to call this at the top of map-secific after-battle scripts!
+ variable(plip)
+ plip := find hero(hero:fraidy plip)
+ if(plip >= 0) then(
+   if(check equipment(plip, slot:extra) == item:Ooze) then(
+     # Fraidy plip auto-revives at the end of each battle if wearing the Ooze heart
+     variable(hp)
+     hp := get hero stat(plip, stat:hp, current stat)
+     hp := large(hp, 1)
+     set hero stat(plip, stat:hp, hp, current stat)
+   )
+ )
+end
+
+#---------------------------------------------------------------------------
+
 plotscript,Panic and Run Around,begin
  suspend player
 

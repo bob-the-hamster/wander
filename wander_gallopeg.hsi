@@ -6,6 +6,7 @@
 plotscript, Gallopeg Autorun, begin
 
   # also run as an afterbattle script
+  default afterbattle
 
   if(check tag(tag:Rathmara in party))
   then(
