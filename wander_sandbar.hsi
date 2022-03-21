@@ -114,7 +114,7 @@ script, create random starfish, x, y, begin
   if(id == 5) then(
     # Special handling for triangle star
     set npc extra(ref, 0, 2) # runaway count
-    set npc speed(ref, 6)
+    set npc speed(ref, 4)
   )
   start starfish scuttle(ref)
 end
@@ -147,9 +147,11 @@ end
 script, update this starfish, ref, begin
   if(get npc speed(ref) <= 5) then(
     if(npc is near hero(ref)) then(
-      set npc speed(ref, 5)
+      if(random(1, 10) <= 5) then(
+        set npc speed(ref, 5)
+      )
     )
-    if(random(1, 10) == 1 && get npc speed(ref) > 3) then(
+    if(random(1, 10) <= 3 && get npc speed(ref) > 3) then(
       set npc speed(ref, get npc speed(ref) -- 1)
     )
   )
@@ -171,6 +173,12 @@ script, update this starfish, ref, begin
       walk npc to x(ref, npc extra(ref, 1))
       walk npc to y(ref, npc extra(ref, 2))
     )
+  )
+end
+
+plotscript, catch starfish, arg, ref, begin
+  if(fight formation(arg)) then(
+    destroy npc(ref)
   )
 end
 
