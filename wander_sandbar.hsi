@@ -46,8 +46,7 @@ script, sandbar: dig a hole, x, y, begin
   shovel := create npc(7, x, y, hero direction(me))
   play sound(sfx:gleeurp, false, true)
   wait(4)
-  write map block(x, y, 3, 3)
-  write zone(1, x, y, false)
+  create a hole in the sand at(x, y)
   destroy npc(shovel)
   dig up an item(x, y)
   
@@ -114,7 +113,7 @@ script, create random starfish, x, y, begin
   if(id == 5) then(
     # Special handling for triangle star
     set npc extra(ref, 0, 2) # runaway count
-    set npc speed(ref, 4)
+    set npc speed(ref, 10)
   )
   start starfish scuttle(ref)
 end
@@ -155,6 +154,16 @@ script, update this starfish, ref, begin
       set npc speed(ref, get npc speed(ref) -- 1)
     )
   )
+  if(npc is tile aligned(ref)) then(
+    variable(tx, ty)
+    tx := npc x(ref)
+    ty := npc y(ref)
+    if(is a hole in the sand(tx, ty)) then(
+      if(get npc speed(ref) > 2) then(
+        set npc speed(ref, 2)
+      )
+    )
+  )
   if(not(npc is walking(ref))) then(
     variable(xtra)
     xtra := npc extra(ref, 0)
@@ -177,8 +186,62 @@ script, update this starfish, ref, begin
 end
 
 plotscript, catch starfish, arg, ref, begin
+  variable(holes)
+  holes := remember holes on screen
   if(fight formation(arg)) then(
     destroy npc(ref)
   )
+  restore holes on screen(holes)
+  free slice(holes)
+end
+
+script, remember holes on screen, begin
+  variable(holes, h)
+  holes := create container
+  set slice visible(holes, false)
+  variable(cx, cy, tx, ty)
+  cx := large(camera pixel x / 20 -- 1, 0)
+  cy := large(camera pixel y / 20 -- 1, 0)
+  for(ty, cy, cy+11) do(
+    if(ty >= map height) then(break)
+    for(tx, cx, cx+17) do(
+      if(tx >= map width) then(break)
+      if(is a hole in the sand(tx, ty)) then(
+        h := create container
+        set parent(h, holes)
+        set slice x(h, tx)
+        set slice y(h, ty)
+      )
+    )
+  )
+  show value(child count(holes))
+  exit returning(holes)
+end
+
+script, restore holes on screen, holes, begin
+  variable(h, tx, ty)
+  h := first child(holes)
+  while(h) do(
+    tx := slice x(h)
+    ty := slice y(h)
+    create a hole in the sand at(tx, ty)
+    h := next sibling(h)
+  )
+end
+
+script, create a hole in the sand at, tx, ty, begin
+  write map block(tx, ty, 3, 3)
+  write zone(1, tx, ty, false)
+end
+
+script, fill hole in the sand at, tx, ty, begin
+  write map block(tx, ty, 0, 3)
+  write zone(1, tx, ty, true)
+end
+
+script, is a hole in the sand, tx, ty, begin
+  if(tx < 0 || tx >= map width) then(exit returning(false))
+  if(ty < 0 || ty >= map height) then(exit returning(false))
+  exit returning(read map block(tx, ty, 3) == 3)
 end
 

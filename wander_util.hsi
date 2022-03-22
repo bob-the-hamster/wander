@@ -496,3 +496,12 @@ script, npc is near hero, ref, rank=0, begin
 end
 
 #---------------------------------------------------------------------------
+
+script, npc is tile aligned, ref, begin
+  exit returning(
+    npc x(ref) == (npc pixel x(ref) + 10) / 20 &&
+    npc y(ref) == (npc pixel y(ref) + 10) / 20
+  )
+end
+
+#---------------------------------------------------------------------------
