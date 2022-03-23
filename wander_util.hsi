@@ -505,3 +505,15 @@ script, npc is tile aligned, ref, begin
 end
 
 #---------------------------------------------------------------------------
+
+script, npc touching hero, ref, who, threshhold=5, begin
+  # Threshold is pixel manhattan distance
+  variable(nx, ny, hx, hy)
+  nx := npc pixel x(ref)
+  ny := npc pixel y(ref)
+  hx := hero pixel x(who)
+  hy := hero pixel y(who)
+  exit returning(abs(nx -- hx) + abs(ny -- hy) <= threshhold)
+end
+
+#---------------------------------------------------------------------------

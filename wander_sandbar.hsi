@@ -22,12 +22,18 @@ plotscript, sandbar onkeypress, begin
     if (current map == map:sandbar && not(hero is walking(me))) then(
       if(inventory(item:shovel)) then(
         if(scripted use action) then(
-          variable(x, y)
+          variable(x, y, ref, id)
           x := x ahead of hero(me)
           y := y ahead of hero(me)
           if(read zone(1, x, y)) then(
-            if(npc at spot(x, y)) then(
-              # NPC is in the way
+            ref := npc at spot(x, y)
+            if(ref) then(
+              # NPC is in the way, don't dig
+              #id := get NPC id(ref)
+              #if(id >= 1 && id <= 5) then(
+              #  # it is a starfish!
+              #  catch starfish(read npc(ref, NPCstat:script argument), ref)
+              #)
             )else(
               sandbar: dig a hole(x, y)
             )
@@ -115,6 +121,8 @@ script, create random starfish, x, y, begin
     set npc extra(ref, 0, 2) # runaway count
     set npc speed(ref, 10)
   )
+  set npc obstructs(ref, false)
+  alter npc(ref, NPCstat:activation, NPCactivation:stepon)
   start starfish scuttle(ref)
 end
 
@@ -144,9 +152,13 @@ script, update all starfish, begin
 end
 
 script, update this starfish, ref, begin
+  if(npc touching hero(ref, me, 5)) then(
+    catch starfish(read npc(ref, NPCstat:script argument), ref)
+    exit script
+  )
   if(get npc speed(ref) <= 5) then(
     if(npc is near hero(ref)) then(
-      if(random(1, 10) <= 5) then(
+      if(random(1, 10) <= 4) then(
         set npc speed(ref, 5)
       )
     )
@@ -186,11 +198,15 @@ script, update this starfish, ref, begin
 end
 
 plotscript, catch starfish, arg, ref, begin
+  set timer(queued battle timer, 0, 1, @starfish battle)
+  set timer args(queued battle timer, arg)
+  destroy npc(ref)
+end
+
+script, starfish battle, form, begin
   variable(holes)
   holes := remember holes on screen
-  if(fight formation(arg)) then(
-    destroy npc(ref)
-  )
+  fight formation(form)
   restore holes on screen(holes)
   free slice(holes)
 end

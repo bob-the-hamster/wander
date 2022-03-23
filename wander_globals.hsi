@@ -80,6 +80,7 @@ define constant(6, mer sculptor timer)
 define constant(7, starfish timer)
 define constant(8, fog timer)
 define constant(9, dancing guard timer)
+define constant(10, queued battle timer)
 
 define constant(0, str:golf swing)
 define constant(1, str:golf score)
