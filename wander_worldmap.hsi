@@ -30,7 +30,7 @@ plotscript, world map eachstep, begin
       fade screen out
       wait for hero(me)
       teleport to map(map:Sandbar, 30, 12)
-      set tag(tag:know of sandbar)
+      set tag(tag:know of sandbar, true)
       walk hero(me, south, 1)
       wait(1)
       fade screen in

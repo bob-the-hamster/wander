@@ -230,7 +230,6 @@ script, remember holes on screen, begin
       )
     )
   )
-  show value(child count(holes))
   exit returning(holes)
 end
 
