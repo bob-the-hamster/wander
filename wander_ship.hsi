@@ -433,6 +433,10 @@ plotscript, icefeather learns patch summon, begin
   icefeather learns summon(atk:Patch, 781)
 end
 
+plotscript, icefeather learns brickson summon, begin
+  icefeather learns summon(atk:Brickson, 1013)
+end
+
 script, icefeather learns summon, atk, textbox, begin
   variable(icefeather)
   icefeather := find hero(hero:icefeather)
