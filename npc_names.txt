@@ -3,7 +3,6 @@ Sucralose - Andrew Verner
 Dexter (min-pin) - RMZ
 Markothy - quackgyver
 Burlap Boy - quackgyver
-Pu - quackgyver
 Jimbob - Brad Mehlenbacher
 Dog Beardog - Brad Mehlenbacher
 
@@ -14,3 +13,4 @@ Used
 Timbert (Sleeping guard in Misa's castle) - quackgyver
 Ralph (Glibby's friend - Orange Tabby) - RMZ
 Stella (Glibby's friend - Gray Tabby) - RMZ
+Pu (Dr Pu, Archeologist) - quackgyver
