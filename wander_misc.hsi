@@ -112,6 +112,8 @@ plotscript, default afterbattle, begin
      set hero stat(plip, stat:hp, hp, current stat)
    )
  )
+ # Reset Brickson counter tag in case it was active when battle ended
+ set tag(tag:Brickson counter, false)
 end
 
 #---------------------------------------------------------------------------
