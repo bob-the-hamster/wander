@@ -5,4 +5,78 @@
 
 plotscript, lostlandia autorun, begin
   set tag(tag:know of lostlandia, true)
+  # scrambe berry directions
+  scramble npc directions(1)
+end
+
+
+plotscript, lostlandia berry bush, arg, ref, begin
+  suspend player
+  show textbox(1017)
+  wait for text box
+  variable(who, rank)
+  who := pick hero()
+  if(who >= 0) then(
+    rank := rank in caterpillar(hero by slot(who))
+    twirl hero(rank, 2)
+    destroy npc(ref)
+    lostlandia berry effect(who)
+  )
+  resume player
+end
+
+script, lostlandia berry effect, who, begin
+  variable(a)
+  a := create array slice(0)
+  # Check if this hero has non-full level mp
+  variable(lmplev, lmax, lcur)
+  for(lmplev, 0 , 7) do(
+    lmax := get level mp(who, lmplev, maximum stat)
+    lcur := get level mp(who, lmplev, current stat)
+    if(lmax > 0 && lcur < lmax) then(
+      append slice extra(a, lmplev)
+    )
+  )
+  if(slice extra length(a) > 0) then(
+    lmplev := random array element(a)
+    lmax := get level mp(who, lmplev, maximum stat)
+    lcur := get level mp(who, lmplev, current stat)
+    skill point level display := lmplev + 1
+    get hero name(0, who)
+    set level mp(who, lmplev, lcur + 1)
+    skill point max := lmax
+    skill point cur := lcur + 1
+    show text box(1018)
+    play sound(sfx: potion)
+    free slice(a)
+    exit()
+  )
+  free slice(a)
+  # Check if the hero has non-full MP
+  variable(cur, max, gain)
+  cur := get hero stat(who, stat:MP, current stat)
+  max := get hero stat(who, stat:MP, maximum stat)
+  if(max > 0 && cur < max) then(
+    gain := small(random(1, 6), max -- cur)
+    set hero stat(who, stat:MP, cur + gain, current stat)
+    get hero name(0, who)
+    how many for text box := gain
+    skill point max := max
+    skill point cur := cur + gain
+    show text box(1019)
+    play sound(sfx: potion)
+    exit()
+  )
+  # restore HP (allowed to exceed max)
+  cur := get hero stat(who, stat:HP, current stat)
+  max := get hero stat(who, stat:HP, maximum stat)
+  cur += 1
+  set hero stat(who, stat:HP, cur, current stat)
+  get hero name(0, who)
+  if(cur <= max) then(
+    $1="a little"
+  )else(
+    $1="weirdly"
+  )
+  show text box(1020)
 end

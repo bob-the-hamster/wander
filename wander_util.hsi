@@ -4,6 +4,27 @@
 # See also wander_misc.hsi for generic wandering-hamster specfic stuff
 #---------------------------------------------------------------------------
 
+
+# Slice-based array helpers
+
+script, create array slice, len=0, begin
+  variable(sl)
+  sl := create container(0, 0)
+  set slice visible(sl, false)
+  set slice lookup(sl, sli:array) # not used for anything, just marks it as an array in the slice debugger
+  resize slice extra(sl, len)
+  exit(sl)
+end
+
+script, random array element, sl, begin
+  variable(len)
+  len := slice extra length(sl)
+  if(len == 0) then(exit(0))
+  exit(get slice extra(sl, random(0, len -- 1)))
+end
+
+#---------------------------------------------------------------------------
+
 script, large, n1, n2, begin
   if(n1 > n2) then(exit returning(n1)) else(exit returning(n2))
 end
@@ -514,6 +535,28 @@ script, npc touching hero, ref, who, threshhold=5, begin
   hx := hero pixel x(who)
   hy := hero pixel y(who)
   exit returning(abs(nx -- hx) + abs(ny -- hy) <= threshhold)
+end
+
+#---------------------------------------------------------------------------
+
+
+script, func on all npcs with id, id, script ref, arg=0, arg2=0, begin
+  variable(ref)
+  ref := next npc reference()
+  while(ref) do(
+    if(get npc id(ref) == id) then(
+      run script by id(script ref, ref, arg, arg2)
+    )
+    ref := next npc reference(ref)
+  )
+end
+
+script, scramble npc direction, ref, begin
+  set npc direction(ref, random(0, 3))
+end
+
+script, scramble npc directions, id, begin
+  func on all npcs with id(id, @scramble npc direction)
 end
 
 #---------------------------------------------------------------------------
