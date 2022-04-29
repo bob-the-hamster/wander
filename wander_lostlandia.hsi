@@ -26,32 +26,34 @@ plotscript, lostlandia berry bush, arg, ref, begin
 end
 
 script, lostlandia berry effect, who, begin
-  variable(a)
-  a := create array slice(0)
   # Check if this hero has non-full level mp
-  variable(lmplev, lmax, lcur)
-  for(lmplev, 0 , 7) do(
-    lmax := get level mp(who, lmplev, maximum stat)
-    lcur := get level mp(who, lmplev, current stat)
-    if(lmax > 0 && lcur < lmax) then(
-      append slice extra(a, lmplev)
-    )
+  if(hero uses level mp(who)) then(
+   variable(a)
+   a := create array slice(0)
+   variable(lmplev, lmax, lcur)
+   for(lmplev, 0 , 7) do(
+     lmax := get level mp(who, lmplev, maximum stat)
+     lcur := get level mp(who, lmplev, current stat)
+     if(lmax > 0 && lcur < lmax) then(
+       append extra(a, lmplev)
+     )
+   )
+   if(extra length(a) > 0) then(
+     lmplev := random array element(a)
+     lmax := get level mp(who, lmplev, maximum stat)
+     lcur := get level mp(who, lmplev, current stat)
+     skill point level display := lmplev + 1
+     get hero name(0, who)
+     set level mp(who, lmplev, lcur + 1)
+     skill point max := lmax
+     skill point cur := lcur + 1
+     show text box(1018)
+     play sound(sfx: potion)
+     free slice(a)
+     exit()
+   )
+   free slice(a)
   )
-  if(slice extra length(a) > 0) then(
-    lmplev := random array element(a)
-    lmax := get level mp(who, lmplev, maximum stat)
-    lcur := get level mp(who, lmplev, current stat)
-    skill point level display := lmplev + 1
-    get hero name(0, who)
-    set level mp(who, lmplev, lcur + 1)
-    skill point max := lmax
-    skill point cur := lcur + 1
-    show text box(1018)
-    play sound(sfx: potion)
-    free slice(a)
-    exit()
-  )
-  free slice(a)
   # Check if the hero has non-full MP
   variable(cur, max, gain)
   cur := get hero stat(who, stat:MP, current stat)

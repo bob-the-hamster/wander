@@ -12,13 +12,13 @@ script, create array slice, len=0, begin
   sl := create container(0, 0)
   set slice visible(sl, false)
   set slice lookup(sl, sli:array) # not used for anything, just marks it as an array in the slice debugger
-  resize slice extra(sl, len)
+  resize extra(sl, len)
   exit(sl)
 end
 
 script, random array element, sl, begin
   variable(len)
-  len := slice extra length(sl)
+  len := extra length(sl)
   if(len == 0) then(exit(0))
   exit(get slice extra(sl, random(0, len -- 1)))
 end
