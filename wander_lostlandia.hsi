@@ -82,3 +82,43 @@ script, lostlandia berry effect, who, begin
   )
   show text box(1020)
 end
+
+plotscript, cottonball inn, begin
+  suspend player
+  set hero speed(me, 5)
+  walk hero(me, left, 5)
+  suspend caterpillar
+  
+  pathfind hero to(0, 6, 28)
+  pathfind hero to(1, 6, 30)
+  pathfind hero to(2, 10, 28)
+  pathfind hero to(3, 10, 30)
+  wait for hero(0)
+  wait for hero(1)
+  wait for hero(2)
+  wait for hero(3)
+  
+  play song (song:Sleeping Music)
+  tweak palette(-40, -40, -10)
+  fade screen in
+  wait (18 * 2) # 2 seconds
+  key wait seconds(8)
+  reset palette
+  fade screen in
+  play song (get ambient music)
+  wait (5)
+  
+  pathfind hero to(0, 10, 31)
+  pathfind hero to(1, 9, 31)
+  pathfind hero to(2, 8, 31)
+  pathfind hero to(3, 8, 30)
+  wait for hero(0)
+  wait for hero(1)
+  wait for hero(2)
+  wait for hero(3)
+  
+  set hero speed(0, 4)
+  resume caterpillar
+  resume player
+end
+
