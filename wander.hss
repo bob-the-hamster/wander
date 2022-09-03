@@ -48,6 +48,8 @@ include, wander_lostlandia.hsi
 
 include, wander_shellgame.hsi
 include, wander_minigolf.hsi
+include, wander_cards_common.hsi
+include, wander_sixcardgolf.hsi
 include, wander_blackjack.hsi
 include, wander_checkers.hsi
 

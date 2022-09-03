@@ -20,4 +20,5 @@ cards:playarea
 cards:dealer face
 cards:player face
 array
+cards:templates
 

@@ -1,0 +1,20 @@
+#---------------------------------------------------------------------------
+# Wandering Hamster - see wander.hss
+# Six-Card-Golf Mini-Game
+#---------------------------------------------------------------------------
+
+plotscript, begin the six card golf game, begin
+  # Load the table
+  # Prepare the deck
+
+  while(true) do(
+    # Play happens here
+    wait(1)
+    if(keyval(key:esc) >= 1) then(break)
+  )
+  
+  clean up six card golf game  
+end
+
+script, clean up six card golf game, begin
+end
