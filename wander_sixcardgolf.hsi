@@ -5,7 +5,12 @@
 
 plotscript, begin the six card golf game, begin
   # Load the table
+  variable(table, deck)
+  table := load slice collection(7)
+  remove all slices with code(sli:cards:placeholder, table)
+  
   # Prepare the deck
+  deck := create a full deck
 
   while(true) do(
     # Play happens here
@@ -13,8 +18,9 @@ plotscript, begin the six card golf game, begin
     if(keyval(key:esc) >= 1) then(break)
   )
   
-  clean up six card golf game  
+  clean up six card golf game(table) 
 end
 
 script, clean up six card golf game, begin
+  free slice(table)
 end

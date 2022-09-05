@@ -21,4 +21,11 @@ cards:dealer face
 cards:player face
 array
 cards:templates
+cards:dealer area
+cards:player area
+cards:discard pile
+cards:deck pile
+cards:placeholder
+cards:deck
+cards:card
 

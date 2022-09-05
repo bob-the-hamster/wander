@@ -4,6 +4,19 @@
 # See also wander_misc.hsi for generic wandering-hamster specfic stuff
 #---------------------------------------------------------------------------
 
+# Slice helpers
+
+script, remove all slices with code, sl, code, begin
+  # Remove all child slices with a specific code. Return the count of slices removed
+  varibale(ch, count)
+  while(true) do(
+    ch := lookup slice(code, sl)
+    if(not(ch)) then(exit(count))
+    free slice(ch)
+  )
+end
+
+#---------------------------------------------------------------------------
 
 # Slice-based array helpers
 
