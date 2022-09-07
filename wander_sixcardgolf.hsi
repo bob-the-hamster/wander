@@ -9,8 +9,14 @@ plotscript, begin the six card golf game, begin
   table := load slice collection(7)
   remove all slices with code(sli:cards:placeholder, table)
   
+  # Lookup codes
+  variable(deck area)
+  deck area := lookup slice(sli:cards:playarea, table)
+  
   # Prepare the deck
   deck := create a full deck
+  set parent(deck)
+  move slice to(deck, slice x(deck area), slice y(deck area), second/2)
 
   while(true) do(
     # Play happens here
@@ -21,6 +27,6 @@ plotscript, begin the six card golf game, begin
   clean up six card golf game(table) 
 end
 
-script, clean up six card golf game, begin
+script, clean up six card golf game, table, begin
   free slice(table)
 end

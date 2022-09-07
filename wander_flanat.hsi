@@ -916,9 +916,7 @@ plotscript, deploy card table, begin
     pathfind npc to(dave, 13, 48)
     pathfind npc to(hal, 17, 48)
     
-    show value(1)
     wait for all
-    show value(2)
     set hero direction(0, down)
     set hero direction(1, down)
     set hero direction(2, down)

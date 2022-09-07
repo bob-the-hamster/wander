@@ -9,33 +9,33 @@ define constant(2, suit:diamonds)
 define constant(3, suit:hearts)
 define constant(4, suit:spades)
 
-define constant(0, face:null)
-define constant(1, face:ace)
-define constant(2, face:two)
-define constant(3, face:three)
-define constant(4, face:four)
-define constant(5, face:five)
-define constant(6, face:six)
-define constant(7, face:seven)
-define constant(8, face:eight)
-define constant(9, face:nine)
-define constant(10, face:ten)
-define constant(11, face:jack)
-define constant(12, face:queen)
-define constant(13, face:king)
+define constant(0, cardval:null)
+define constant(1, cardval:ace)
+define constant(2, cardval:two)
+define constant(3, cardval:three)
+define constant(4, cardval:four)
+define constant(5, cardval:five)
+define constant(6, cardval:six)
+define constant(7, cardval:seven)
+define constant(8, cardval:eight)
+define constant(9, cardval:nine)
+define constant(10, cardval:ten)
+define constant(11, cardval:jack)
+define constant(12, cardval:queen)
+define constant(13, cardval:king)
 
 script, create a full deck, begin
   variable(col, templ, back, card, deck, suit, cardval)
   deck := create container(0,0)
-  set lookup code(deck, sli:cards:deck)
+  set slice lookup(deck, sli:cards:deck)
   
   load slice collection(0)
-  templ := lookup slice(sli:cards:templates,col)
+  templ := lookup slice(sli:cards:templates, col)
   
   back := slice child(templ, 0)
   for(suit, 1, 4) do(
-    for(face, 1, 13) do(
-      card := create card(suit, face, slice child(templ, face), back)
+    for(cardval, 1, 13) do(
+      card := create card(suit, cardval, slice child(templ, cardval), back)
       set parent(card, deck)
     )
   )
@@ -44,4 +44,17 @@ script, create a full deck, begin
   exit(deck)
 end
 
-script, create card(suit, face, )
+script, create card, suit, cardval, front, back, begin
+  variable(card, w, h)
+  w := large(slice width(front), slice width(back))
+  h := large(slice height(front), slice height(back))
+  card := create select(w, h)
+  set slice lookup(card, sli:cards:card)
+  realign slice(card, edge:left, edge:top, edge:center, edge:center)
+  set parent(back, card)
+  set parent(front, card)
+  set slice extra(card, 0, suit)
+  set slice extra(card, 1, cardval)
+end
+
+
