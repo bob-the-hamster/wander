@@ -4,10 +4,13 @@
 #---------------------------------------------------------------------------
 
 define constant(0, suit:null)
-define constant(1, suit:clubs)
-define constant(2, suit:diamonds)
+define constant(1, suit:diamonds)
+define constant(2, suit:spades)
 define constant(3, suit:hearts)
-define constant(4, suit:spades)
+define constant(4, suit:clubs)
+
+define constant(104, suitcol:black)
+define constant(105, suitcol:red)
 
 define constant(0, cardval:null)
 define constant(1, cardval:ace)
@@ -25,17 +28,18 @@ define constant(12, cardval:queen)
 define constant(13, cardval:king)
 
 script, create a full deck, begin
-  variable(col, templ, back, card, deck, suit, cardval)
+  variable(col, templ, back, front, card, deck, suit, cardval)
   deck := create container(0,0)
   set slice lookup(deck, sli:cards:deck)
   
-  load slice collection(0)
+  col := load slice collection(0)
   templ := lookup slice(sli:cards:templates, col)
   
   back := slice child(templ, 0)
   for(suit, 1, 4) do(
     for(cardval, 1, 13) do(
-      card := create card(suit, cardval, slice child(templ, cardval), back)
+      front := slice child(templ, cardval)
+      card := create card(suit, cardval, clone slice(front), clone slice(back))
       set parent(card, deck)
     )
   )
@@ -55,6 +59,107 @@ script, create card, suit, cardval, front, back, begin
   set parent(front, card)
   set slice extra(card, 0, suit)
   set slice extra(card, 1, cardval)
+  refresh card(card)
+  exit(card)
 end
 
+script, refresh card, card, begin
+  assert is card(card)
+  variable(mark, suit, cardval, suitcol, facecolid)
+  suit := get slice extra(card, 0)
+  cardval := get slice extra(card, 1)
+  switch(suit) do(
+    case(suit:diamonds)
+      suitcol := suitcol:red
+      facecolid := 0
+    case(suit:spades)
+      suitcol := suitcol:black
+      facecolid := 1
+    case(suit:hearts)
+      suitcol := suitcol:red
+      facecolid := 0
+    case(suit:clubs)
+      suitcol := suitcol:black
+      facecolid := 1
+  )
+  # Update numbers
+  mark := lookup slice(sli:card:num, card)
+  while(mark) do(
+    set sprite frame(mark, cardval -- 1)
+    set sprite palette(mark, suitcol)
+    mark := lookup next slice(sli:card:num, mark, card)
+  )
+  # Update big suit icons
+  mark := lookup slice(sli:card:suit, card)
+  while(mark) do(
+    set sprite frame(mark, suit -- 1)
+    set sprite palette(mark, suitcol)
+    mark := lookup next slice(sli:card:suit, mark, card)
+  )
+  # Update tiny suit icons
+  mark := lookup slice(sli:card:tinysuit, card)
+  while(mark) do(
+    set sprite frame(mark, suit + 3)
+    set sprite palette(mark, suitcol)
+    mark := lookup next slice(sli:card:tinysuit, mark, card)
+  )
+  # Update face card palettes
+  variable(facepic)
+  facepic := lookup slice(sli:card:facepic, card)
+  if(facepic) then(
+    set select slice index(facepic, facecolid)
+  )
+end
+
+script, assert is card, card, begin
+  if(get slice lookup(card) <> sli:cards:card) then(
+    script error(string sprintf(0, $1="slice %d should have code 'sli:cards:card' but found '%s' instead", card, get slice lookup name(2, get slice lookup(card))))
+    exit(false)
+  )
+  exit(true)
+end
+
+script, for each card, sl, func, delay=0, begin
+  variable(card)
+  card := lookup slice(sli:cards:card, sl)
+  while (card) do (
+    run script by id(func, card)
+    if(delay > 0) then(wait(delay))
+    card := lookup next slice(sli:cards:card, card, sl)
+  )
+end
+
+script, flip all cards face up, sl, delay=0, begin
+  for each card(sl, @flip card face up, delay)
+end
+
+script, flip card face up, card, begin
+  assert is card(card)
+  set select slice index(card, 1)
+end
+
+script, flip all cards face down, sl, delay=0, begin
+  for each card(sl, @flip card face down, delay)
+end
+
+script, flip card face down, card, begin
+  assert is card(card)
+  set select slice index(card, 0)
+end
+
+script, spread out cards, sl, voverlap=0, begin
+  variable(card, x, y, sx, sy)
+  card := lookup slice(sli:cards:card, sl)
+  while (card) do (
+    sx := slice width(card) / 2 + 1 + x * (slice width(card) + 1)
+    sy := slice height(card) / 2 + 1 + y * (slice height(card) + 1 -- voverlap)
+    x += 1
+    if(sx + slice width(card) / 2 + 1 > slice width(sprite layer) -- slice width(card)) then(
+      x := 0
+      y += 1
+    )
+    move slice to screen pos(card, sx, sy, second / 2)
+    card := lookup next slice(sli:cards:card, card, sl)
+  )
+end
 

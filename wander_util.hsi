@@ -6,7 +6,7 @@
 
 # Slice helpers
 
-script, remove all slices with code, sl, code, begin
+script, remove all slices with code, code, sl, begin
   # Remove all child slices with a specific code. Return the count of slices removed
   variable(ch, count)
   while(true) do(

@@ -10,13 +10,16 @@ plotscript, begin the six card golf game, begin
   remove all slices with code(sli:cards:placeholder, table)
   
   # Lookup codes
-  variable(deck area)
-  deck area := lookup slice(sli:cards:playarea, table)
+  variable(deck pile)
+  deck pile := lookup slice(sli:cards:deckpile, table)
   
   # Prepare the deck
   deck := create a full deck
-  set parent(deck)
-  move slice to(deck, slice x(deck area), slice y(deck area), second/2)
+  set parent(deck, table)
+  move slice to(deck, slice screen x(deck pile), slice screen y(deck pile), second/2)
+  wait for slice(deck)
+  flip all cards face up(deck)
+  spread out cards(deck, 20)
 
   while(true) do(
     # Play happens here

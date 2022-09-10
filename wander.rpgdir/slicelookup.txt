@@ -28,4 +28,5 @@ cards:deck pile
 cards:placeholder
 cards:deck
 cards:card
+card:facepic
 
