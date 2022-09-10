@@ -18,8 +18,13 @@ plotscript, begin the six card golf game, begin
   set parent(deck, table)
   move slice to(deck, slice screen x(deck pile), slice screen y(deck pile), second/2)
   wait for slice(deck)
-  flip all cards face up(deck)
-  spread out cards(deck, 20)
+  reparent cards(deck, deck pile)
+  free slice(deck), deck := none
+  
+  # Deal 6 cards to each player
+  sixgolf:deal cards(table, sli:cards:dealer area)
+  sixgolf:deal cards(table, sli:cards:player area)
+  wait for all cards(table)
 
   while(true) do(
     # Play happens here
@@ -32,4 +37,22 @@ end
 
 script, clean up six card golf game, table, begin
   free slice(table)
+end
+
+script, sixgolf:deal cards, table, code, begin
+  variable(deck pile)
+  deck pile := lookup slice(sli:cards:deck pile, table)
+  variable(dest)
+  dest := lookup slice(code, table)
+  variable(i, card)
+  # Six cards
+  for(i, 0, 5) do(
+    card := last child(deck pile)
+    assert is card(card)
+    gently reparent(card, dest)
+    move slice to(card, slice width(dest) / 4, slice height(dest) / 6, second / 2)
+    wait(second * 2 / 5)
+    #FIXME don't reall flip these up yet
+    flip card face up(card)
+  )
 end

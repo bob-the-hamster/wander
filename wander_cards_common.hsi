@@ -163,3 +163,23 @@ script, spread out cards, sl, voverlap=0, begin
   )
 end
 
+script, reparent cards, oldparent, newparent, begin
+  variable(card, next)
+  card := lookup slice(sli:cards:card, oldparent)
+  while(card) do(
+    next := lookup next slice(sli:cards:card, card, oldparent)
+    gently reparent(card, newparent)
+    card := next
+  )
+end
+
+script, wait for all cards, sl, begin
+  variable(card)
+  card := lookup slice(sli:cards:card, sl)
+  while(card) do(
+    while(slice is moving(card)) do(wait(1))
+    card := lookup next slice(sli:cards:card, card, sl)
+  )
+end
+
+
