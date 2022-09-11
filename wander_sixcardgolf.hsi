@@ -4,16 +4,19 @@
 #---------------------------------------------------------------------------
 
 plotscript, begin the six card golf game, begin
+  suspend player
+
   # Load the table
   variable(table, deck, card)
   table := load slice collection(7)
   set slice lookup(table, sli:cards:table)
   remove all slices with code(sli:cards:placeholder, table)
+  # Set turn indicator
+  set slice extra(table, 0, 1)
   
   # Lookup codes
-  variable(deck pile, discard pile)
+  variable(deck pile)
   deck pile := lookup slice(sli:cards:deckpile, table)
-  discard pile := lookup slice(sli:cards:deckpile, table)
   
   # Prepare the deck
   deck := create a full deck
@@ -36,14 +39,16 @@ plotscript, begin the six card golf game, begin
   # Flip one card to the discard pile
   card := last child(deck pile)
   sixgolf:discard(card)
-
+  
   while(true) do(
     # Play happens here
+    sixgolf:draw choice(table)
     wait(1)
     if(keyval(key:esc) >= 1) then(break)
   )
   
   clean up six card golf game(table) 
+  resume player
 end
 
 script, clean up six card golf game, table, begin
@@ -76,7 +81,7 @@ end
 script, sixgolf:discard, card, begin
   assert is card(card)
   variable(table)
-  table := lookup parent(sli:cards:table, card)
+  table := lookup ancestor(sli:cards:table, card)
   if(not(table)) then(script error($0="sixgolf:discard: Whoops! Can't find table from card"), exit)
   variable(discard)
   discard := lookup slice(sli:cards:discard pile, table)
@@ -90,4 +95,26 @@ script, sixgolf:discard, card, begin
   flip card face up(card)
 end
 
+script, sixgolf: draw choice, table, begin
+  sixgolf: handle empty draw pile(table)
 
+  variable(deck pile, discard pile, draw choice)
+  deck pile := lookup slice(sli:cards:deckpile, table)
+  discard pile := lookup slice(sli:cards:discardpile, table)
+  draw choice := lookup slice(sli:cards:drawchoice, table)
+  
+  variable(card)
+  card := last child(deck pile)
+  assert is card(card)
+  gently reparent(card, draw choice)
+  card := last child(discard pile)
+  assert is card(card)
+  gently reparent(card, draw choice)
+  
+  card := select a card(draw choice)
+  
+end
+
+script, sixgolf: handle empty draw pile, table, begin
+  #FIXME: do this
+end

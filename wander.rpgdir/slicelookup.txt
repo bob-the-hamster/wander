@@ -30,4 +30,7 @@ cards:deck
 cards:card
 card:facepic
 cards:drawchoice
+cards:table
+cards:sel
+cards:cursor
 

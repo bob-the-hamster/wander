@@ -49,14 +49,17 @@ script, create a full deck, begin
 end
 
 script, create card, suit, cardval, front, back, begin
-  variable(card, w, h)
+  variable(card, sel, w, h)
   w := large(slice width(front), slice width(back))
   h := large(slice height(front), slice height(back))
-  card := create select(w, h)
+  card := create container(w, h)
   set slice lookup(card, sli:cards:card)
   realign slice(card, edge:left, edge:top, edge:center, edge:center)
-  set parent(back, card)
-  set parent(front, card)
+  sel := create select(w, h)
+  set parent(sel, card)
+  set slice lookup(sel, sli:cards:sel)
+  set parent(back, sel)
+  set parent(front, sel)
   set slice extra(card, 0, suit)
   set slice extra(card, 1, cardval)
   refresh card(card)
@@ -142,7 +145,7 @@ end
 
 script, flip card face up, card, begin
   assert is card(card)
-  set select slice index(card, 1)
+  set select slice index(lookup slice(sli:cards:sel, card), 1)
 end
 
 script, flip all cards face down, sl, delay=0, begin
@@ -152,7 +155,7 @@ end
 script, flip card face down, card, begin
   assert is card(card)
   randomize card border shade(card)
-  set select slice index(card, 0)
+  set select slice index(lookup slice(sli:cards:sel, card), 0)
 end
 
 script, spread out cards, sl, voverlap=0, begin
@@ -245,5 +248,44 @@ script, visually shuffle cards, sl, endx, endy, repetitions=3, begin
   )
 end
 
+script, select a card, holder, begin
+  variable(cursor, go, anim col)
+  cursor := create rect(0, 0)
+  set slice lookup(cursor, sli:cards:cursor)
+  center slice(cursor)
+  fill parent(cursor, true)
+  set rect border(cursor, border:line)
+  set rect bgcol(cursor, 15)
+  set rect opacity(cursor, 25)
+  set parent(cursor, first child(holder))
+  while(true) do(
+    go := none
+    if(keypress(key:up))    then(go := next sl in direction(slice parent(cursor), up))
+    if(keypress(key:right)) then(go := next sl in direction(slice parent(cursor), right))
+    if(keypress(key:down))  then(go := next sl in direction(slice parent(cursor), down))
+    if(keypress(key:left))  then(go := next sl in direction(slice parent(cursor), left))
+    if(mouse release(left button)) then(
+      go := card at pixel(mouse pixel x, mouse pixel y, holder)
+    )
+    if(go && go <> slice parent(cursor)) then(
+      gently reparent(cursor, go)
+      move slice to(cursor, 0, 0, second / 8)
+    )
+    anim col += 1
+    if(anim col > 14) then(anim col := 0)
+    set rect fgcol(cursor, 160 + anim col)
+    wait(1)
+  )
+end
 
-
+script, card at pixel, x, y, holder, begin
+  variable(count, i, sl)
+  count := slice at pixel(holder, x, y, get count)
+  for(i, 0, count -- 1) do(
+    sl := slice at pixel(holder, x, y, i)
+    if(get slice lookup(sl) == sli:cards:card) then(
+      exit(sl)
+    )
+  )
+  exit(0)
+end
