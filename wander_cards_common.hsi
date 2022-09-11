@@ -109,6 +109,13 @@ script, refresh card, card, begin
   if(facepic) then(
     set select slice index(facepic, facecolid)
   )
+  randomize card border shade(card)
+end
+
+script, randomize card border shade, card, begin
+  variable(back)
+  back := lookup slice(sli:card:back, card)
+  set rect fg col(back, random(249, 252))
 end
 
 script, assert is card, card, begin
@@ -144,6 +151,7 @@ end
 
 script, flip card face down, card, begin
   assert is card(card)
+  randomize card border shade(card)
   set select slice index(card, 0)
 end
 
@@ -181,5 +189,61 @@ script, wait for all cards, sl, begin
     card := lookup next slice(sli:cards:card, card, sl)
   )
 end
+
+script, count cards, sl, begin
+  variable(card, count)
+  count := 0
+  card := lookup slice(sli:cards:card, sl)
+  while(card) do(
+    count += 1
+    card := lookup next slice(sli:cards:card, card, sl)
+  )
+  exit(count)
+end
+
+script, visually shuffle cards, sl, endx, endy, repetitions=3, begin
+  variable(rep)
+  for(rep, 1, repetitions) do(
+    variable(i, count, index, relx, rely, card)
+    index := 0
+    count := count cards(sl)
+    # Cut the deck
+    card := lookup slice(sli:cards:card, sl)
+    while(card) do(
+      relx := slice width(card) * -1
+      rely := count / 3 + index / 3
+      move slice by(card, relx, endy -- rely, second / 2)
+      index += 1
+      card := lookup next slice(sli:cards:card, card, sl)
+      if(index >= count / 2) then(break)
+    )
+    while(card) do(
+      relx := slice width(card)
+      rely := count / 3 + index / 3
+      move slice by(card, relx, endy -- rely, second / 2)
+      index += 1
+      card := lookup next slice(sli:cards:card, card, sl)
+    )
+    wait for all cards(sl)
+    # Assign random numbers to the whole deck's sort order
+    card := lookup slice(sli:cards:card, sl)
+    while(card) do(
+      set sort order(card, random(-1000000, 1000000))
+      card := lookup next slice(sli:cards:card, card, sl)
+    )
+    sort children(sl, true)
+    # Move them back into a stack
+    index := 0
+    card := lookup slice(sli:cards:card, sl)
+    while(card) do(
+      rely := index / 3
+      move slice to(card, endx, endy -- rely, second / 3)
+      index += 1
+      card := lookup next slice(sli:cards:card, card, sl)
+    )
+    wait for all cards(sl)
+  )
+end
+
 
 

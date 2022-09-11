@@ -5,13 +5,15 @@
 
 plotscript, begin the six card golf game, begin
   # Load the table
-  variable(table, deck)
+  variable(table, deck, card)
   table := load slice collection(7)
+  set slice lookup(table, sli:cards:table)
   remove all slices with code(sli:cards:placeholder, table)
   
   # Lookup codes
-  variable(deck pile)
+  variable(deck pile, discard pile)
   deck pile := lookup slice(sli:cards:deckpile, table)
+  discard pile := lookup slice(sli:cards:deckpile, table)
   
   # Prepare the deck
   deck := create a full deck
@@ -21,10 +23,19 @@ plotscript, begin the six card golf game, begin
   reparent cards(deck, deck pile)
   free slice(deck), deck := none
   
+  # Shuffle the deck
+  variable(i)
+  visually shuffle cards(deck pile, slice width(deck pile) / 2, slice width(deck pile) / 2)
+  wait(second)
+  
   # Deal 6 cards to each player
   sixgolf:deal cards(table, sli:cards:dealer area)
   sixgolf:deal cards(table, sli:cards:player area)
   wait for all cards(table)
+  
+  # Flip one card to the discard pile
+  card := last child(deck pile)
+  sixgolf:discard(card)
 
   while(true) do(
     # Play happens here
@@ -50,9 +61,33 @@ script, sixgolf:deal cards, table, code, begin
     card := last child(deck pile)
     assert is card(card)
     gently reparent(card, dest)
-    move slice to(card, slice width(dest) / 4, slice height(dest) / 6, second / 2)
-    wait(second * 2 / 5)
-    #FIXME don't reall flip these up yet
-    flip card face up(card)
+    gently realign slice(card, edge:center, edge:center)
+    move slice to(card, 0, 0, second / 2)
+    wait(second / 4)
+  )
+  wait for all cards(dest)
+  card := first child(dest)
+  while(card) do(
+    gently realign slice(card, edge:left, edge:top)
+    card := next sibling(card)
   )
 end
+
+script, sixgolf:discard, card, begin
+  assert is card(card)
+  variable(table)
+  table := lookup parent(sli:cards:table, card)
+  if(not(table)) then(script error($0="sixgolf:discard: Whoops! Can't find table from card"), exit)
+  variable(discard)
+  discard := lookup slice(sli:cards:discard pile, table)
+  gently reparent(card, discard)
+  gently realign slice(card, edge:center, edge:center)
+  variable(rely)
+  rely := count cards(discard) / 3
+  move slice to(card, 0, 0 -- rely, second / 2)
+  wait for slice(card)
+  gently realign slice(card, edge:left, edge:top)
+  flip card face up(card)
+end
+
+

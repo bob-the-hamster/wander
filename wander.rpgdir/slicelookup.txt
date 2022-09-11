@@ -29,4 +29,5 @@ cards:placeholder
 cards:deck
 cards:card
 card:facepic
+cards:drawchoice
 
