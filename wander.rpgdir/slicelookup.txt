@@ -33,4 +33,7 @@ cards:drawchoice
 cards:table
 cards:sel
 cards:cursor
+cards:dealer score
+cards:player score
+cards:prompt text
 

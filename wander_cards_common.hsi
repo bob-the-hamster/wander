@@ -321,3 +321,27 @@ script, card at pixel, x, y, holder, begin
   )
   exit(0)
 end
+
+script, card short name, strid, card, begin
+  assert is card(card)
+  variable(cardval)
+  cardval := get slice extra(card, 1)
+  switch(cardval) do(
+    case(cardval:null)  $strid="NULL"
+    case(cardval:ace)   $strid="Ace"
+    case(cardval:two)   $strid="Two"
+    case(cardval:three) $strid="Three"
+    case(cardval:four)  $strid="Four"
+    case(cardval:five)  $strid="Five"
+    case(cardval:six)   $strid="Six"
+    case(cardval:seven) $strid="Seven"
+    case(cardval:eight) $strid="Eight"
+    case(cardval:nine)  $strid="Nine"
+    case(cardval:ten)   $strid="Ten"
+    case(cardval:jack)  $strid="Jack"
+    case(cardval:queen) $strid="Queen"
+    case(cardval:king)  $strid="King"
+    else($strid="INVALID")
+  )
+  exit(strid)
+end

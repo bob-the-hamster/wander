@@ -22,6 +22,8 @@ plotscript, begin the six card golf game, begin
   set slice extra(table, 0, 1)
   # Set state machine id
   set slice extra(table, 1, sixgolf:state:setup)
+
+  sixgolf:prompt(table, $0="Six Card Golf")
   
   # Lookup codes
   variable(deck pile)
@@ -36,11 +38,13 @@ plotscript, begin the six card golf game, begin
   free slice(deck), deck := none
   
   # Shuffle the deck
+  sixgolf:prompt(table, $0="Shuffling...")
   variable(i)
-  visually shuffle cards(deck pile, slice width(deck pile) / 2, slice width(deck pile) / 2)
+  visually shuffle cards(deck pile, slice width(deck pile) / 2, slice height(deck pile) / 2)
   wait(second)
   
   # Deal 6 cards to each player
+  sixgolf:prompt(table, $0="Each player gets six cards")
   sixgolf:deal cards(table, sli:cards:dealer area)
   sixgolf:deal cards(table, sli:cards:player area)
   wait for all cards(table)
@@ -71,6 +75,10 @@ end
 
 script, clean up six card golf game, table, begin
   free slice(table)
+  $0=""
+  $1=""
+  $2=""
+  $3=""
 end
 
 script, sixgolf:deal cards, table, code, begin
@@ -116,6 +124,8 @@ end
 script, sixgolf: draw choice, table, begin
   sixgolf: handle empty draw pile(table)
 
+  sixgolf:prompt by turn(table, $0="Dealer's draw", $1="Draw a card")
+
   variable(deck pile, discard pile, draw choice)
   deck pile := lookup slice(sli:cards:deckpile, table)
   discard pile := lookup slice(sli:cards:discardpile, table)
@@ -155,6 +165,7 @@ script, sixgolf: draw choice, table, begin
 end
 
 script, sixgolf:choose, table, begin
+
   variable(area)
   area := sixgolf:get current player area(table)
   
@@ -162,22 +173,39 @@ script, sixgolf:choose, table, begin
   draw choice := lookup slice(sli:cards:drawchoice, table)
   new card := first child(draw choice)
   assert is card(new card)
-  
+
+  sixgolf:prompt by turn(table, $0="Dealer's turn", string sprintf(1, $2="Keep this %s?\nWhere to put it?", card short name(3, new card)))
+
   variable(card)
   card := none
   while(not(card)) do(
     card := select a card(area)
     wait(1)
+    if(card == none) then(
+      card short name(0, new card)
+      show text box(1024)
+      wait for text box
+      if(check tag(tag:sixgolf:choice)) then(
+        sixgolf:prompt(table, $0="Discarding...")
+        sixgolf:discard(new card)
+        set slice extra(table, 1, sixgolf:state:nextturn)
+        exit
+      )
+    )
   )
   assert is card(card)
+
+  sixgolf:prompt(table, $0="")
   
   if(card is face down(card)) then(
     flip card face up(card)
     wait(second)
   )
 
+  sixgolf:prompt(table, string sprintf(0, $1="Replace %s", card short name(3, card)))
+
   move slice to screen pos(new card, slice screen x(card), slice screen y(card), second / 2)
-  move slice by(card, 0, -10, second / 4)
+  move slice by(card, 20 * sixgolf:away from player(table), -10, second / 2)
   wait for slice(card)
   wait for slice(new card)
   variable(after)
@@ -216,7 +244,58 @@ script, sixgolf:get current player area, table, begin
   )
 end
 
+script, sixgolf:away from player, table, begin
+  variable(turn)
+  turn := get slice extra(table, 0)
+  if(turn) then(
+    exit(-1)
+  )else(
+    exit(1)
+  )
+end
+
+script, sixgolf:towards player, table, begin
+  variable(turn)
+  turn := get slice extra(table, 0)
+  if(turn) then(
+    exit(1)
+  )else(
+    exit(-1)
+  )
+end
+
+script, sixgolf:prompt, table, string id, begin
+  variable(txt)
+  txt := lookup slice(sli:cards:prompt text, table)
+  set slice text(txt, string id)
+end
+
+script, sixgolf:prompt by turn, table, dealer string, player string, begin
+  variable(turn)
+  turn := get slice extra(table, 0)
+  if(turn) then(
+    sixgolf:prompt(table, player string)
+  )else(
+    sixgolf:prompt(table, dealer string)
+  )
+end
+
 script, sixgolf: handle empty draw pile, table, begin
-  #FIXME: do this
+  variable(deck pile, discard pile)
+  deck pile := lookup slice(sli:cards:deck pile)
+
+  if(count cards(deck pile) == 0) then(
+
+    sixgolf:prompt(table, $0="Oops! Time to shuffle")
+    discard pile := lookup slice(sli:cards:discard pile)
+    reparent cards(discard pile, deck pile)
+    flip all cards face down(deck pile)
+    visually shuffle cards(deck pile, slice width(deck pile) / 2, slice height(deck pile) / 2)
+  
+    # Flip one card to the discard pile
+    variable(card)
+    card := last child(deck pile)
+    sixgolf:discard(card)
+  )
 end
 
