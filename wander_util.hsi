@@ -46,13 +46,13 @@ script, dir compare, dir, sib, best, begin
   if(best == none) then(exit(sib))
   switch(dir) do(
     case(up)
-      if(slice screen y(sib) < slice screen y(best)) then(exit(sib))
-    case(right)
-      if(slice screen x(sib) > slice screen x(best)) then(exit(sib))
-    case(down)
       if(slice screen y(sib) > slice screen y(best)) then(exit(sib))
-    case(left)
+    case(right)
       if(slice screen x(sib) < slice screen x(best)) then(exit(sib))
+    case(down)
+      if(slice screen y(sib) < slice screen y(best)) then(exit(sib))
+    case(left)
+      if(slice screen x(sib) > slice screen x(best)) then(exit(sib))
   )
   exit(best)
 end

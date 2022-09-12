@@ -123,6 +123,7 @@ end
 
 script, assert is card, card, begin
   if(get slice lookup(card) <> sli:cards:card) then(
+    $2=""
     script error(string sprintf(0, $1="slice %d should have code 'sli:cards:card' but found '%s' instead", card, get slice lookup name(2, get slice lookup(card))))
     exit(false)
   )
@@ -139,6 +140,11 @@ script, for each card, sl, func, delay=0, begin
   )
 end
 
+script, card is face up, card, begin
+  assert is card(card)
+  exit(get select slice index(lookup slice(sli:cards:sel, card)) == 1)
+end
+
 script, flip all cards face up, sl, delay=0, begin
   for each card(sl, @flip card face up, delay)
 end
@@ -146,6 +152,11 @@ end
 script, flip card face up, card, begin
   assert is card(card)
   set select slice index(lookup slice(sli:cards:sel, card), 1)
+end
+
+script, card is face down, card, begin
+  assert is card(card)
+  exit(get select slice index(lookup slice(sli:cards:sel, card)) == 0)
 end
 
 script, flip all cards face down, sl, delay=0, begin
@@ -249,7 +260,8 @@ script, visually shuffle cards, sl, endx, endy, repetitions=3, begin
 end
 
 script, select a card, holder, begin
-  variable(cursor, go, anim col)
+  variable(cursor, go, anim col, mouse confirm)
+  variable(result)
   cursor := create rect(0, 0)
   set slice lookup(cursor, sli:cards:cursor)
   center slice(cursor)
@@ -266,16 +278,36 @@ script, select a card, holder, begin
     if(keypress(key:left))  then(go := next sl in direction(slice parent(cursor), left))
     if(mouse release(left button)) then(
       go := card at pixel(mouse pixel x, mouse pixel y, holder)
+      if(go == slice parent(cursor)) then(
+        mouse confirm := true
+      )
     )
     if(go && go <> slice parent(cursor)) then(
       gently reparent(cursor, go)
       move slice to(cursor, 0, 0, second / 8)
+      play sound(sfx:select8bit, false, true)
     )
+    
+    # Check for confirm or cancel
+    if(keypress(use key) || mouse confirm) then(
+      play sound(sfx:confirm8bit, false, true)
+      result := slice parent(cursor)
+      break
+    )
+    if(keypress(cancel key) || mouse release(right button)) then(
+      play sound(sfx:cancel8bit, false, true)
+      result := none
+      break
+    )
+
+    # Animate cursor
     anim col += 1
     if(anim col > 14) then(anim col := 0)
     set rect fgcol(cursor, 160 + anim col)
     wait(1)
   )
+  free slice(cursor)
+  exit(result)
 end
 
 script, card at pixel, x, y, holder, begin

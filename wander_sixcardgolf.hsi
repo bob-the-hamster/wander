@@ -3,6 +3,13 @@
 # Six-Card-Golf Mini-Game
 #---------------------------------------------------------------------------
 
+define constant(
+  0, sixgolf:state:setup
+  1, sixgolf:state:drawchoice
+  2, sixgolf:state:choose
+  3, sixgolf:state:nextturn
+)
+
 plotscript, begin the six card golf game, begin
   suspend player
 
@@ -13,6 +20,8 @@ plotscript, begin the six card golf game, begin
   remove all slices with code(sli:cards:placeholder, table)
   # Set turn indicator
   set slice extra(table, 0, 1)
+  # Set state machine id
+  set slice extra(table, 1, sixgolf:state:setup)
   
   # Lookup codes
   variable(deck pile)
@@ -39,10 +48,19 @@ plotscript, begin the six card golf game, begin
   # Flip one card to the discard pile
   card := last child(deck pile)
   sixgolf:discard(card)
+
+  set slice extra(table, 1, sixgolf:state:drawchoice)
   
   while(true) do(
     # Play happens here
-    sixgolf:draw choice(table)
+    switch(get slice extra(table, 1)) do(
+      case(sixgolf:state:drawchoice)
+        sixgolf:draw choice(table)
+      case(sixgolf:state:choose)
+        sixgolf:choose(table)
+      case(sixgolf:state:nextturn)
+        sixgolf:next turn(table)
+    )
     wait(1)
     if(keyval(key:esc) >= 1) then(break)
   )
@@ -111,10 +129,94 @@ script, sixgolf: draw choice, table, begin
   assert is card(card)
   gently reparent(card, draw choice)
   
-  card := select a card(draw choice)
+  card := none
+  while(not(card)) do(
+    card := select a card(draw choice)
+    wait(1)
+  )
+  assert is card(card)
   
+  move slice by(card, 0, slice height(card) * 2 / 3 * -1, second / 2)
+  wait for slice(card)
+  flip card face up(card)
+  
+  # Return the other card to its pile
+  if(slice child index(card) == 0) then(
+    # other card goes to the discard pile
+    gently reparent(last child(draw choice), discard pile)
+  )else(
+    # other card goes to the draw pile
+    gently reparent(first child(draw choice), deck pile)
+  )
+  
+  # Advance the table state machine
+  set slice extra(table, 1, sixgolf:state:choose)
+  
+end
+
+script, sixgolf:choose, table, begin
+  variable(area)
+  area := sixgolf:get current player area(table)
+  
+  variable(draw choice, new card)
+  draw choice := lookup slice(sli:cards:drawchoice, table)
+  new card := first child(draw choice)
+  assert is card(new card)
+  
+  variable(card)
+  card := none
+  while(not(card)) do(
+    card := select a card(area)
+    wait(1)
+  )
+  assert is card(card)
+  
+  if(card is face down(card)) then(
+    flip card face up(card)
+    wait(second)
+  )
+
+  move slice to screen pos(new card, slice screen x(card), slice screen y(card), second / 2)
+  move slice by(card, 0, -10, second / 4)
+  wait for slice(card)
+  wait for slice(new card)
+  variable(after)
+  after := previous sibling(card)
+  gently reparent(card, draw choice)
+  if(after) then(
+    move slice above(new card, after)
+  )else(
+    set parent(new card, area)
+    slice to back(new card)
+  )
+  realign slice(new card, edge:center, edge:center)
+  set slice x(new card, 0)
+  set slice y(new card, 0)
+  gently realign slice(new card, edge:left, edge:top)
+  sixgolf:discard(card)
+  
+  set slice extra(table, 1, sixgolf:state:nextturn)
+  
+end
+
+script, sixgolf:next turn, table, begin
+  variable(turn)
+  turn := get slice extra(table, 0)
+  set slice extra(table, 0, (turn ,xor, 1))
+  set slice extra(table, 1, sixgolf:state:drawchoice)
+end
+
+script, sixgolf:get current player area, table, begin
+  variable(turn)
+  turn := get slice extra(table, 0)
+  if(turn) then(
+    exit(lookup slice(sli:cards:player area, table))
+  )else(
+    exit(lookup slice(sli:cards:dealer area, table))
+  )
 end
 
 script, sixgolf: handle empty draw pile, table, begin
   #FIXME: do this
 end
+
