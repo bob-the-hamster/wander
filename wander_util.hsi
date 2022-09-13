@@ -16,6 +16,18 @@ script, remove all slices with code, code, sl, begin
   )
 end
 
+script, lookup slice at pixel, code, x, y, holder, begin
+  variable(count, i, sl)
+  count := slice at pixel(holder, x, y, get count)
+  for(i, 0, count -- 1) do(
+    sl := slice at pixel(holder, x, y, i)
+    if(get slice lookup(sl) == code) then(
+      exit(sl)
+    )
+  )
+  exit(0)
+end
+
 #---------------------------------------------------------------------------
 # Slice arrow cursor movement
 

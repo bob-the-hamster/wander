@@ -41,6 +41,7 @@ plotscript, begin the six card golf game, begin
   sixgolf:prompt(table, $0="Shuffling...")
   variable(i)
   visually shuffle cards(deck pile, slice width(deck pile) / 2, slice height(deck pile) / 2)
+  sixgolf:prompt(table, $0="")
   wait(second)
   
   # Deal 6 cards to each player
@@ -52,6 +53,10 @@ plotscript, begin the six card golf game, begin
   # Flip one card to the discard pile
   card := last child(deck pile)
   sixgolf:discard(card)
+
+  # Reveal two of your cards
+  sixgolf:reveal two(table, 0)
+  sixgolf:reveal two(table, 1)
 
   set slice extra(table, 1, sixgolf:state:drawchoice)
   
@@ -179,7 +184,7 @@ script, sixgolf:choose, table, begin
   variable(card)
   card := none
   while(not(card)) do(
-    card := select a card(area)
+    card := select a card(area, sli:cards:discard pile)
     wait(1)
     if(card == none) then(
       card short name(0, new card)
@@ -237,6 +242,10 @@ end
 script, sixgolf:get current player area, table, begin
   variable(turn)
   turn := get slice extra(table, 0)
+  exit(sixgolf:get player area(table, turn))
+end
+
+script, sixgolf:get player area, table, turn, begin
   if(turn) then(
     exit(lookup slice(sli:cards:player area, table))
   )else(
@@ -273,6 +282,10 @@ end
 script, sixgolf:prompt by turn, table, dealer string, player string, begin
   variable(turn)
   turn := get slice extra(table, 0)
+  sixgolf:prompt by turn id(table, turn, dealer string, player string)
+end
+
+script, sixgolf:prompt by turn id, table, turn, dealer string, player string, begin
   if(turn) then(
     sixgolf:prompt(table, player string)
   )else(
@@ -299,3 +312,24 @@ script, sixgolf: handle empty draw pile, table, begin
   )
 end
 
+script, sixgolf:reveal two, table, turn, begin
+  variable(area)
+  area := sixgolf:get player area(table, turn)
+  sixgolf: prompt by turn id(table, turn, $0="Dealer reveals two", $1="Reveal two cards please")
+
+  variable(i)
+  variable(card)
+  for(i, 0, 1) do(
+    card := none
+    while(true) do(
+      card := select a card(area)
+      wait(1)
+      if(card) then(
+        if(card is face down(card)) then(
+          flip card face up(card)
+          break
+        )
+      )
+    )
+  )
+end

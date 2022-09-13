@@ -259,9 +259,11 @@ script, visually shuffle cards, sl, endx, endy, repetitions=3, begin
   )
 end
 
-script, select a card, holder, begin
-  variable(cursor, go, anim col, mouse confirm)
+script, select a card, holder, cancel click code=none, begin
+  variable(cursor, go, anim col, mouse confirm, cancel)
   variable(result)
+  variable(table)
+  table := lookup ancestor(sli:cards:table, holder)
   cursor := create rect(0, 0)
   set slice lookup(cursor, sli:cards:cursor)
   center slice(cursor)
@@ -280,6 +282,12 @@ script, select a card, holder, begin
       go := card at pixel(mouse pixel x, mouse pixel y, holder)
       if(go == slice parent(cursor)) then(
         mouse confirm := true
+        show string($0="")
+      )
+      if(cancel click code) then(
+        if(lookup slice at pixel(cancel click code, mouse pixel x, mouse pixel y, table)) then(
+          cancel := true
+        )
       )
     )
     if(go && go <> slice parent(cursor)) then(
@@ -295,6 +303,9 @@ script, select a card, holder, begin
       break
     )
     if(keypress(cancel key) || mouse release(right button)) then(
+      cancel := true
+    )
+    if(cancel) then(
       play sound(sfx:cancel8bit, false, true)
       result := none
       break
@@ -311,15 +322,7 @@ script, select a card, holder, begin
 end
 
 script, card at pixel, x, y, holder, begin
-  variable(count, i, sl)
-  count := slice at pixel(holder, x, y, get count)
-  for(i, 0, count -- 1) do(
-    sl := slice at pixel(holder, x, y, i)
-    if(get slice lookup(sl) == sli:cards:card) then(
-      exit(sl)
-    )
-  )
-  exit(0)
+  exit(lookup slice at pixel(sli:cards:card, x, y, holder))
 end
 
 script, card short name, strid, card, begin
