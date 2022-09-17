@@ -28,6 +28,12 @@ script, lookup slice at pixel, code, x, y, holder, begin
   exit(0)
 end
 
+script, random slice child, sl, begin
+  variable(i)
+  i := random(0, child count(sl) -- 1)
+  exit(slice child(sl, i))
+end
+
 #---------------------------------------------------------------------------
 # Slice arrow cursor movement
 

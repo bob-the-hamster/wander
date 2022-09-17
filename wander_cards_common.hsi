@@ -27,6 +27,16 @@ define constant(11, cardval:jack)
 define constant(12, cardval:queen)
 define constant(13, cardval:king)
 
+# Card AI can return these codes to do nothing or to make a choice.
+# Any other return value from a card ai callback is interpeted as a card slice handle to move the cursor to
+# card ai callbacks take three arguments:
+#   table handle
+#   cursor handle (Cursor is always a child of the currently selected card)
+#   init (bool indicating if this is a first-call)
+define constant(0, card ai:wait)
+define constant(-1, card ai:confirm)
+define constant(-2, card ai:cancel)
+
 script, create a full deck, begin
   variable(col, templ, back, front, card, deck, suit, cardval)
   deck := create container(0,0)
@@ -62,15 +72,26 @@ script, create card, suit, cardval, front, back, begin
   set parent(front, sel)
   set slice extra(card, 0, suit)
   set slice extra(card, 1, cardval)
+  set slice extra(card, 2, 0) # game specific state
   refresh card(card)
   exit(card)
+end
+
+script, get cardval, card, begin
+  assert is card(card)
+  exit(get slice extra(card, 1))
+end
+
+script, get suit, card, begin
+  assert is card(card)
+  exit(get slice extra(card, 0))
 end
 
 script, refresh card, card, begin
   assert is card(card)
   variable(mark, suit, cardval, suitcol, facecolid)
-  suit := get slice extra(card, 0)
-  cardval := get slice extra(card, 1)
+  suit := get suit(card)
+  cardval := get cardval(card)
   switch(suit) do(
     case(suit:diamonds)
       suitcol := suitcol:red
@@ -215,6 +236,19 @@ script, count cards, sl, begin
   exit(count)
 end
 
+script, count face up cards, sl, begin
+  variable(card, count)
+  count := 0
+  card := lookup slice(sli:cards:card, sl)
+  while(card) do(
+    if(card is face up(card)) then(
+      count += 1
+    )
+    card := lookup next slice(sli:cards:card, card, sl)
+  )
+  exit(count)
+end
+
 script, visually shuffle cards, sl, endx, endy, repetitions=3, begin
   variable(rep)
   for(rep, 1, repetitions) do(
@@ -259,10 +293,12 @@ script, visually shuffle cards, sl, endx, endy, repetitions=3, begin
   )
 end
 
-script, select a card, holder, cancel click code=none, begin
-  variable(cursor, go, anim col, mouse confirm, cancel)
+script, select a card, holder, cancel click code=none, card change callback=none, ai callback=none, begin
+  variable(cursor, go, anim col, do confirm, cancel)
   variable(result)
   variable(table)
+  variable(ai, ai init)
+  ai init := true
   table := lookup ancestor(sli:cards:table, holder)
   cursor := create rect(0, 0)
   set slice lookup(cursor, sli:cards:cursor)
@@ -272,38 +308,55 @@ script, select a card, holder, cancel click code=none, begin
   set rect bgcol(cursor, 15)
   set rect opacity(cursor, 25)
   set parent(cursor, first child(holder))
+  if(card change callback) then(run script by id(card change callback, slice parent(cursor)))
   while(true) do(
-    go := none
-    if(keypress(key:up))    then(go := next sl in direction(slice parent(cursor), up))
-    if(keypress(key:right)) then(go := next sl in direction(slice parent(cursor), right))
-    if(keypress(key:down))  then(go := next sl in direction(slice parent(cursor), down))
-    if(keypress(key:left))  then(go := next sl in direction(slice parent(cursor), left))
-    if(mouse release(left button)) then(
-      go := card at pixel(mouse pixel x, mouse pixel y, holder)
-      if(go == slice parent(cursor)) then(
-        mouse confirm := true
-        show string($0="")
-      )
-      if(cancel click code) then(
-        if(lookup slice at pixel(cancel click code, mouse pixel x, mouse pixel y, table)) then(
+    if(ai callback) then(
+      ai := run script by id(ai callback, table, cursor, ai init)
+      ai init := false
+      switch(ai) do(
+        case(card ai:confirm)
+          do confirm := true
+        case(card ai:cancel)
           cancel := true
+        case(card ai:wait)
+          do()
+        else(go := ai)
+      )
+    )else(
+      go := none
+      if(keypress(key:up))    then(go := next sl in direction(slice parent(cursor), up))
+      if(keypress(key:right)) then(go := next sl in direction(slice parent(cursor), right))
+      if(keypress(key:down))  then(go := next sl in direction(slice parent(cursor), down))
+      if(keypress(key:left))  then(go := next sl in direction(slice parent(cursor), left))
+      if(mouse release(left button)) then(
+        go := card at pixel(mouse pixel x, mouse pixel y, holder)
+        if(go == slice parent(cursor)) then(
+          do confirm := true
+          show string($0="")
         )
+        if(cancel click code) then(
+          if(lookup slice at pixel(cancel click code, mouse pixel x, mouse pixel y, table)) then(
+            cancel := true
+          )
+        )
+      )
+      if(keypress(use key)) then(do confirm := true)
+      if(keypress(cancel key) || mouse release(right button)) then(
+        cancel := true
       )
     )
     if(go && go <> slice parent(cursor)) then(
       gently reparent(cursor, go)
       move slice to(cursor, 0, 0, second / 8)
       play sound(sfx:select8bit, false, true)
+      if(card change callback) then(run script by id(card change callback, go))
     )
     
     # Check for confirm or cancel
-    if(keypress(use key) || mouse confirm) then(
+    if(do confirm) then(
       play sound(sfx:confirm8bit, false, true)
       result := slice parent(cursor)
       break
-    )
-    if(keypress(cancel key) || mouse release(right button)) then(
-      cancel := true
     )
     if(cancel) then(
       play sound(sfx:cancel8bit, false, true)
@@ -328,7 +381,7 @@ end
 script, card short name, strid, card, begin
   assert is card(card)
   variable(cardval)
-  cardval := get slice extra(card, 1)
+  cardval := get cardval(card)
   switch(cardval) do(
     case(cardval:null)  $strid="NULL"
     case(cardval:ace)   $strid="Ace"
