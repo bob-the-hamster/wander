@@ -36,6 +36,8 @@ global variable(30, fog dir)
 global variable(31, dance counter)
 global variable(32, dance guard text)
 global variable(33, how many for text box)
+global variable(34, sixgolf:dealer total)
+global variable(35, sixgolf:player total)
 
 # Used by TMC's parallax voodoo
 global variable(50, camera slice)
@@ -51,6 +53,7 @@ global variable(63, checkers:red captured)
 global variable(64, checkers:blue captured)
 global variable(65, checkers:playarea)
 global variable(66, checkers:movelist)
+
 
 # globals used by saving/restoring party position
 global variable(80, saved hero0 x)

@@ -293,7 +293,7 @@ script, visually shuffle cards, sl, endx, endy, repetitions=3, begin
   )
 end
 
-script, select a card, holder, cancel click code=none, card change callback=none, ai callback=none, begin
+script, select a card, holder, ai callback=none, cancel click code=none, card change callback=none, begin
   variable(cursor, go, anim col, do confirm, cancel)
   variable(result)
   variable(table)

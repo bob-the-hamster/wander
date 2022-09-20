@@ -26,6 +26,10 @@ plotscript, begin the six card golf game, begin
   resize extra(table, 4)
   set slice lookup(table, sli:cards:table)
   remove all slices with code(sli:cards:placeholder, table)
+  
+  # Update the player portrait
+  sixgolf:update player face(table)
+  
   # Set turn indicator
   sixgolf:set turn(table, 1)
   # Set state machine id
@@ -85,6 +89,7 @@ plotscript, begin the six card golf game, begin
       case(sixgolf:state:next turn)
         sixgolf:next turn(table)
       case(sixgolf:state:game over)
+        sixgolf:grand totals(table)
         break(2)
     )
     wait(1)
@@ -162,9 +167,12 @@ script, sixgolf: draw choice, table, begin
   assert is card(card)
   gently reparent(card, draw choice)
   
+  variable(ai)
   card := none
   while(not(card)) do(
-    card := select a card(draw choice)
+    ai := none
+    if(sixgolf:turn(table) == 0) then(ai := @sixgolf:draw ai)
+    card := select a card(draw choice, ai)
     wait(1)
   )
   assert is card(card)
@@ -199,16 +207,24 @@ script, sixgolf:choose, table, begin
 
   sixgolf:prompt by turn(table, $0="Dealer's turn", string sprintf(1, $2="Keep this %s?\nWhere to put it?", card short name(3, new card)))
 
-  variable(card)
+  variable(card, ai)
   card := none
   while(not(card)) do(
-    card := select a card(area, sli:cards:discard pile, @sixgolf:chooser callback)
+    ai := none
+    if(sixgolf:turn(table) == 0) then(ai := @sixgolf:chooser ai)
+    card := select a card(area, ai, sli:cards:discard pile, @sixgolf:chooser callback)
     sixgolf:prompt2(table, $0="")
     wait(1)
     if(card == none) then(
-      card short name(0, new card)
-      show text box(1024)
-      wait for text box
+      if(sixgolf:turn(table) == 0) then(
+        # No confirmation for dealer
+        set tag(tag:sixgolf:choice, true)
+      )else(
+        # Player must confirm cancellation
+        card short name(0, new card)
+        show text box(1024)
+        wait for text box
+      )
       if(check tag(tag:sixgolf:choice)) then(
         sixgolf:prompt(table, $0="Discarding...")
         sixgolf:discard(new card)
@@ -382,7 +398,7 @@ script, sixgolf:reveal two, table, turn, begin
     while(true) do(
       ai := none
       if(turn == 0) then(ai := @sixgolf:reveal two ai)
-      card := select a card(area, none, none, ai)
+      card := select a card(area, ai)
       wait(1)
       if(card) then(
         if(card is face down(card)) then(
@@ -410,16 +426,22 @@ script, sixgolf:recalc score, table, turn, begin
   sixgolf:set score text(table, turn, 0)
 end
 
-script, sixgolf:get score, table, turn, begin
+script, sixgolf:get score, table, turn, guess unknown=false, override=none, oindex=0, begin
   variable(area)
   area := sixgolf:get player area(table, turn)
   variable(score, unknown, cancl)
   score := 0
   unknown := 0
   sixgolf:refresh canceled cards(table, turn)
-  variable(card)
-  card := first child(area)
-  while(card) do(
+  variable(real card, card, index)
+  index := 0
+  real card := first child(area)
+  while(real card) do(
+    if(override && index == oindex) then(
+      card := override
+    )else(
+      card := real card
+    )
     assert is card(card)
     if(card is face up(card)) then(
       cancl := get slice extra(card, 2)
@@ -428,8 +450,12 @@ script, sixgolf:get score, table, turn, begin
       )
     )else(
       unknown += 1
+      if(guess unknown) then(
+        score += 7
+      )
     )
-    card := next sibling(card)
+    index += 1
+    real card := next sibling(real card)
   )
   exit(score)
 end
@@ -575,7 +601,11 @@ script, sixgolf:victory check, table, begin
       play song(song:game over)
     )
     wait(second / 2)
-    wait for key(use key)
+    while(true) do(
+      if(keypress(use key)) then(break)
+      if(mouse release(left button)) then(break)
+      wait(1)
+    )
     set slice extra(table, 1, sixgolf:state:game over)
     exit
   )
@@ -621,7 +651,6 @@ end
 
 script, sixgolf:reveal two ai, table, cursor, init, begin
   variable(area, card)
-  show string(string sprintf(0, $1="ctr=%d, state=%d, init=%d", sixgolf:get ai counter(table), sixgolf:get ai state(table), init))
   if(init) then(
     # First wait a bit
     sixgolf:set ai state(table, 0)
@@ -652,3 +681,136 @@ script, sixgolf:reveal two ai, table, cursor, init, begin
   exit(card ai:wait)
 end
 
+script, sixgolf:draw ai, table, cursor, init, begin
+  variable(drawchoice, area, card)
+  if(init) then(
+    # First wait a bit
+    sixgolf:set ai state(table, 0)
+    sixgolf:set ai counter(table, second / 2)
+  )
+  if(sixgolf:ai counter(table) > 0) then(
+    exit(card ai:wait)
+  )
+  if(slice is moving(cursor)) then(
+    exit(card ai:wait)
+  )
+  drawchoice := lookup slice(sli:cards:drawchoice, table)
+  area := sixgolf:get current player area(table)
+  switch(sixgolf:get ai state(table)) do(
+    case(0)
+      # Check if the visible card is a good one
+      card := last child(drawchoice)
+      assert is card(card)
+      if(sixgolf:brute force(table, card)) then(
+        sixgolf:set ai state(table, 1)
+        exit(card)
+      )
+      sixgolf:set ai state(table, 3)
+    case(1) # confirm after delay
+      sixgolf:set ai counter(table, second / 4)
+      sixgolf:set ai state(table, 2)
+    case(2)
+      exit(card ai:confirm)
+    case(3)
+      # take the hidden card
+      card := first child(drawchoice)
+      assert is card(card)
+      sixgolf:set ai state(table, 1)
+      exit(card)
+  )
+  exit(card ai:wait)
+end
+
+script, sixgolf:brute force, table, card, begin
+  # Brute force check each placement of a card
+  # return the best one to replace
+  variable(turn, area)
+  turn := sixgolf:turn(table)
+  area := sixgolf:get current player area(table)
+  variable(old score, new score)
+  old score := sixgolf:get score(table, turn, true)
+  variable(i, c, best score, best)
+  best := none
+  best score := 1000000
+  for(i, 0, 5) do(
+    c := slice child(area, i)
+    assert is card(c)
+    new score := sixgolf:get score(table, turn, true, card, i)
+    if(new score < old score) then(
+      if(new score < best score) then(
+        # Found a better card to replace
+        best score := new score
+        best := c
+      )else if(new score == best score) then(
+        # Found an equally good place to put it, flip a coin
+        if(random(0, 1) == 0) then(
+          best := c
+        )
+      )
+    )
+    #variable(besti)
+    #besti := -1
+    #if(best) then(besti := slice child index(best))
+    #show string(string sprintf(0, $1="i=%d o=%d n=%d b=%d", i, old score, new score, besti))
+    #wait(second/6)
+    #wait for key(use key)
+  )
+  exit(best)
+end
+
+script, sixgolf:chooser ai, table, cursor, init, begin
+  variable(drawchoice, area, card)
+  if(init) then(
+    # First wait a bit
+    sixgolf:set ai state(table, 0)
+    sixgolf:set ai counter(table, random(second / 2, second))
+  )
+  if(sixgolf:ai counter(table) > 0) then(
+    exit(card ai:wait)
+  )
+  if(slice is moving(cursor)) then(
+    exit(card ai:wait)
+  )
+  drawchoice := lookup slice(sli:cards:drawchoice, table)
+  card := first child(drawchoice)
+  assert is card(card)
+  area := sixgolf:get current player area(table)
+  switch(sixgolf:get ai state(table)) do(
+    case(0)
+      # Check if there is any good place to put the card
+      variable(best)
+      best := sixgolf:brute force(table, card)
+      if(best) then(
+        sixgolf:set ai state(table, 1)
+        exit(best)
+      )
+      sixgolf:set ai state(table, 3)
+    case(1) # confirm after delay
+      sixgolf:set ai counter(table, second / 4)
+      sixgolf:set ai state(table, 2)
+    case(2)
+      exit(card ai:confirm)
+    case(3)
+      # Discard the card unplayed
+      exit(card ai:cancel)
+  )
+  exit(card ai:wait)
+end
+
+script, sixgolf: grand totals, table, begin
+  sixgolf:dealer total += sixgolf:get score(table, 0)
+  sixgolf:player total += sixgolf:get score(table, 1)
+  if(sixgolf:dealer total <= sixgolf:player total) then(
+    $0="Some day you might catch up!"
+  )else(
+    $0="I'll catch up to you someday!"
+  )
+  show text box(1026)
+  wait for text box
+end
+
+script, sixgolf:update player face, table, begin
+  variable(pic)
+  pic := lookup slice(sli:cards:player face, table)
+  set sprite set number(pic, get hero picture(find hero(hero by rank(me)), hero portrait))
+end
