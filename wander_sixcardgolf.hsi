@@ -15,6 +15,8 @@ define constant(
 plotscript, begin the six card golf game, begin
   suspend player
   
+  sixgolf:pregame silliness
+  
   # Change music
   variable(saved song)
   saved song := current song
@@ -95,9 +97,9 @@ plotscript, begin the six card golf game, begin
     wait(1)
     if(keyval(key:esc) >= 1) then(break)
   )
-  
   clean up six card golf game(table)
   play song(saved song)
+  sixgolf:postgame silliness
   resume player
 end
 
@@ -107,6 +109,61 @@ script, clean up six card golf game, table, begin
   $1=""
   $2=""
   $3=""
+end
+
+script, sixgolf:pregame silliness, begin
+  pathfind hero to(me, 15, 49)
+
+  variable(pals)
+  pals := 41
+  focus camera(npc x(pals), npc y(pals), 10)
+  wait for camera
+  camera follows npc(pals)
+  if(check tag(tag:know card souls)) then(
+    show text box(1036)
+    pathfind npc to(pals, 17, 46)
+    wait for npc(pals)
+    set npc direction(pals, north)
+    play sound(sfx:treasure blip)
+    wait(2)
+    set hero direction(me, north)
+    pathfind npc to(pals, 15, 47)
+    wait for npc(pals)
+    set npc direction(pals, south)
+  )else(
+    show text box(1037)
+  )
+  
+  wait for hero(me)
+  set hero direction(me, north)
+  wait for text box
+end
+
+script, sixgolf:postgame silliness, begin
+  if(sixgolf:dealer total <= sixgolf:player total) then(
+    $0="Some day you might catch up!"
+  )else(
+    $0="I'll catch up to you someday!"
+  )
+  show text box(1026)
+  wait for text box
+
+  if(check tag(tag:know card souls) == false) then(
+    show text box(1027)
+    wait for text box
+    set tag(tag:know card souls, true)
+  )
+  switch(sixgolf:player wins) do(
+    case(2, 10, 20, 30, 40, 50, 60, 70, 80, 90)
+      show text box(1031)
+      wait for text box
+    case(5)
+      show text box(1032)
+      wait for text box
+  )
+  focus camera(hero x(me), hero y(me), 10)
+  wait for camera
+  camera follows hero(me)
 end
 
 script, sixgolf:deal cards, table, code, begin
@@ -432,7 +489,6 @@ script, sixgolf:get score, table, turn, guess unknown=false, override=none, oind
   variable(score, unknown, cancl)
   score := 0
   unknown := 0
-  sixgolf:refresh canceled cards(table, turn)
   variable(real card, card, index)
   index := 0
   real card := first child(area)
@@ -443,6 +499,7 @@ script, sixgolf:get score, table, turn, guess unknown=false, override=none, oind
       card := real card
     )
     assert is card(card)
+    sixgolf:refresh canceled cards(table, turn, override, oindex)
     if(card is face up(card)) then(
       cancl := get slice extra(card, 2)
       if(not(cancl)) then(
@@ -505,41 +562,48 @@ script, sixgolf:score by cardval, cardval, begin
   exit(score)
 end
 
-script, sixgolf:refresh canceled cards, table, turn, begin
+script, sixgolf:refresh canceled cards, table, turn, override=none, oindex=0, begin
   variable(area)
   area := sixgolf:get player area(table, turn)
-  variable(card, dup, row, index, cardval)
-  index := 0
+  variable(real card, card, dup, row, index, cardval)
   card := first child(area)
   while(card) do(
     set slice extra(card, 2, false)
     card := next sibling(card)
   )
-  card := first child(area)
-  while(card) do(
+  if(override) then(
+    set slice extra(override, 2, false)
+  )
+  index := 0
+  real card := first child(area)
+  while(real card) do(
+    card := real card
+    if(override && index == oindex) then(card := override)
     assert is card(card)
     if(card is face up(card)) then(
       row := index ,mod, 2
       cardval := get cardval(card)
       if(cardval <> cardval:two) then(
-        dup := sixgolf:seek duplicate card(area, cardval, index)
+        dup := sixgolf:seek duplicate card(area, cardval, index, override, oindex)
         if(dup) then(
           set slice extra(card, 2, true)
           set slice extra(dup, 2, true)
         )
       )
     )
-    card := next sibling(card)
+    real card := next sibling(real card)
     index += 1
   )
 end
 
-script, sixgolf:seek duplicate card, area, cardval, index, begin
-  variable(card, i, row, r, cv, cncl)
+script, sixgolf:seek duplicate card, area, cardval, index, override=none, oindex=0, begin
+  variable(real card, card, i, row, r, cv, cncl)
   row := index ,mod, 2
-  card := first child(area)
+  real card := first child(area)
   i := 0
-  while(card) do(
+  while(real card) do(
+    card := real card
+    if(override && i == oindex) then(card := override)
     assert is card(card)
     if(card is face up(card)) then(
       r := i ,mod, 2
@@ -553,7 +617,7 @@ script, sixgolf:seek duplicate card, area, cardval, index, begin
         )
       )
     )
-    card := next sibling(card)
+    real card := next sibling(real card)
     i += 1
   )
   exit(none)
@@ -602,6 +666,7 @@ script, sixgolf:victory check, table, begin
     )
     wait(second / 2)
     while(true) do(
+      sixgolf:victory animation(table)
       if(keypress(use key)) then(break)
       if(mouse release(left button)) then(break)
       wait(1)
@@ -798,15 +863,24 @@ script, sixgolf:chooser ai, table, cursor, init, begin
 end
 
 script, sixgolf: grand totals, table, begin
+  if(sixgolf:winner(table)) then(
+    sixgolf:player wins += 1
+  )else(
+    sixgolf:dealer wins += 1
+  )
   sixgolf:dealer total += sixgolf:get score(table, 0)
   sixgolf:player total += sixgolf:get score(table, 1)
-  if(sixgolf:dealer total <= sixgolf:player total) then(
-    $0="Some day you might catch up!"
+  if(sixgolf:winner(table)) then(
+    $0="Dealer wins, better luck next time"
   )else(
-    $0="I'll catch up to you someday!"
+    $0="You win! Good game! Well Played!"
   )
-  show text box(1026)
-  wait for text box
+  show text box(1025)
+  while(true) do(
+    sixgolf:victory animation(table)
+    if(current text box == -1) then(break)
+    wait(1)
+  )
 end
 
 script, sixgolf:update player face, table, begin
@@ -814,3 +888,66 @@ script, sixgolf:update player face, table, begin
   pic := lookup slice(sli:cards:player face, table)
   set sprite set number(pic, get hero picture(find hero(hero by rank(me)), hero portrait))
 end
+
+script, sixgolf:victory animation, table, begin
+  variable(sl, winner, face, x, y, ch, nxt)
+  winner := sixgolf:winner(table)
+  if(winner) then(
+    face := lookup slice(sli:cards:player face, table)
+  )else(
+    face := lookup slice(sli:cards:dealer face, table)
+  )
+  # Fade out pictures
+  if(random(0,2) == 0) then(
+    sl := lookup slice(sli:card:facepic, table)
+    ch := lookup slice(sli:card:sprite, sl)
+    while(ch) do(
+      nxt := lookup next slice(sli:card:sprite, ch, sl)
+      set slice lookup(ch, sli:cards:anim)
+      dissolve sprite(ch, dissolve:fade, random(second / 4, second * 3 / 4))
+      set slice extra(ch, 0, 1)
+      gently reparent(ch, table)
+      ch := nxt
+    )
+    free slice(sl)
+    sl := none
+  )
+  # Launch card marks
+  variable(i)
+  for(i, 0, 3) do(
+    switch(i) do(
+      case(0,1)
+        sl := lookup slice(sli:card:suit)
+      case(2)
+        sl := lookup slice(sli:card:tinysuit)
+      case(3)
+        sl := lookup slice(sli:card:num)
+    )
+    if(sl) then(
+      gently reparent(sl, table)
+      set slice lookup(sl, sli:cards:anim)
+      x := slice screen x(face) + slice edge x(face, edge:center) + random(-20, 20)
+      y := slice screen y(face) + slice edge y(face, edge:center) + random(-20, 20)
+      move slice to screen pos(sl, x, y, random(second / 2, second))
+    )
+  )
+  # Animate card marks
+  sl := first child(table)
+  while(sl) do(
+    nxt := lookup next slice(sli:cards:anim, sl, table)
+    if(get slice lookup(sl) == sli:cards:anim) then(
+      if(not(slice is moving(sl))) then(
+        if(not(sprite is dissolving(sl))) then(
+          if(get slice extra(sl, 0) == 1) then(
+            free slice(sl)
+          )else(
+            dissolve sprite(sl, dissolve:puff, random(second / 4, second * 3 / 4))
+            set slice extra(sl, 0, 1)
+          )
+        )
+      )
+    )
+    sl := nxt
+  )
+end
+

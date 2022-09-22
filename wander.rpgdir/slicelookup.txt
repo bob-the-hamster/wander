@@ -37,4 +37,5 @@ cards:dealer score
 cards:player score
 cards:prompt text
 cards:prompt2
+cards:anim
 

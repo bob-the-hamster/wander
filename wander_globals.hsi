@@ -38,6 +38,8 @@ global variable(32, dance guard text)
 global variable(33, how many for text box)
 global variable(34, sixgolf:dealer total)
 global variable(35, sixgolf:player total)
+global variable(36, sixgolf:dealer wins)
+global variable(37, sixgolf:player wins)
 
 # Used by TMC's parallax voodoo
 global variable(50, camera slice)
