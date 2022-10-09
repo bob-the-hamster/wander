@@ -153,13 +153,15 @@ script, sixgolf:postgame silliness, begin
     wait for text box
     set tag(tag:know card souls, true)
   )
-  switch(sixgolf:player wins) do(
-    case(2, 10, 20, 30, 40, 50, 60, 70, 80, 90)
-      show text box(1031)
-      wait for text box
-    case(5)
-      show text box(1032)
-      wait for text box
+  if(sixgolf:last win) then(
+    switch(sixgolf:player wins) do(
+      case(2, 10, 20, 30, 40, 50, 60, 70, 80, 90)
+        show text box(1031)
+        wait for text box
+      case(5)
+        show text box(1032)
+        wait for text box
+    )
   )
   focus camera(hero x(me), hero y(me), 10)
   wait for camera
@@ -864,16 +866,18 @@ end
 
 script, sixgolf: grand totals, table, begin
   if(sixgolf:winner(table)) then(
+    sixgolf:last win := 1
     sixgolf:player wins += 1
   )else(
+    sixgolf:last win := 0
     sixgolf:dealer wins += 1
   )
   sixgolf:dealer total += sixgolf:get score(table, 0)
   sixgolf:player total += sixgolf:get score(table, 1)
   if(sixgolf:winner(table)) then(
-    $0="Dealer wins, better luck next time"
-  )else(
     $0="You win! Good game! Well Played!"
+  )else(
+    $0="Dealer wins, better luck next time"
   )
   show text box(1025)
   while(true) do(

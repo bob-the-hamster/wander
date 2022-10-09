@@ -40,6 +40,7 @@ global variable(34, sixgolf:dealer total)
 global variable(35, sixgolf:player total)
 global variable(36, sixgolf:dealer wins)
 global variable(37, sixgolf:player wins)
+global variable(38, sixgolf:last win)
 
 # Used by TMC's parallax voodoo
 global variable(50, camera slice)
