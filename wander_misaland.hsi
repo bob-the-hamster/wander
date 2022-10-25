@@ -9,6 +9,7 @@ plotscript,Cyclic Misa Saying,begin
   if(check tag(tag:ship initialization)) then(
     base box := 868
     set tag(tag:misaland cactus, true)
+    set tag(tag:saw misa after ship, true)
   )
   show text box(base box + Misa Saying)
   wait for text Box

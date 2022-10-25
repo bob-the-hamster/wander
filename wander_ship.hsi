@@ -502,6 +502,13 @@ script, upon returning to the ship, begin
     wait for text box
     set tag(tag:ship hint visit misa, true)
   )
+  if(check tag(tag:saw misa after ship) && not(check tag(tag:saw hasim after ship))) then(
+    if(not(check tag(tag:ship hint visit hasim))) then(
+      show text box(1051)
+      wait for text box
+      set tag(tag:ship hint visit hasim, true)
+    )
+  )
 end
 
 plotscript, myrmidon shows you the ship, begin

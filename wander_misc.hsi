@@ -81,6 +81,16 @@ plotscript, on load, begin
     set tag(tag:fixed locking cats, true)
   )
 
+  # Set a tag to indicate if Bob knows HealHit (or HasteHit)
+  variable(slot)
+  slot := find hero(hero:Bob the Hamster)
+  set tag(tag:know healhit, false)
+  if(slot >= 0) then(
+    if(knows spell(slot, atk:healhit) || knows spell(atk:hastehit)) then(
+      set tag(tag:know healhit, true)
+    )
+  )
+
 end
 
 script, jorm belly onload, begin
@@ -414,6 +424,10 @@ end
 
 plotscript, upgrade spellbreak, begin
   upgrade bob skill(atk:spellbreak, atk:spellbreak2)
+end
+
+plotscript, upgrade healhit, begin
+  upgrade bob skill(atk:healhit, atk:hastehit)
 end
 
 script, upgrade bob skill, oldatk, newatk, begin
