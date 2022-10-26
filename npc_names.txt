@@ -1,6 +1,3 @@
-Cotton Ball - Andrew Verner
-Sucralose - Andrew Verner
-Dexter (min-pin) - RMZ
 Markothy - quackgyver
 Burlap Boy - quackgyver
 Jimbob - Brad Mehlenbacher
@@ -14,3 +11,6 @@ Timbert (Sleeping guard in Misa's castle) - quackgyver
 Ralph (Glibby's friend - Orange Tabby) - RMZ
 Stella (Glibby's friend - Gray Tabby) - RMZ
 Pu (Dr Pu, Archeologist) - quackgyver
+Cotton Ball (Lostlandia Innkeeper) - Andrew Verner
+Sucralose (Lostlandia weapon shop) - Andrew Verner
+Dexter (Lostlandia Blacksmith) - RMZ

@@ -1,8 +1,6 @@
-* Add a few treasure chests in the snake
 
 =Notes from Bird=
 
-- I think, "cannot steal" could be missunterstood. Wouldn't "steal failed" or "missed it" be better?
 - When the Ramthara wants to light up a wood blockage in the forest, she walks to a tile, where the other characters are standing. So they overlap. Maybe it would be nicer, if she would make her fire from a free place?
 - At the beginning of the forest, you can't see, where you are exactly standing, because the trees are above you. I would make them transparent, so that the way to go is clear.
 The monters are very well designed. But I would like to see them less often, because there are too many random battles. 
@@ -14,10 +12,8 @@ The monters are very well designed. But I would like to see them less often, bec
 ** Friar Cart Wheels
 ** Rock Owl hoot and wings
 ** Tetra knight grow arms
-* Make Mersheep village
 
 =LATER=
-* Bringing a card table to Palskovitch should unlock a blackjack game
-** Maybe the ELF card could be part of a fetch quest for the card table?
+* Maybe the ELF card could be part of a fetch quest for (?)
 * Dying in a Plip Tamer battle should not be a game-over
 * Item-collection mini-game similar to "Small Medals"
