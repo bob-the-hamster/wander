@@ -12,17 +12,17 @@ wander*.gif
 # Debug files
 g_debug.txt
 g_debug_archive.txt
+c_debug.txt
 c_debug_archive.txt
 # Sound Effects
 import/sfx/Foxley's Bfxr Set A/
 # Bulky music files
 music/convert/
 # Distrib files
-wandering-hamster-linux-x86.tar.gz
-wandering-hamster-linux-x86_64.tar.gz
-wandering-hamster-mac-32bit.zip
-wandering-hamster-mac.zip
+wandering-hamster-*.tar.gz
+wandering-hamster-mac*.zip
 wandering-hamster.exe
 wandering-hamster.zip
-wandering-hamster_amd64.deb
-wandering-hamster_i386.deb
+wandering-hamster*.deb
+# Clutter
+clutter
