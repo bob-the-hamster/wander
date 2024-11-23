@@ -468,6 +468,12 @@ script, from the deck of the ship to the world map, begin
   set hero direction(me, ship dir)
   wait(1)
   fade screen in
+  # Say something the first time you go to the world map
+  if(not(check tag(tag:ship hint visit misa))) then(
+    show text box(850)
+    wait for text box
+    set tag(tag:ship hint visit misa, true)
+  )
 end
 
 script, initialize ship, begin
@@ -497,11 +503,6 @@ plotscript, ship menu script, begin
 end
 
 script, upon returning to the ship, begin
-  if(not(check tag(tag:ship hint visit misa))) then(
-    show text box(850)
-    wait for text box
-    set tag(tag:ship hint visit misa, true)
-  )
   if(check tag(tag:saw misa after ship) && not(check tag(tag:saw hasim after ship))) then(
     if(not(check tag(tag:ship hint visit hasim))) then(
       show text box(1051)
