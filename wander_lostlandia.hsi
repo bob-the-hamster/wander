@@ -122,3 +122,42 @@ plotscript, cottonball inn, begin
   resume player
 end
 
+plotscript, try to wake up bridge frog, begin
+  set tag(tag:yell at bridge frog, ON)
+  suspend player
+  suspend random enemies
+  suspend caterpillar
+  suspend obstruction
+  pathfind hero to(0, 17, 57)
+  pathfind hero to(1, 17, 56)
+  pathfind hero to(2, 17, 58)
+  pathfind hero to(3, 16, 57)
+  wait for hero(0)
+  set hero direction(0, right)
+  
+  show text box(1071) # We want to cross... ZZZZ
+  wait for hero(1)
+  wait for hero(2)
+  wait for hero(3)
+  set hero direction(1, right)
+  set hero direction(2, right)
+  set hero direction(3, right)
+  wait for text box
+  wait(second / 2)
+
+  show text box(1073) # Hey wake up!... ZZZZ
+  wait for text box
+  wait(second / 2)
+  
+  show text box(1074) # Maybe another way
+  wait for text box
+  
+  resume caterpillar
+  pathfind hero to(0, 15, 55)
+  wait for hero(0)
+  
+  resume random enemies
+  resume player
+  resume obstruction
+  set tag(tag:yell at bridge frog, OFF)
+end
