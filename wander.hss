@@ -3,7 +3,7 @@
 # Although Wandering Hamster is licenced under the GPL, this script
 # file is licenced under the terms of the MIT license.
 #
-# Copyright (c) 2000-2018 James Paige
+# Copyright (c) 2000-2025 James Paige
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -52,6 +52,7 @@ include, wander_cards_common.hsi
 include, wander_sixcardgolf.hsi
 include, wander_blackjack.hsi
 include, wander_checkers.hsi
+include, wander_projectile.hsi
 
 #---------------------------------------------------------------------------
 

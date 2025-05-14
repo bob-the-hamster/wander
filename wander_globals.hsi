@@ -41,6 +41,7 @@ global variable(35, sixgolf:player total)
 global variable(36, sixgolf:dealer wins)
 global variable(37, sixgolf:player wins)
 global variable(38, sixgolf:last win)
+global variable(39, frogcarrots)
 
 # Used by TMC's parallax voodoo
 global variable(50, camera slice)
@@ -75,6 +76,17 @@ global variable(91, saved hero3 d)
 
 # variables after 100 used for temporary fake-array
 global variable(100,array)
+
+# For projectile scripts
+# These are temporary variables used by the projectile scripts. They are saved
+# and loaded to a hidden data slice, so that you can have multiple projectiles at once.
+global variable(16001, prj:time)   # Ticks remaining
+global variable(16002, prj:x100)   # Current x position * 100
+global variable(16003, prj:y100)   # Current y position * 100
+global variable(16004, prj:z100)   # Current z position (relative to start) * 100
+global variable(16005, prj:v_x100) # x velocity * 100 
+global variable(16006, prj:v_y100) # y velocity * 100 
+global variable(16007, prj:v_z100) # z velocity * 100 
 
 #---------------------------------------------------------------------------
 

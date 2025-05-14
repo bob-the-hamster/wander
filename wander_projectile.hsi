@@ -1,0 +1,128 @@
+# Strength of gravity, in hundredths of a pixel per tick per tick
+define constant(150, gravity 100)
+
+################################################################################
+# Utility scripts
+
+# Load the prj:* globals from a slice
+script, load projectile data, dataslice, begin
+    prj:time   := slicewidth(dataslice)
+    prj:x100   := sliceheight(dataslice)
+    prj:y100   := slicex(dataslice)
+    prj:z100   := slicey(dataslice)
+    prj:v_x100 := gettoppadding(dataslice)
+    prj:v_y100 := getbottompadding(dataslice)
+    prj:v_z100 := getleftpadding(dataslice)
+end
+
+# Save the prj:* globals to a slice
+script, save projectile data, dataslice, begin
+    setslicewidth    (dataslice, prj:time)
+    setsliceheight   (dataslice, prj:x100)
+    setslicex        (dataslice, prj:y100)
+    setslicey        (dataslice, prj:z100)
+    settoppadding    (dataslice, prj:v_x100)
+    setbottompadding (dataslice, prj:v_y100)
+    setleftpadding   (dataslice, prj:v_z100)
+end
+
+# Create a hidden child slice that can be used to store data
+script, create data slice, parent, begin
+    variable(dataslice)
+    dataslice := lookup slice(sli:projectile:dataslice, parent)
+    if (dataslice) then (exit returning(dataslice))  # Just in case you call this twice
+    dataslice := createcontainer
+    setparent(dataslice, parent)
+    setslicevisible(dataslice, false)
+    setslicelookup(dataslice, sli:projectile:dataslice)
+    return(dataslice)
+end
+
+################################################################################
+# Projectiles
+
+# Start a new projectile on an arcing path.
+# Speed is the ground speed in pixels per tick.
+# x distance and y distance is how far you want to shoot the projectile, relative
+# to the initial position (like "move slice by").
+# z distance is used when shooting at a target with a different height, e.g. aiming
+# at the top of a tree or up a cliff. Positive z distance means shooting upwards
+script, fire projectile, slice, speed, x distance, y distance, z distance = 0, begin
+    variable(dist, time)
+
+    dist := sqrt(xdistance ^ 2 + ydistance ^ 2)
+
+    # Calculate time-in-air, in ticks
+    time := (dist + speed / 2) / speed
+    if (time <= 0) then (time := 1)
+
+    # Initial vertical velocity, in hundredths of a pixel per tick
+    prj:v_z100 := gravity100 * time / 2 + 100 * zdistance / time
+
+    # Save some other necessary data
+    prj:x100 := slicex(slice) * 100
+    prj:y100 := slicey(slice) * 100
+    prj:z100 := 0
+    prj:v_x100 := xdistance * 100 / time
+    prj:v_y100 := ydistance * 100 / time
+    prj:time := time
+
+    save projectile data(create data slice(slice))
+end
+
+# Update the position of a projectile slice. Needs to be called every tick.
+# Returns true if still in flight, or false if the projectile has reached the end.
+script, projectile eachtick, slice, begin
+    variable(dataslice)
+    dataslice := lookup slice(sli:projectile:dataslice, slice)
+    if (dataslice == false) then (script error($99="Couldn't find projectile data slice"))
+
+    load projectile data(dataslice)
+    if (prj:time <= 0) then (exit returning(false))  # Already finished
+    prj:time -= 1
+    prj:x100 += prj:v_x100
+    prj:y100 += prj:v_y100
+    prj:z100 += prj:v_z100 -- gravity100 / 2  # Add half of gravity to perform leapfrog integration
+    prj:v_z100 -= gravity100
+    save projectile data(dataslice)
+
+    # Add 50 to round to nearest pixel
+    put slice(slice, (prj:x100 + 50) / 100, (prj:y100 -- prj:z100 + 50) / 100)
+
+    return (prj:time > 0)
+end
+
+
+# Make a hero to jump to a certain tile position, at their normal walk speed,
+# and wait for the jump to finish.
+# This is a drop-in replacement for "walk hero to X(who, X), walk hero to Y(who, Y), wait for hero(who)"
+# X, Y is the position in tile coordinates.
+script, jump hero to, who, x, y, begin
+	variable(sl, midair)
+	sl := get hero slice(who)
+	fire projectile(sl, getherospeed(who), 20 * (x -- herox(who)), 20 * (y -- heroy(who)))
+	midair := true
+	while (midair) do (
+		midair := projectile eachtick(sl)
+		# This is needed because you can't move a hero slice directly
+		put hero(who, slicex(sl), slicey(sl))
+		wait(1)
+	)
+end
+
+# Make an NPC to jump to a certain tile position, at their normal walk speed,
+# and wait for the jump to finish.
+# This is a drop-in replacement for "walk npc to X(who, X), walk npc to Y(who, Y), wait for npc(who)"
+# X, Y is the position in tile coordinates.
+script, jump npc to, who, x, y, begin
+	variable(sl, midair)
+	sl := get npc slice(who)
+	fire projectile(sl, getnpcspeed(who), 20 * (x -- npcx(who)), 20 * (y -- npcy(who)))
+	midair := true
+	while (midair) do (
+		midair := projectile eachtick(sl)
+		# This is needed because you can't move a npc slice directly
+		put npc(who, slicex(sl), slicey(sl))
+		wait(1)
+	)
+end

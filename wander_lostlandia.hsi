@@ -149,6 +149,36 @@ plotscript, try to wake up bridge frog, begin
   wait for text box
   wait(second / 2)
   
+  variable(carrot)
+  while(true) do(
+    show text box(1075)
+    wait for text box
+    if(check tag(tag:throw carrot at frog)) then(
+      if(inventory(item:carrot) > 0) then(
+        carrot := create npc(6, 17, 57)
+        set npc moves(carrot, false)
+        set npc obstructs(carrot, false)
+        set npc ignores walls(carrot, true)
+        jump npc to(carrot, 20, 56)
+        play sound(sfx:lil hit, false, true)
+        jump npc to(carrot, random(19, 21), random(55, 57))
+        destroy npc(carrot)
+        frog carrots += 1
+        delete item(item:carrot)
+      )else(
+        show text box(1076)
+        wait for text box
+        if(frog carrots > 0) then(
+          show text box(1077)
+          wait for text box
+        )
+        break
+      )
+    )else(
+      break
+    )
+  )
+  
   show text box(1074) # Maybe another way
   wait for text box
   
@@ -161,3 +191,29 @@ plotscript, try to wake up bridge frog, begin
   resume obstruction
   set tag(tag:yell at bridge frog, OFF)
 end
+
+plotscript, actually wake up bridge frog, begin
+  show text box(1081)
+  wait for text box
+  if(check tag(tag:Gisli in party now)) then(
+    show text box(1082)
+    wait for text box
+  )
+  if(check tag(tag:Icefeather in party)) then(
+    show text box(1083)
+    wait for text box
+  )
+  if(check tag(tag:Fraidy Plip in party)) then(
+    show text box(1084)
+    wait for text box
+  )
+  set tag(tag:woke bridge frog, ON)
+  show text box(1085)
+  wait for text box
+  variable(frog)
+  frog := npc reference(4)
+  set npc obstructs(frog, false)
+  pathfind npc to(frog, 22, 57)
+  wait for npc(frog)
+  
+end script
