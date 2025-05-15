@@ -7,8 +7,10 @@ plotscript, lostlandia autorun, begin
   set tag(tag:know of lostlandia, true)
   # scrambe berry directions
   scramble npc directions(1)
+  if(check tag(tag:frog bridge open)) then(
+    open frog bridge(0)
+  )
 end
-
 
 plotscript, lostlandia berry bush, arg, ref, begin
   suspend player
@@ -160,7 +162,7 @@ plotscript, try to wake up bridge frog, begin
         set npc obstructs(carrot, false)
         set npc ignores walls(carrot, true)
         jump npc to(carrot, 20, 56)
-        play sound(sfx:lil hit, false, true)
+        play sound(sfx:crush8bit, false, true)
         jump npc to(carrot, random(19, 21), random(55, 57))
         destroy npc(carrot)
         frog carrots += 1
@@ -193,6 +195,7 @@ plotscript, try to wake up bridge frog, begin
 end
 
 plotscript, actually wake up bridge frog, begin
+  suspend player
   show text box(1081)
   wait for text box
   if(check tag(tag:Gisli in party now)) then(
@@ -215,5 +218,25 @@ plotscript, actually wake up bridge frog, begin
   set npc obstructs(frog, false)
   pathfind npc to(frog, 22, 57)
   wait for npc(frog)
-  
-end script
+  set tag(tag:frog bridge open, ON)
+  walk npc(frog, left, 1)
+  wait for npc(frog)
+  set npc direction(frog, up)
+  open frog bridge(2)
+  pathfind npc to(frog, 24, 56)
+  wait for npc(frog)
+  set npc direction(frog, south)
+  set npc obstructs(frog, true)
+  resume player
+end
+
+script, open frog bridge, tickdelay, begin
+  variable(x, y, i)
+  x := 20
+  y := 57
+  for(i, 0, 2) do(
+    write map block(x -- i, y, 35, 2) # show the bridge
+    write pass block(x -- i, y, 0) # erase any walls
+    wait(tickdelay)
+  )
+end
