@@ -1,4 +1,3 @@
-Markothy - quackgyver
 Burlap Boy - quackgyver
 Jimbob - Brad Mehlenbacher
 Dog Beardog - Brad Mehlenbacher
@@ -14,3 +13,5 @@ Pu (Dr Pu, Archeologist) - quackgyver
 Cotton Ball (Lostlandia Innkeeper) - Andrew Verner
 Sucralose (Lostlandia weapon shop) - Andrew Verner
 Dexter (Lostlandia Blacksmith) - RMZ
+Markothy (Lostlandia shopkeeper) - quackgyver
+
