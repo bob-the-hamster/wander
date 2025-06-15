@@ -263,7 +263,8 @@ plotscript, give away the fraidy plip, begin
   wait for npc(plip)
   set npc direction(plip, down)
   set hero direction(me, right)
-  
+  wait for text box
+
   show text box(1098)
   wait for text box
   

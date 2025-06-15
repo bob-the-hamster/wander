@@ -430,6 +430,14 @@ plotscript, upgrade healhit, begin
   upgrade bob skill(atk:healhit, atk:hastehit)
 end
 
+plotscript, upgrade firestrike, begin
+  upgrade bob skill(atk:firestrike, atk:fireswirl)
+end
+
+plotscript, upgrade boltstrike, begin
+  upgrade bob skill(atk:boltstrike, atk:joltstrike)
+end
+
 script, upgrade bob skill, oldatk, newatk, begin
   variable(bob)
   bob := find hero(hero:Bob the Hamster)
