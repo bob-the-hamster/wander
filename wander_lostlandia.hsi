@@ -279,3 +279,96 @@ plotscript, give away the fraidy plip, begin
   
   resume player
 end
+
+plotscript, left the plipservationalists house after giving away fraidy plip, begin
+  set tag(tag:can borrow fraidy, ON)
+end
+
+plotscript, borrow the fraidy plip, begin
+  suspend player
+  if(room in active party) then(
+    show text box(1114)
+    wait for text box
+    variable(x, y, rank)
+    x := npc x(8)
+    y := npc y(8)
+    suspend caterpillar
+    unlock hero(hero:fraidy plip)
+    swap in hero(hero:fraidy plip)
+    set tag(tag:fraidy plip in house, OFF)
+    rank := rank in caterpillar(hero:fraidy plip)
+    set hero position(rank, x, y)
+    set hero direction(rank, down)
+    resume caterpillar
+  )else(
+    show text box(1113)
+    wait for text box
+  )
+  resume player
+end
+
+plotscript, return the fraidy plip, begin
+  suspend player
+  show text box(1097)
+
+  variable(x, y, d)
+  x := hero x(rank in caterpillar(hero:Fraidy Plip))
+  y := hero y(rank in caterpillar(hero:Fraidy Plip))
+  d := hero direction(rank in caterpillar(hero:Fraidy Plip))
+  swap out hero(hero:fraidy plip)
+  lock hero(hero:fraidy plip)
+  set tag(tag:fraidyplip in house, true)
+  variable(plip)
+  plip := npc reference(8)
+  set npc position(plip, x, y)
+  set npc direction(plip, d)
+  if(hero x(me) == 9 && hero y(me) == 107) then(
+    pathfind hero to(me, 8, 108)
+  )
+  pathfind npc to(plip, 9, 107)
+  wait for hero(me)
+  wait for npc(plip)
+  set npc direction(plip, down)
+  set hero direction(me, right)
+
+  wait for text box  
+  resume player
+end
+
+plotscript, fraidy plip goes home if you try to exit lostlandia, begin
+  # This script is run only as a step-on script right before you exit
+  # the main entrace of Lostlandia
+  if(check tag(tag:gave away fraidy plip)) then(
+    if(check tag(tag:fraidy plip in party)) then(
+      suspend player
+      suspend caterpillar
+      show text box(1117)
+      variable(plip)
+      plip := rank in caterpillar(hero:fraidy plip)
+      set hero speed(plip, 8)
+      pathfind hero to(plip, 11, 55)
+      wait(second / 4)
+      variable(i)
+      for (i, 0, 3) do(
+        set hero direction(i, up)
+      )
+      wait for hero(plip)
+      pathfind hero to(plip, 20, 57)
+      wait(second / 4)
+      for (i, 0, 3) do(
+        set hero direction(i, right)
+      )
+      wait for hero(plip)
+
+      swap out hero(hero:fraidy plip)
+      lock hero(hero:fraidy plip)
+      set tag(tag:fraidyplip in house, true)
+
+      wait for text box
+      show text box(1118)
+      wait for text box
+      resume caterpillar
+      resume player
+    )
+  )
+end
