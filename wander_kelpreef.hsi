@@ -202,6 +202,7 @@ end
 #---------------------------------------------------------------------------
 
 plotscript, sheep inn script, begin
+  suspend player
   cancel air timer
   set tag(tag:using sheep inn, ON)
   walk hero to X(me, 13)
@@ -248,6 +249,7 @@ plotscript, sheep inn script, begin
   set tag(tag:need air timer, ON)
   walk hero(me, south, 1)
   wait for hero(me)
+  resume player
 end
 
 #---------------------------------------------------------------------------

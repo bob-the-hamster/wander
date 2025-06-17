@@ -299,6 +299,8 @@ plotscript, borrow the fraidy plip, begin
     rank := rank in caterpillar(hero:fraidy plip)
     set hero position(rank, x, y)
     set hero direction(rank, down)
+    # heal the fraidy plip
+    set hero stat(find hero(hero:fraidy plip), stat:hp, get hero stat(find hero(hero:fraidy plip), stat:hp, maximum stat), current stat) 
     resume caterpillar
   )else(
     show text box(1113)
