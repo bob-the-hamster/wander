@@ -365,9 +365,9 @@ script, skill point bean, lev, item, begin
     exit script
   )
   # Check to see if Bob can use this Skill Point level at all yet
-  variable(max)
-  max := get level mp(who, lev, maximum stat)
-  if(max <= 0) then(
+  variable(maxs)
+  maxs := get level mp(who, lev, maximum stat)
+  if(maxs <= 0) then(
     show text box(677)
     exit script
   )
@@ -375,7 +375,7 @@ script, skill point bean, lev, item, begin
     # Loop while we want to keep eating beans
     variable(cur)
     cur := get level mp(who, lev, current stat)
-    if(cur >= max) then(
+    if(cur >= maxs) then(
       # This level of skill points is already full
       show text box(658)
       exit script
@@ -388,7 +388,7 @@ script, skill point bean, lev, item, begin
     # Set globals for display in the next text box
     skill point bean count := inventory(item)
     skill point cur := get level mp(who, lev, current stat)
-    skill point max := max
+    skill point max := maxs
     show text box(668)
     wait for text box
     if(check tag(tag:eat another bean) == OFF) then(exit script)
@@ -466,6 +466,14 @@ script, upgrade bob skill, oldatk, newatk, begin
 
   read attack name(str:intobox, newatk)
   show text box(972)
+end
+
+#---------------------------------------------------------------------------
+
+plotscript, text entry test, begin
+  $0=""
+  input string with virtual keyboard(0, 20)
+  show string(0)
 end
 
 #---------------------------------------------------------------------------

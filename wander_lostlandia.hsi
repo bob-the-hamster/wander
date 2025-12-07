@@ -57,15 +57,15 @@ script, lostlandia berry effect, who, begin
    free slice(a)
   )
   # Check if the hero has non-full MP
-  variable(cur, max, gain)
+  variable(cur, maxm, maxh, gain)
   cur := get hero stat(who, stat:MP, current stat)
-  max := get hero stat(who, stat:MP, maximum stat)
-  if(max > 0 && cur < max) then(
-    gain := small(random(1, 6), max -- cur)
+  maxm := get hero stat(who, stat:MP, maximum stat)
+  if(maxm > 0 && cur < maxm) then(
+    gain := small(random(1, 6), maxm -- cur)
     set hero stat(who, stat:MP, cur + gain, current stat)
     get hero name(0, who)
     how many for text box := gain
-    skill point max := max
+    skill point max := maxm
     skill point cur := cur + gain
     show text box(1019)
     play sound(sfx: potion)
@@ -73,11 +73,11 @@ script, lostlandia berry effect, who, begin
   )
   # restore HP (allowed to exceed max)
   cur := get hero stat(who, stat:HP, current stat)
-  max := get hero stat(who, stat:HP, maximum stat)
+  maxh := get hero stat(who, stat:HP, maximum stat)
   cur += 1
   set hero stat(who, stat:HP, cur, current stat)
   get hero name(0, who)
-  if(cur <= max) then(
+  if(cur <= maxh) then(
     $1="a little"
   )else(
     $1="weirdly"
